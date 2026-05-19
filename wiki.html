@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="description" content="九界修真世界观百科全书，包含人物图鉴、七大体系可视化、故事线梳理">
+    <title>九界修真世界 - 百科系统</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#1a1a2e">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <style>
+        /* lifeline配色变量 */
+        :root {
+            --bg-primary: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
+            --text-primary: #ccd6f6;
+            --text-secondary: #8892b0;
+            --accent: #64ffda;
+            --highlight: #ff9f1c;
+            --card-bg: rgba(255, 255, 255, 0.08);
+            --card-border: rgba(255, 255, 255, 0.1);
+        }
+        
+        /* 导航按钮颜色调整 */
+        .nav-btn {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: #8892b0;
+            transition: all 0.3s ease;
+        }
+        .nav-btn:hover {
+            background: rgba(100, 255, 218, 0.15);
+            color: #64ffda;
+            border-color: rgba(100, 255, 218, 0.3);
+        }
+        
+        /* 文字颜色 */
+        .text-title-gradient {
+            background: linear-gradient(90deg, #f39c12, #e74c3c, #9b59b6, #3498db, #2ecc71);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradient 3s ease infinite;
+        }
+        
+        @keyframes gradient {
+            0%, to { background-position: 0% center; }
+            50% { background-position: 200% center; }
+        }
+
+        /* 像素时钟：整体缩放到 80% */
+        #pixel-clock {
+            transform: scale(0.8);
+            transform-origin: left center;
+        }
+
+        .digit-container {
+            display: grid;
+            grid-template-columns: repeat(4, 0.2rem);
+            grid-template-rows: repeat(7, 0.2rem);
+            gap: 0.05rem;
+        }
+
+        .pixel {
+            background-color: rgba(100, 255, 218, 0.15);
+            border-radius: 0.5px;
+        }
+
+        .pixel.active {
+            background-color: #64ffda;
+            box-shadow: 0 0 4px rgba(100, 255, 218, 0.5);
+        }
+
+        .colon {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 0.25rem;
+            margin: 0 0.1rem;
+        }
+
+        .colon-dot {
+            width: 0.15rem;
+            height: 0.15rem;
+            background-color: #64ffda;
+            border-radius: 50%;
+            box-shadow: 0 0 4px rgba(100, 255, 218, 0.5);
+        }
+
+        /* 日期行：更小的像素块 */
+        .date-digit {
+            grid-template-columns: repeat(4, 0.14rem);
+            grid-template-rows: repeat(7, 0.14rem);
+            gap: 0.03rem;
+        }
+
+        .date-sep {
+            width: 0.14rem;
+            height: 0.14rem;
+            background-color: #64ffda;
+            border-radius: 1px;
+            align-self: center;
+            margin: 0 1px;
+        }
+
+        /* 移动端隐藏秒数和第二个冒号 */
+        @media (max-width: 768px) {
+            #seconds-tens,
+            #seconds-ones,
+            #colon-ms {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body class="text-gray-200">
+    <!-- 导航栏 -->
+    <nav class="fixed top-0 w-full z-50" style="background: rgba(26, 26, 46, 0.9); backdrop-filter: blur(10px); border-bottom: 1px solid rgba(255, 255, 255, 0.1);">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <h1 class="text-xl font-bold text-title-gradient whitespace-nowrap">九界修真</h1>
+                <!-- 像素时钟 -->
+                <div id="pixel-clock">
+                    <!-- 日期行：YYYY-MM-DD -->
+                    <div id="date-row" class="flex items-center justify-center" style="gap: 1px; margin-bottom: 2px;">
+                        <div class="digit-container date-digit" id="year-thousands"></div>
+                        <div class="digit-container date-digit" id="year-hundreds"></div>
+                        <div class="digit-container date-digit" id="year-tens"></div>
+                        <div class="digit-container date-digit" id="year-ones"></div>
+                        <div class="date-sep"></div>
+                        <div class="digit-container date-digit" id="month-tens"></div>
+                        <div class="digit-container date-digit" id="month-ones"></div>
+                        <div class="date-sep"></div>
+                        <div class="digit-container date-digit" id="day-tens"></div>
+                        <div class="digit-container date-digit" id="day-ones"></div>
+                    </div>
+                    <!-- 时间行：HH:MM:SS -->
+                    <div id="time-row" class="flex items-center" style="gap: 2px;">
+                        <div class="digit-container" id="hours-tens"></div>
+                        <div class="digit-container" id="hours-ones"></div>
+                        <div class="colon" id="colon-hm">
+                            <div class="colon-dot"></div>
+                            <div class="colon-dot"></div>
+                        </div>
+                        <div class="digit-container" id="minutes-tens"></div>
+                        <div class="digit-container" id="minutes-ones"></div>
+                        <div class="colon" id="colon-ms">
+                            <div class="colon-dot"></div>
+                            <div class="colon-dot"></div>
+                        </div>
+                        <div class="digit-container" id="seconds-tens"></div>
+                        <div class="digit-container" id="seconds-ones"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="hidden md:flex space-x-2">
+                <button onclick="scrollToSection('overview')" class="nav-btn px-3 py-1 rounded-full text-sm">总览</button>
+                <button onclick="scrollToSection('realms')" class="nav-btn px-3 py-1 rounded-full text-sm">九界</button>
+                <button onclick="scrollToSection('characters')" class="nav-btn px-3 py-1 rounded-full text-sm">人物</button>
+                <button onclick="scrollToSection('systems')" class="nav-btn px-3 py-1 rounded-full text-sm">体系</button>
+                <button onclick="scrollToSection('story')" class="nav-btn px-3 py-1 rounded-full text-sm">故事</button>
+                <a href="he-yi-player.html" class="nav-btn px-3 py-1 rounded-full text-sm" style="text-decoration:none; display:inline-flex; align-items:center;">🎧 播客</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 移动端导航 -->
+    <div class="md:hidden fixed bottom-0 w-full z-50" style="background: rgba(26, 26, 46, 0.95); backdrop-filter: blur(10px); border-top: 1px solid rgba(255, 255, 255, 0.1);">
+        <div class="flex justify-around py-2">
+            <button onclick="scrollToSection('overview')" class="flex flex-col items-center text-xs" style="color: #8892b0;">
+                <span class="text-lg">🏠</span>总览
+            </button>
+            <button onclick="scrollToSection('characters')" class="flex flex-col items-center text-xs" style="color: #8892b0;">
+                <span class="text-lg">👥</span>人物
+            </button>
+            <button onclick="scrollToSection('systems')" class="flex flex-col items-center text-xs" style="color: #8892b0;">
+                <span class="text-lg">⚙️</span>体系
+            </button>
+            <button onclick="scrollToSection('story')" class="flex flex-col items-center text-xs" style="color: #8892b0;">
+                <span class="text-lg">📖</span>故事
+            </button>
+            <a href="he-yi-player.html" class="flex flex-col items-center text-xs" style="color: #8892b0; text-decoration: none;">
+                <span class="text-lg">🎧</span>播客
+            </a>
+        </div>
+    </div>
+
+    <!-- 主内容区 -->
+    <main class="container mx-auto px-4 pt-20 pb-20 md:pb-10">
+
+        <!-- 模块1：引导总览页 -->
+        <section id="overview" class="mb-16 scroll-mt-20 fade-in">
+            <div class="text-center py-10 rounded-2xl" style="background: rgba(255, 255, 255, 0.06); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1);">
+                <h2 class="text-3xl font-bold mb-4" style="color: #ccd6f6;">九界封闭能量循环</h2>
+                <p class="text-lg mb-6" style="color: #ff9f1c;">→ 主角破局引入宇宙能 →</p>
+                <p class="text-md max-w-2xl mx-auto mb-8" style="color: #8892b0;">探讨平衡/自由/开放/宿命</p>
+                
+                <div class="max-w-3xl mx-auto rounded-xl p-6" style="background: rgba(0, 0, 0, 0.3);">
+                    <h3 class="text-xl font-semibold mb-4" style="color: #64ffda;">七大体系关系图谱</h3>
+                    <div class="text-left text-sm space-y-2" style="color: #8892b0;">
+                        <p><span style="color: #a78bfa;" class="font-bold">能源为根</span> → <span style="color: #60a5fa;" class="font-bold">灵根为核</span> → <span style="color: #34d399;" class="font-bold">功法为梯</span></p>
+                        <p><span style="color: #fbbf24;" class="font-bold">势力为场</span> → <span style="color: #f97316;" class="font-bold">经济为网</span> → <span style="color: #f87171;" class="font-bold">黑暗为刃</span> → <span style="color: #4ade80;" class="font-bold">宝药为盾</span></p>
+                        <p class="text-center mt-4" style="color: #6b7280;">七层递进自洽修真生命体</p>
+                    </div>
+                </div>
+                
+                <button onclick="scrollToSection('characters')" class="mt-8 px-6 py-3 rounded-full shadow-lg" style="background: linear-gradient(135deg, #667eea, #764ba2); color: white;">
+                    开始探索 →
+                </button>
+            </div>
+        </section>
+
+        <!-- 模块2：九界详解 -->
+        <section id="realms" class="mb-16 scroll-mt-20">
+            <h2 class="text-2xl font-bold text-center mb-8" style="color: #ccd6f6;">九界世界观</h2>
+            <p class="text-center mb-8" style="color: #8892b0;">九层世界，从蛮荒到始源，每一界都有独特的法则与秘密</p>
+            
+            <!-- 九界立体层级结构 -->
+            <div id="realm-hierarchy-wrapper" class="mb-12">
+                <h3 class="text-xl font-bold text-center mb-4" style="color: #64ffda;">九界立体层级结构</h3>
+                <p class="text-center mb-6" style="color: #8892b0; font-size: 14px;">点击任意界域查看详情，连线表示界门连通方向</p>
+                <div class="flex justify-center">
+                    <div class="w-full" style="
+            background: linear-gradient(145deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.06));
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            border: 0.5px solid rgba(255, 255, 255, 0.18);
+            border-radius: 32px;
+            padding: 32px;
+            box-shadow: 
+                inset 0 1px 1px rgba(255, 255, 255, 0.15),
+                inset 0 -1px 1px rgba(0, 0, 0, 0.1),
+                0 8px 32px rgba(0, 0, 0, 0.25);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+        " onmouseover="this.style.transform='translateY(-5px) scale(1.01)'; this.style.boxShadow='inset 0 1px 2px rgba(255,255,255,0.2), inset 0 -1px 1px rgba(0,0,0,0.1), 0 15px 40px rgba(0,0,0,0.35), 0 0 30px #8B735520';" onmouseout="this.style.transform=''; this.style.boxShadow='inset 0 1px 1px rgba(255,255,255,0.15), inset 0 -1px 1px rgba(0,0,0,0.1), 0 8px 32px rgba(0,0,0,0.25)';">
+                        <svg id="realm-hierarchy-svg" viewBox="0 0 800 600" class="w-full" style="max-height: 460px; background: transparent;"></svg>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 九界卡片容器 -->
+            <div id="realms-container" class="space-y-6">
+                <!-- 动态渲染 -->
+            </div>
+        </section>
+
+        <!-- 模块3：人物图鉴 -->
+        <section id="characters" class="mb-16 scroll-mt-20">
+            <div class="flex flex-col md:flex-row justify-between items-center mb-8">
+                <h2 class="text-2xl font-bold" style="color: #ccd6f6;">人物图鉴</h2>
+                
+                <!-- 搜索框 -->
+                <div class="mt-4 md:mt-0 flex gap-2">
+                    <input type="text" id="search-input" placeholder="搜索人物..." 
+                           class="px-4 py-2 rounded-full text-sm"
+                           style="background: rgba(0, 0, 0, 0.3); border: 1px solid rgba(255, 255, 255, 0.15); color: #e0e0e0;"
+                           oninput="handleSearch(this.value)">
+                </div>
+            </div>
+            
+            <!-- 筛选按钮 -->
+            <div class="flex flex-wrap gap-2 mb-6">
+                <button class="filter-btn active px-4 py-2 rounded-full text-sm" data-camp="all" onclick="handleFilter('all')">全部</button>
+                <button class="filter-btn px-4 py-2 rounded-full text-sm" data-camp="protagonist" onclick="handleFilter('protagonist')">主角团</button>
+                <button class="filter-btn px-4 py-2 rounded-full text-sm" data-camp="antagonist" onclick="handleFilter('antagonist')">反派</button>
+                <button class="filter-btn px-4 py-2 rounded-full text-sm" data-camp="love" onclick="handleFilter('love')">爱情线</button>
+                <button class="filter-btn px-4 py-2 rounded-full text-sm" data-camp="special" onclick="handleFilter('special')">特殊</button>
+            </div>
+            
+            <!-- 人物卡片网格 -->
+            <div id="characters-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                <!-- 动态渲染 -->
+            </div>
+            
+            <p id="characters-empty" class="hidden text-center mt-4" style="color: #8892b0;">未找到匹配的人物</p>
+        </section>
+
+        <!-- 模块3：七大体系可视化 -->
+        <section id="systems" class="mb-16 scroll-mt-20">
+            <h2 class="text-2xl font-bold text-center mb-8" style="color: #ccd6f6;">七大体系可视化</h2>
+            <div id="systems-container" class="space-y-6">
+                <!-- 动态渲染 -->
+            </div>
+        </section>
+
+        <!-- 模块4：故事线梳理 -->
+        <section id="story" class="scroll-mt-20">
+            <h2 class="text-2xl font-bold text-center mb-8" style="color: #ccd6f6;">故事线梳理</h2>
+            
+            <!-- 三条主线概览 -->
+            <div class="grid md:grid-cols-3 gap-4 mb-8">
+                <div class="p-4 rounded-lg" style="border-left: 4px solid #f87171; background: rgba(248, 113, 113, 0.1);">
+                    <h4 class="font-bold" style="color: #f87171;">生存+势力线</h4>
+                    <p class="text-sm mt-2" style="color: #8892b0;">凡人建势力→统战国→修真探九界→九界守护者</p>
+                </div>
+                <div class="p-4 rounded-lg" style="border-left: 4px solid #60a5fa; background: rgba(96, 165, 250, 0.1);">
+                    <h4 class="font-bold" style="color: #60a5fa;">回家+救赎线</h4>
+                    <p class="text-sm mt-2" style="color: #8892b0;">寻罗布泊之眼→揭核战关联→救地球家人→治愈地球</p>
+                </div>
+                <div class="p-4 rounded-lg" style="border-left: 4px solid #4ade80; background: rgba(74, 222, 128, 0.1);">
+                    <h4 class="font-bold" style="color: #4ade80;">人性+道线</h4>
+                    <p class="text-sm mt-2" style="color: #8892b0;">人性黑暗与光辉→修仙即修心→克服本性证道</p>
+                </div>
+            </div>
+            
+            <!-- 时间轴 -->
+            <div id="storyline-container">
+                <!-- 动态渲染 -->
+            </div>
+        </section>
+    </main>
+
+    <!-- 人物详情弹窗 -->
+    <div id="character-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4" style="background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(10px);">
+        <div class="rounded-2xl max-w-2xl w-full max-h-screen overflow-y-auto" style="background: linear-gradient(135deg, #1a1a2e, #16213e); border: 1px solid rgba(255, 255, 255, 0.15);">
+            <div class="px-6 py-4 flex justify-between items-center" style="border-bottom: 1px solid rgba(100, 255, 218, 0.2);">
+                <h2 id="modal-title" class="text-2xl font-bold" style="color: #64ffda;"></h2>
+                <button onclick="closeModal()" class="text-2xl" style="color: #8892b0;">&times;</button>
+            </div>
+            <div id="modal-content" class="p-6"></div>
+        </div>
+    </div>
+
+    <!-- 音乐播放器（唱机UI - 中间圆形部分） -->
+    <div id="music-player" style="position: fixed; bottom: 20px; right: 20px; z-index: 100; transform: scale(0.35); transform-origin: bottom right;">
+        <div id="music-panel" style="background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(40px) saturate(180%) brightness(1.2); -webkit-backdrop-filter: blur(40px) saturate(180%) brightness(1.2); border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 32px; padding: 24px; width: 340px; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1); position: relative; overflow: hidden;">
+            <!-- 液态光泽效果 -->
+            <div style="position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.1) 0%, transparent 50%); pointer-events: none;"></div>
+            
+            <!-- 唱机中间圆形部分 -->
+            <div class="turntable-base" id="turntable" style="width: 280px; height: 280px; position: relative; margin: 0 auto 16px;">
+                <!-- 外圈阴影光晕 -->
+                <div class="base-glow"></div>
+                <!-- 深色底盘 -->
+                <div class="base-plate"></div>
+                <!-- 进度环 -->
+                <div class="progress-ring">
+                    <svg viewBox="0 0 300 300">
+                        <circle class="bg" cx="150" cy="150" r="146"/>
+                        <circle class="fg" cx="150" cy="150" r="146" id="progressCircle"/>
+                    </svg>
+                </div>
+                <!-- 橙色圆环 -->
+                <div class="orange-ring"></div>
+                <!-- 黑胶唱片 -->
+                <div class="vinyl-disc" id="vinylDisc">
+                    <div class="vinyl-shine"></div>
+                    <div class="vinyl-label">
+                        <span class="label-title">九界修真</span>
+                        <span class="label-tracks">月下孤城</span>
+                    </div>
+                    <div class="center-hole"></div>
+                </div>
+            </div>
+            
+            <!-- 控制按钮 -->
+            <div class="flex items-center gap-3" style="position: relative;">
+                <button id="play-btn" onclick="togglePlay()" style="background: rgba(232, 136, 24, 0.2); border: 1px solid rgba(232, 136, 24, 0.3); color: #e88818; width: 48px; height: 48px; border-radius: 50%; cursor: pointer; font-size: 20px; display: flex; align-items: center; justify-content: center; transition: all 0.3s ease; flex-shrink: 0;">⏸️</button>
+                <div class="flex-1">
+                    <div class="flex items-center gap-2" style="margin-bottom: 8px;">
+                        <span style="color: #8892b0; font-size: 11px;">🔊</span>
+                        <input type="range" id="volume-slider" min="0" max="100" value="5" oninput="changeVolume(this.value)" style="flex: 1; -webkit-appearance: none; height: 4px; border-radius: 2px; background: rgba(255, 255, 255, 0.1); outline: none;">
+                        <span id="volume-text" style="color: #e88818; font-size: 11px; min-width: 35px; text-align: right;">5%</span>
+                    </div>
+                    <div id="now-playing" style="color: #8892b0; font-size: 10px; text-align: center;">正在播放...</div>
+                </div>
+            </div>
+            
+            <!-- 关闭按钮 -->
+            <button onclick="toggleMusicPanel()" style="position: absolute; top: 12px; right: 12px; background: rgba(255, 255, 255, 0.1); border: none; color: #8892b0; font-size: 18px; cursor: pointer; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">×</button>
+        </div>
+        
+        <!-- 最小化状态 -->
+        <div id="music-mini" style="display: none; background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(40px) saturate(180%); -webkit-backdrop-filter: blur(40px) saturate(180%); border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 50%; width: 60px; height: 60px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 28px; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);" onclick="toggleMusicPanel()">
+            🎵
+        </div>
+    </div>
+
+    <style>
+        /* 唱机UI样式 */
+        .turntable-base {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 280px;
+            height: 280px;
+        }
+        
+        .base-glow {
+            position: absolute;
+            width: 92%;
+            height: 92%;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(20,60,65,0.9) 0%, rgba(10,26,31,0.3) 70%, transparent 100%);
+            filter: blur(20px);
+        }
+        
+        .base-plate {
+            position: absolute;
+            width: 88%;
+            height: 88%;
+            border-radius: 50%;
+            background: radial-gradient(circle at 50% 45%, #143338 0%, #0c2228 60%, #081a1f 100%);
+            box-shadow: 0 4px 30px rgba(0,0,0,0.6), inset 0 2px 10px rgba(255,255,255,0.03), inset 0 -2px 15px rgba(0,0,0,0.5);
+        }
+        
+        .orange-ring {
+            position: absolute;
+            width: 78%;
+            height: 78%;
+            border-radius: 50%;
+            border: 14px solid #e88818;
+            box-shadow: 0 0 20px rgba(232,136,24,0.25), inset 0 0 12px rgba(0,0,0,0.3);
+            z-index: 3;
+        }
+        
+        .vinyl-disc {
+            position: absolute;
+            width: 72%;
+            height: 72%;
+            border-radius: 50%;
+            background: repeating-radial-gradient(circle at center, #111 0px, #111 1px, #1a1a1a 1px, #1a1a1a 2px);
+            z-index: 4;
+            cursor: pointer;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.7), inset 0 0 40px rgba(0,0,0,0.5);
+        }
+        
+        .vinyl-disc.spinning {
+            animation: spin 2s linear infinite;
+        }
+        
+        .vinyl-disc::before {
+            content: '';
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 34%;
+            height: 34%;
+            border-radius: 50%;
+            background: radial-gradient(circle at 55% 45%, #2a3530 0%, #151d1a 70%, #0a1210 100%);
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.6);
+        }
+        
+        .vinyl-label {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 32%;
+            height: 32%;
+            border-radius: 50%;
+            background: radial-gradient(circle at 55% 48%, #3a4a42 0%, #1e2e28 60%, #152019 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: #8aa89a;
+            font-size: 6px;
+            text-align: center;
+            overflow: hidden;
+            z-index: 5;
+            box-shadow: inset 0 0 8px rgba(0,0,0,0.5);
+        }
+        
+        .label-title {
+            font-size: 7px;
+            font-weight: bold;
+            letter-spacing: 1px;
+            margin-bottom: 2px;
+            color: #a0bfaa;
+        }
+        
+        .label-tracks {
+            font-size: 5px;
+            line-height: 1.4;
+            opacity: 0.7;
+        }
+        
+        .center-hole {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 5%;
+            height: 5%;
+            border-radius: 50%;
+            background: #0a1210;
+            box-shadow: inset 0 0 3px rgba(0,0,0,1);
+            z-index: 6;
+        }
+        
+        .progress-ring {
+            position: absolute;
+            width: 76%;
+            height: 76%;
+            border-radius: 50%;
+            z-index: 2;
+        }
+        
+        .progress-ring svg {
+            width: 100%;
+            height: 100%;
+            transform: rotate(-90deg);
+        }
+        
+        .progress-ring circle {
+            fill: none;
+            stroke-width: 3;
+        }
+        
+        .progress-ring .bg {
+            stroke: rgba(232,136,24,0.1);
+        }
+        
+        .progress-ring .fg {
+            stroke: #e88818;
+            stroke-linecap: round;
+            stroke-dasharray: 0 9999;
+            transition: stroke-dasharray 0.3s ease;
+            filter: drop-shadow(0 0 4px rgba(232,136,24,0.4));
+        }
+        
+        .vinyl-shine {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            border-radius: 50%;
+            background: linear-gradient(115deg, transparent 40%, rgba(255,255,255,0.04) 45%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.04) 55%, transparent 60%);
+            pointer-events: none;
+            z-index: 7;
+        }
+        
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        #volume-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: #e88818;
+            cursor: pointer;
+            box-shadow: 0 0 8px rgba(232,136,24,0.5);
+        }
+        
+        #volume-slider::-moz-range-thumb {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: #e88818;
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 0 8px rgba(232,136,24,0.5);
+        }
+        
+        #volume-slider::-webkit-slider-runnable-track {
+            height: 4px;
+            border-radius: 2px;
+            background: linear-gradient(to right, #e88818 0%, #e88818 20%, rgba(255, 255, 255, 0.1) 20%, rgba(255, 255, 255, 0.1) 100%);
+        }
+    </style>
+
+    <script>
+        // 音乐播放器功能
+        let musicPlayer = null;
+        let isPlaying = false;  // 默认不自动播放
+        let progressTimer = null;
+        const circumference = 2 * Math.PI * 146;
+
+        // 播放列表（3首MP3，循环播放）
+        const playlist = [
+            'assets/music/月下孤城 (1).mp3',
+            'assets/music/月下孤城.mp3',
+            'assets/music/月下孤城03.mp3'
+        ];
+        let currentTrackIndex = 0;
+
+        function updateNowPlaying() {
+            const rawName = playlist[currentTrackIndex].split('/').pop();
+            const displayName = rawName.replace('.mp3', '');
+            const el = document.getElementById('now-playing');
+            if (el) el.textContent = '正在播放: ' + displayName;
+        }
+
+        function initMusic() {
+            if (musicPlayer) return;
+            currentTrackIndex = 0;
+            musicPlayer = new Audio(playlist[currentTrackIndex]);
+            musicPlayer.loop = false;
+            musicPlayer.volume = 0.05;  // 默认5%
+            updateNowPlaying();
+
+            // 播完自动下一首（循环播放列表）
+            musicPlayer.addEventListener('ended', () => {
+                currentTrackIndex = (currentTrackIndex + 1) % playlist.length;
+                musicPlayer.src = playlist[currentTrackIndex];
+                musicPlayer.load();
+                updateNowPlaying();
+                startProgressRing();
+                musicPlayer.play().catch(() => {});
+            });
+
+            updatePlayButton();
+        }
+
+        function toggleMusicPanel() {
+            const panel = document.getElementById('music-panel');
+            const mini = document.getElementById('music-mini');
+            
+            if (panel.style.display === 'none') {
+                panel.style.display = 'block';
+                mini.style.display = 'none';
+            } else {
+                panel.style.display = 'none';
+                mini.style.display = 'flex';
+            }
+        }
+
+        function togglePlay() {
+            if (!musicPlayer) initMusic();
+            
+            if (isPlaying) {
+                musicPlayer.pause();
+                isPlaying = false;
+                stopProgressRing();
+            } else {
+                musicPlayer.play();
+                isPlaying = true;
+                startProgressRing();
+            }
+            updatePlayButton();
+        }
+
+        function updatePlayButton() {
+            const btn = document.getElementById('play-btn');
+            const vinylDisc = document.getElementById('vinylDisc');
+            
+            if (isPlaying) {
+                btn.textContent = '⏸️';
+                vinylDisc.classList.add('spinning');
+            } else {
+                btn.textContent = '▶️';
+                vinylDisc.classList.remove('spinning');
+            }
+        }
+
+        function changeVolume(value) {
+            if (!musicPlayer) initMusic();
+            
+            musicPlayer.volume = value / 100;
+            document.getElementById('volume-text').textContent = value + '%';
+            
+            // 更新滑块背景
+            const slider = document.getElementById('volume-slider');
+            slider.style.background = `linear-gradient(to right, #e88818 0%, #e88818 ${value}%, rgba(255, 255, 255, 0.1) ${value}%, rgba(255, 255, 255, 0.1) 100%)`;
+        }
+        
+        function startProgressRing() {
+            stopProgressRing();
+            progressTimer = setInterval(updateProgressRing, 500);
+        }
+        
+        function stopProgressRing() {
+            if (progressTimer) {
+                clearInterval(progressTimer);
+                progressTimer = null;
+            }
+        }
+        
+        function updateProgressRing() {
+            if (!musicPlayer || !musicPlayer.duration) return;
+            
+            const progress = (musicPlayer.currentTime / musicPlayer.duration) * 100;
+            const offset = circumference - (progress / 100) * circumference;
+            document.getElementById('progressCircle').style.strokeDasharray = `${circumference - offset} ${circumference}`;
+        }
+        
+        // 页面加载时初始化音乐（不自动播放）
+        window.addEventListener('load', () => {
+            initMusic();
+        });
+    </script>
+
+    <script src="assets/js/app.js"></script>
+    <script>
+        // 注册Service Worker
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js')
+                    .then(reg => console.log('SW 注册成功'))
+                    .catch(err => console.log('SW 注册失败:', err));
+            });
+        }
+        
+        // 搜索处理
+        function handleSearch(value) {
+            state.filters.search = value;
+            renderCharacters();
+        }
+        
+        // 筛选处理
+        function handleFilter(camp) {
+            state.filters.camp = camp;
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                if (btn.dataset.camp === camp) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+            renderCharacters();
+        }
+    </script>
+
+    <script>
+    // 像素时钟逻辑
+    const digitPatterns = {
+        0: [[1,1,1,1],[1,0,0,1],[1,0,0,1],[1,0,0,1],[1,0,0,1],[1,0,0,1],[1,1,1,1]],
+        1: [[0,0,1,0],[0,1,1,0],[0,0,1,0],[0,0,1,0],[0,0,1,0],[0,0,1,0],[0,1,1,1]],
+        2: [[1,1,1,1],[0,0,0,1],[0,0,0,1],[1,1,1,1],[1,0,0,0],[1,0,0,0],[1,1,1,1]],
+        3: [[1,1,1,1],[0,0,0,1],[0,0,0,1],[1,1,1,1],[0,0,0,1],[0,0,0,1],[1,1,1,1]],
+        4: [[1,0,0,1],[1,0,0,1],[1,0,0,1],[1,1,1,1],[0,0,0,1],[0,0,0,1],[0,0,0,1]],
+        5: [[1,1,1,1],[1,0,0,0],[1,0,0,0],[1,1,1,1],[0,0,0,1],[0,0,0,1],[1,1,1,1]],
+        6: [[1,1,1,1],[1,0,0,0],[1,0,0,0],[1,1,1,1],[1,0,0,1],[1,0,0,1],[1,1,1,1]],
+        7: [[1,1,1,1],[0,0,0,1],[0,0,0,1],[0,0,0,1],[0,0,0,1],[0,0,0,1],[0,0,0,1]],
+        8: [[1,1,1,1],[1,0,0,1],[1,0,0,1],[1,1,1,1],[1,0,0,1],[1,0,0,1],[1,1,1,1]],
+        9: [[1,1,1,1],[1,0,0,1],[1,0,0,1],[1,1,1,1],[0,0,0,1],[0,0,0,1],[1,1,1,1]]
+    };
+
+    function initDigitContainers() {
+        ['year-thousands','year-hundreds','year-tens','year-ones','month-tens','month-ones','day-tens','day-ones',
+         'hours-tens','hours-ones','minutes-tens','minutes-ones','seconds-tens','seconds-ones'].forEach(id => {
+            const container = document.getElementById(id);
+            if (!container) return;
+            for (let row = 0; row < 7; row++) {
+                for (let col = 0; col < 4; col++) {
+                    const pixel = document.createElement('div');
+                    pixel.className = 'pixel';
+                    container.appendChild(pixel);
+                }
+            }
+        });
+        updateClock();
+    }
+
+    function updateDigit(containerId, digit) {
+        const container = document.getElementById(containerId);
+        if (!container) return;
+        const pattern = digitPatterns[digit];
+        const pixels = container.children;
+        let idx = 0;
+        for (let row = 0; row < 7; row++) {
+            for (let col = 0; col < 4; col++) {
+                pixels[idx].classList.toggle('active', pattern[row][col] === 1);
+                idx++;
+            }
+        }
+    }
+
+    function updateClock() {
+        const now = new Date();
+
+        // 日期：YYYY-MM-DD
+        const dateStr = now.toLocaleString('zh-CN', {
+            timeZone: 'Asia/Shanghai',
+            year: 'numeric', month: '2-digit', day: '2-digit'
+        });
+        const dMatch = dateStr.match(/(\d{4})[^\d](\d{2})[^\d](\d{2})/);
+        if (dMatch) {
+            updateDigit('year-thousands', parseInt(dMatch[1][0]));
+            updateDigit('year-hundreds', parseInt(dMatch[1][1]));
+            updateDigit('year-tens', parseInt(dMatch[1][2]));
+            updateDigit('year-ones', parseInt(dMatch[1][3]));
+            updateDigit('month-tens', parseInt(dMatch[2][0]));
+            updateDigit('month-ones', parseInt(dMatch[2][1]));
+            updateDigit('day-tens', parseInt(dMatch[3][0]));
+            updateDigit('day-ones', parseInt(dMatch[3][1]));
+        }
+
+        // 时间：HH:MM:SS
+        const timeStr = now.toLocaleString('zh-CN', {
+            timeZone: 'Asia/Shanghai',
+            hour12: false,
+            hour: '2-digit', minute: '2-digit', second: '2-digit'
+        });
+        const tMatch = timeStr.match(/(\d{1,2}):(\d{2}):(\d{2})/);
+        if (tMatch) {
+            const h = tMatch[1].padStart(2, '0');
+            updateDigit('hours-tens', parseInt(h[0]));
+            updateDigit('hours-ones', parseInt(h[1]));
+            updateDigit('minutes-tens', parseInt(tMatch[2][0]));
+            updateDigit('minutes-ones', parseInt(tMatch[2][1]));
+            updateDigit('seconds-tens', parseInt(tMatch[3][0]));
+            updateDigit('seconds-ones', parseInt(tMatch[3][1]));
+        }
+    }
+
+    // 初始化
+    initDigitContainers();
+    setInterval(updateClock, 1000);
+    </script>
+</body>
+</html>

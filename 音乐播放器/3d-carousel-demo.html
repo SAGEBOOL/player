@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D卡片轮播 - 使用示例</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="3d-carousel.css">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-family: system-ui, sans-serif;
+            color: white;
+        }
+
+        .info-panel {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px;
+            max-width: 600px;
+        }
+
+        .current-info {
+            text-align: center;
+            margin: 20px 0;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 12px;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            background: rgba(100, 255, 218, 0.2);
+            border: 1px solid rgba(100, 255, 218, 0.4);
+            color: #64ffda;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            background: rgba(100, 255, 218, 0.3);
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body>
+    <div class="info-panel">
+        <h1 style="color: #64ffda; margin-bottom: 10px;">🎨 3D卡片轮播组件</h1>
+        <p style="color: #8892b0; line-height: 1.6;">
+            这是一个可复用的3D卡片轮播组件，可以从用户提供的播放器代码中提取使用。
+            支持鼠标拖拽和触摸滑动切换，具有流畅的3D变换效果。
+        </p>
+    </div>
+
+    <!-- 3D轮播容器 -->
+    <div id="carousel-stage" class="carousel-stage perspective-1200">
+        <div class="carousel-track preserve-3d">
+            <!-- 卡片将通过JS动态生成 -->
+        </div>
+    </div>
+
+    <!-- 当前选中信息 -->
+    <div class="current-info">
+        <h3 id="current-title" style="color: #64ffda; font-size: 20px; margin-bottom: 8px;">请选择卡片</h3>
+        <p id="current-artist" style="color: #8892b0;">拖拽或点击切换</p>
+    </div>
+
+    <!-- 控制按钮 -->
+    <div class="btn-group">
+        <button class="btn" onclick="carousel.prev()">← 上一首</button>
+        <button class="btn" onclick="carousel.next()">下一首 →</button>
+    </div>
+
+    <!-- 集成说明 -->
+    <div class="info-panel" style="margin-top: 40px;">
+        <h3 style="color: #64ffda; margin-bottom: 15px;">📦 如何使用</h3>
+        
+        <h4 style="color: #e0e0e0; margin: 15px 0 8px;">1. 引入文件</h4>
+        <pre style="background: rgba(0,0,0,0.5); padding: 12px; border-radius: 8px; overflow-x: auto; font-size: 12px; color: #64ffda;"><code>&lt;link rel="stylesheet" href="3d-carousel.css"&gt;
+&lt;script src="3d-carousel.js"&gt;&lt;/script&gt;</code></pre>
+
+        <h4 style="color: #e0e0e0; margin: 15px 0 8px;">2. 创建HTML结构</h4>
+        <pre style="background: rgba(0,0,0,0.5); padding: 12px; border-radius: 8px; overflow-x: auto; font-size: 12px; color: #64ffda;"><code>&lt;div id="your-container" class="carousel-stage perspective-1200"&gt;
+    &lt;div class="carousel-track preserve-3d"&gt;
+        &lt;!-- 卡片将动态生成 --&gt;
+    &lt;/div&gt;
+&lt;/div&gt;</code></pre>
+
+        <h4 style="color: #e0e0e0; margin: 15px 0 8px;">3. 初始化轮播</h4>
+        <pre style="background: rgba(0,0,0,0.5); padding: 12px; border-radius: 8px; overflow-x: auto; font-size: 12px; color: #64ffda;"><code>// 准备数据
+const items = [
+    {
+        title: '章节标题',
+        artist: '艺术家',
+        cover: '封面URL'
+    },
+    // ...更多项目
+];
+
+// 初始化轮播
+const carousel = init3DCarousel('your-container', items, {
+    initialIndex: 0,  // 初始选中索引
+    onChange: (index, item) => {
+        // 切换时的回调
+        console.log('切换到:', item.title);
+    }
+});</code></pre>
+
+        <h4 style="color: #e0e0e0; margin: 15px 0 8px;">4. API方法</h4>
+        <ul style="color: #8892b0; line-height: 1.8; padding-left: 20px;">
+            <li><code style="color: #64ffda;">carousel.next()</code> - 切换到下一首</li>
+            <li><code style="color: #64ffda;">carousel.prev()</code> - 切换到上一首</li>
+            <li><code style="color: #64ffda;">carousel.goTo(index)</code> - 切换到指定索引</li>
+            <li><code style="color: #64ffda;">carousel.getCurrentIndex()</code> - 获取当前索引</li>
+            <li><code style="color: #64ffda;">carousel.getCurrentItem()</code> - 获取当前项目数据</li>
+        </ul>
+    </div>
+
+    <script src="3d-carousel.js"></script>
+    <script>
+        // 示例数据（可以替换成你的播客章节数据）
+        const podcastItems = [
+            {
+                title: '《九界归尘》开篇',
+                artist: 'SAGEBOOK',
+                cover: 'https://p3-flow-imagex-download-sign.byteimg.com/tos-cn-i-a9rns2rl98/78563f57a6a5408b96c1065918d119cf.png~tplv-a9rns2rl98-24:720:720.png?lk3s=8e244e95&rcl=20260517172750856B27F51CBE8C8C37B4&rrcfp=8a172a1a&x-expires=1779614870&x-signature=D8BJ6ZBxhhYdRhUQZctDbpNrimk%3D'
+            },
+            {
+                title: '第二章：墟界残响',
+                artist: 'SAGEBOOK',
+                cover: 'https://p3-flow-imagex-download-sign.byteimg.com/tos-cn-i-a9rns2rl98/78563f57a6a5408b96c1065918d119cf.png~tplv-a9rns2rl98-24:720:720.png?lk3s=8e244e95&rcl=20260517172750856B27F51CBE8C8C37B4&rrcfp=8a172a1a&x-expires=1779614870&x-signature=D8BJ6ZBxhhYdRhUQZctDbpNrimk%3D'
+            },
+            {
+                title: '第四章：散修的规矩',
+                artist: 'SAGEBOOK',
+                cover: 'https://p3-flow-imagex-download-sign.byteimg.com/tos-cn-i-a9rns2rl98/78563f57a6a5408b96c1065918d119cf.png~tplv-a9rns2rl98-24:720:720.png?lk3s=8e244e95&rcl=20260517172750856B27F51CBE8C8C37B4&rrcfp=8a172a1a&x-expires=1779614870&x-signature=D8BJ6ZBxhhYdRhUQZctDbpNrimk%3D'
+            },
+            {
+                title: '第五章：墟界遗址',
+                artist: 'SAGEBOOK',
+                cover: 'https://p3-flow-imagex-download-sign.byteimg.com/tos-cn-i-a9rns2rl98/78563f57a6a5408b96c1065918d119cf.png~tplv-a9rns2rl98-24:720:720.png?lk3s=8e244e95&rcl=20260517172750856B27F51CBE8C8C37B4&rrcfp=8a172a1a&x-expires=1779614870&x-signature=D8BJ6ZBxhhYdRhUQZctDbpNrimk%3D'
+            },
+            {
+                title: '第六章：归来者',
+                artist: 'SAGEBOOK',
+                cover: 'https://p3-flow-imagex-download-sign.byteimg.com/tos-cn-i-a9rns2rl98/78563f57a6a5408b96c1065918d119cf.png~tplv-a9rns2rl98-24:720:720.png?lk3s=8e244e95&rcl=20260517172750856B27F51CBE8C8C37B4&rrcfp=8a172a1a&x-expires=1779614870&x-signature=D8BJ6ZBxhhYdRhUQZctDbpNrimk%3D'
+            }
+        ];
+
+        // 初始化3D轮播
+        const carousel = init3DCarousel('carousel-stage', podcastItems, {
+            initialIndex: 0,
+            onChange: (index, item) => {
+                // 更新显示信息
+                document.getElementById('current-title').textContent = item.title;
+                document.getElementById('current-artist').textContent = item.artist;
+                
+                // 在这里可以触发你的音频播放逻辑
+                console.log('切换到章节:', index, item.title);
+                // 例如: playPodcast(index);
+            }
+        });
+
+        // 初始化显示
+        const firstItem = podcastItems[0];
+        document.getElementById('current-title').textContent = firstItem.title;
+        document.getElementById('current-artist').textContent = firstItem.artist;
+    </script>
+</body>
+</html>

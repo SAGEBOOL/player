@@ -1,0 +1,1291 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>9JIE | 播客播放器</title>
+    <!-- Tailwind CSS v3 -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome -->
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#FF6B35',
+                        secondary: '#4CC9F0',
+                        dark: '#2A2A2A',
+                        darker: '#121212',
+                        light: '#F8F9FA',
+                        accent: '#FFD166'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                        display: ['Montserrat', 'sans-serif']
+                    },
+                    animation: {
+                        'spin-slow': 'spin 15s linear infinite',
+                        'pulse-slow': 'pulse 3s ease-in-out infinite',
+                        'fade-in': 'fadeIn 0.8s ease-in-out',
+                        'slide-up': 'slideUp 0.8s ease-in-out',
+                        'slide-down': 'slideDown 0.8s ease-in-out',
+                        'slide-left': 'slideLeft 0.8s ease-in-out',
+                        'slide-right': 'slideRight 0.8s ease-in-out',
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' },
+                        },
+                        slideUp: {
+                            '0%': { transform: 'translateY(20px)', opacity: '0' },
+                            '100%': { transform: 'translateY(0)', opacity: '1' },
+                        },
+                        slideDown: {
+                            '0%': { transform: 'translateY(-20px)', opacity: '0' },
+                            '100%': { transform: 'translateY(0)', opacity: '1' },
+                        },
+                        slideLeft: {
+                            '0%': { transform: 'translateX(20px)', opacity: '0' },
+                            '100%': { transform: 'translateX(0)', opacity: '1' },
+                        },
+                        slideRight: {
+                            '0%': { transform: 'translateX(-20px)', opacity: '0' },
+                            '100%': { transform: 'translateX(0)', opacity: '1' },
+                        },
+                    }
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .text-shadow {
+                text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            }
+            .vinyl-shadow {
+                filter: drop-shadow(0 10px 8px rgb(0 0 0 / 0.04)) drop-shadow(0 4px 3px rgb(0 0 0 / 0.1));
+            }
+            .text-thin {
+                font-weight: 300;
+            }
+            .text-light {
+                font-weight: 100;
+            }
+        }
+    </style>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #121212;
+            color: #FFFFFF;
+            overflow-x: hidden;
+        }
+        
+        /* 黑胶唱片样式 */
+        .vinyl-record {
+            position: relative;
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            background: radial-gradient(circle at center, #000000 0%, #333333 100%);
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+            overflow: hidden;
+        }
+        
+        .vinyl-record::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 106px;
+            height: 106px;
+            border-radius: 50%;
+            background: #4CC9F0;
+            z-index: 0;
+        }
+        
+        .vinyl-record::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #FF6B35;
+            z-index: 2;
+        }
+        
+        .vinyl-grooves {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: repeating-radial-gradient(circle at center, 
+                rgba(255, 255, 255, 0.1) 0px, 
+                rgba(255, 255, 255, 0.1) 2px, 
+                transparent 2px, 
+                transparent 4px);
+        }
+        
+        .vinyl-label {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            overflow: hidden;
+            z-index: 1;
+            border: 2px solid #4CC9F0;
+        }
+        
+        .vinyl-label-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+        
+        .vinyl-ring {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 320px;
+            height: 320px;
+            border-radius: 50%;
+            border: 3px solid #FF6B35;
+            opacity: 0.7;
+        }
+        
+        /* 唱针样式 */
+        .tonearm {
+            position: absolute;
+            top: -20px;
+            right: -20px;
+            width: 150px;
+            height: 150px;
+            transform-origin: top right;
+            transform: rotate(-30deg);
+            z-index: 10;
+        }
+        
+        .tonearm-base {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: #444444;
+            border: 2px solid #666666;
+        }
+        
+        .tonearm-arm {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            width: 120px;
+            height: 4px;
+            background: #666666;
+            transform-origin: top right;
+            transform: rotate(-45deg);
+        }
+        
+        .tonearm-head {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 10px;
+            height: 30px;
+            background: #FF6B35;
+            border-radius: 2px;
+            transform-origin: top center;
+            transform: rotate(45deg);
+        }
+        
+        /* 音频波形动画 */
+        .audio-wave {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 40px;
+            gap: 3px;
+        }
+        
+        .audio-wave span {
+            display: block;
+            width: 3px;
+            height: 100%;
+            background-color: #FF6B35;
+            border-radius: 3px;
+            animation: wave 1.2s linear infinite;
+            transform-origin: bottom;
+        }
+        
+        .audio-wave span:nth-child(2) {
+            animation-delay: 0.1s;
+        }
+        
+        .audio-wave span:nth-child(3) {
+            animation-delay: 0.2s;
+        }
+        
+        .audio-wave span:nth-child(4) {
+            animation-delay: 0.3s;
+        }
+        
+        .audio-wave span:nth-child(5) {
+            animation-delay: 0.4s;
+        }
+        
+        @keyframes wave {
+            0% {
+                height: 10%;
+            }
+            50% {
+                height: 100%;
+            }
+            100% {
+                height: 10%;
+            }
+        }
+        
+        /* 进度条样式 */
+        .progress-bar {
+            height: 4px;
+            background: #444444;
+            border-radius: 2px;
+            overflow: hidden;
+            cursor: pointer;
+        }
+        
+        .progress-bar-fill {
+            height: 100%;
+            background: #FF6B35;
+            border-radius: 2px;
+            width: 30%;
+            transition: width 0.1s linear;
+        }
+        
+        /* 滚动条样式 */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #121212;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: #FF6B35;
+            border-radius: 3px;
+        }
+        
+        /* 功能按钮激活状态 */
+        .control-active {
+            color: #FF6B35 !important;
+        }
+        
+        /* 功能按钮弹窗 */
+        .modal-overlay {
+            animation: fadeIn 0.2s ease-in-out;
+        }
+        
+        .modal-content {
+            animation: slideUp 0.3s ease-in-out;
+        }
+        
+        /* 响应式调整 */
+        @media (max-width: 768px) {
+            .vinyl-record {
+                width: 200px;
+                height: 200px;
+            }
+            
+            .vinyl-record::before {
+                width: 60px;
+                height: 60px;
+            }
+            
+            .vinyl-record::after {
+                width: 12px;
+                height: 12px;
+            }
+            
+            .vinyl-ring {
+                width: 220px;
+                height: 220px;
+            }
+            
+            .tonearm {
+                width: 100px;
+                height: 100px;
+            }
+            
+            .tonearm-arm {
+                width: 80px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部导航栏 -->
+    <nav class="fixed top-0 left-0 w-full bg-darker bg-opacity-90 backdrop-blur-md z-50 border-b border-gray-800">
+        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="index.html" class="flex items-center space-x-2">
+                <div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center">
+                    <i class="fa fa-podcast text-white text-xl"></i>
+                </div>
+                <span class="text-2xl font-bold">9JIE</span>
+            </a>
+            
+            <div class="hidden md:flex items-center space-x-8">
+                <a href="index.html" class="font-medium text-white hover:text-primary transition-colors">首页</a>
+                <a href="#" class="font-medium text-white hover:text-primary transition-colors">发现</a>
+
+                <a href="#" class="font-medium text-white hover:text-primary transition-colors">关于我们</a>
+            </div>
+            
+            <div class="flex items-center space-x-4">
+                <button class="hidden md:block px-4 py-2 bg-primary text-white rounded-full hover:bg-opacity-90 transition-colors" id="share-button">
+                    分享
+                </button>
+                    
+                    <div id="share-dropdown" class="hidden absolute bottom-full mb-2 right-0 bg-darker border border-gray-800 rounded-lg shadow-lg p-4 w-64 z-50">
+                        <h4 class="text-white font-medium mb-3">分享到</h4>
+                        <div class="grid grid-cols-2 gap-3">
+                            <a href="#" class="flex items-center space-x-3 p-2 rounded-md hover:bg-gray-800 transition-colors share-link">
+                                <i class="fa fa-link text-primary"></i>
+                                <span class="text-gray-300">复制链接</span>
+                            </a>
+                            <a href="#" class="flex items-center space-x-3 p-2 rounded-md hover:bg-gray-800 transition-colors share-email">
+                                <i class="fa fa-envelope text-primary"></i>
+                                <span class="text-gray-300">邮件</span>
+                            </a>
+                            <a href="#" class="flex items-center space-x-3 p-2 rounded-md hover:bg-gray-800 transition-colors share-wechat">
+                                <i class="fa fa-wechat text-primary"></i>
+                                <span class="text-gray-300">微信</span>
+                            </a>
+                            <a href="#" class="flex items-center space-x-3 p-2 rounded-md hover:bg-gray-800 transition-colors share-weibo">
+                                <i class="fa fa-weibo text-primary"></i>
+                                <span class="text-gray-300">微博</span>
+                            </a>
+                        </div>
+                    </div>
+
+                <button class="md:hidden text-white text-xl" id="mobile-menu-button">
+                    <i class="fa fa-bars"></i>
+                </button>
+            </div>
+        </div>
+        
+        <!-- 移动端菜单 -->
+        <div id="mobile-menu" class="hidden md:hidden bg-darker border-t border-gray-800 absolute w-full">
+            <div class="container mx-auto px-6 py-4 flex flex-col space-y-4">
+                <a href="index.html" class="font-medium text-white hover:text-primary transition-colors py-2">首页</a>
+                <a href="#" class="font-medium text-white hover:text-primary transition-colors py-2">发现</a>
+
+                <a href="#" class="font-medium text-white hover:text-primary transition-colors py-2">关于我们</a>
+                <button class="w-full px-4 py-2 bg-primary text-white rounded-full hover:bg-opacity-90 transition-colors" id="share-button-mobile">
+                    分享
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 播放器主体 -->
+    <main class="pt-24 pb-24">
+        <div class="container mx-auto px-6">
+            <!-- 顶部装饰条 -->
+            <div class="w-full h-1 bg-primary mb-12"></div>
+            
+            <div class="flex flex-col lg:flex-row gap-12">
+                <!-- 左侧：黑胶唱片和播放器 -->
+                <div class="lg:w-1/2 flex flex-col items-center" data-animation="fade-in">
+                    <!-- 黑胶唱片区域 -->
+                    <div class="relative mb-12">
+                        <div class="vinyl-ring animate-pulse-slow"></div>
+                        <div class="vinyl-record animate-spin-slow" id="vinyl-record">
+                            <div class="vinyl-grooves"></div>
+                            <div class="vinyl-label">
+                                <img src="/Volumes/D/WorkBuddy/nine-realm-wiki/assets/images/河一.png" alt="河一" class="vinyl-label-img">
+                            </div>
+                        </div>
+                        <div class="tonearm">
+                            <div class="tonearm-base"></div>
+                            <div class="tonearm-arm"></div>
+                            <div class="tonearm-head"></div>
+                        </div>
+                    </div>
+                    
+                    <!-- 播放控制区域 -->
+                    <div class="w-full max-w-md" data-animation="slide-up" data-delay="200">
+                        <div class="mb-6">
+                            <h2 class="text-2xl font-light mb-2 text-center">九界之河一</h2>
+                            <p class="text-sm text-gray-400 text-center mb-4">SAGEBOOK | 九界之河一</p>
+                            <div class="audio-wave mx-auto">
+                                <span></span>
+                                <span></span>
+                                <span></span>
+                                <span></span>
+                                <span></span>
+                            </div>
+                        </div>
+                        
+                        <!-- 进度条 -->
+                        <div class="mb-6">
+                            <div class="flex justify-between text-xs text-gray-400 mb-2">
+                                <span>12:34</span>
+                                <span>45:00</span>
+                            </div>
+                            <div class="progress-bar" id="progress-bar">
+                                <div class="progress-bar-fill" id="progress-bar-fill"></div>
+                            </div>
+                        </div>
+                        
+                        <!-- 播放控制按钮 -->
+                        <div class="flex items-center justify-center space-x-8">
+                            <button class="text-white hover:text-primary transition-colors" id="prev-button">
+                                <i class="fa fa-step-backward text-2xl"></i>
+                            </button>
+                            <button class="w-16 h-16 rounded-full bg-primary flex items-center justify-center text-white hover:bg-opacity-90 transition-colors" id="play-button">
+                                <i class="fa fa-pause text-2xl"></i>
+                            </button>
+                            <button class="text-white hover:text-primary transition-colors" id="next-button">
+                                <i class="fa fa-step-forward text-2xl"></i>
+                            </button>
+                        </div>
+                        
+                        <!-- 额外控制按钮 -->
+                        <div class="flex items-center justify-center space-x-6 mt-6 flex-wrap gap-y-4" id="control-buttons">
+                            <button class="text-white hover:text-primary transition-colors relative" id="shuffle-btn" title="随机播放">
+                                <i class="fa fa-random"></i>
+                            </button>
+                            <button class="text-white hover:text-primary transition-colors relative" id="loop-btn" title="循环播放">
+                                <i class="fa fa-repeat"></i>
+                                <span id="loop-badge" class="hidden absolute -top-2 -right-2 text-[8px] bg-primary text-white rounded-full w-4 h-4 flex items-center justify-center">1</span>
+                            </button>
+                            <button class="text-white hover:text-primary transition-colors" id="favorite-btn" title="收藏">
+                                <i class="fa fa-heart-o"></i>
+                            </button>
+                            <button class="text-white hover:text-primary transition-colors" id="share-btn" title="分享">
+                                <i class="fa fa-share-alt"></i>
+                            </button>
+                            <button class="text-white hover:text-primary transition-colors relative" id="timer-btn" title="定时关闭">
+                                <i class="fa fa-clock-o"></i>
+                                <span id="timer-badge" class="hidden absolute -top-2 -right-2 text-[8px] bg-primary text-white rounded-full w-4 h-4 flex items-center justify-center"></span>
+                            </button>
+                            <button class="text-white hover:text-primary transition-colors relative" id="speed-btn" title="语速调节">
+                                <i class="fa fa-tachometer"></i>
+                                <span id="speed-badge" class="hidden absolute -top-2 -right-2 text-[8px] bg-primary text-white rounded-full w-4 h-4 flex items-center justify-center">1x</span>
+                            </button>
+                        </div>
+
+                        <!-- 定时关闭下拉菜单 -->
+                        <div id="timer-menu" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm">
+                            <div class="bg-darker border border-gray-700 rounded-xl p-6 max-w-sm w-full mx-4 shadow-2xl">
+                                <h3 class="text-lg font-bold mb-4 text-center">定时关闭</h3>
+                                <div class="space-y-3 mb-6">
+                                    <button class="timer-option w-full py-3 px-4 bg-dark border border-gray-700 rounded-lg hover:border-primary transition-colors text-left flex items-center" data-minutes="15">
+                                        <i class="fa fa-clock-o mr-3 text-primary"></i>
+                                        <span>15 分钟后关闭</span>
+                                    </button>
+                                    <button class="timer-option w-full py-3 px-4 bg-dark border border-gray-700 rounded-lg hover:border-primary transition-colors text-left flex items-center" data-minutes="30">
+                                        <i class="fa fa-clock-o mr-3 text-primary"></i>
+                                        <span>30 分钟后关闭</span>
+                                    </button>
+                                    <button class="timer-option w-full py-3 px-4 bg-dark border border-gray-700 rounded-lg hover:border-primary transition-colors text-left flex items-center" data-minutes="60">
+                                        <i class="fa fa-clock-o mr-3 text-primary"></i>
+                                        <span>60 分钟后关闭</span>
+                                    </button>
+                                    <div class="flex items-center space-x-2">
+                                        <input type="number" id="timer-custom" placeholder="自定义" min="1" max="180" class="flex-1 py-3 px-4 bg-dark border border-gray-700 rounded-lg text-white focus:border-primary focus:outline-none text-center">
+                                        <span class="text-gray-400">分钟</span>
+                                        <button id="timer-custom-confirm" class="py-3 px-4 bg-primary rounded-lg hover:bg-opacity-90 transition-colors">
+                                            <i class="fa fa-check"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <button id="timer-cancel" class="w-full py-3 bg-dark border border-gray-700 rounded-lg hover:border-primary transition-colors">
+                                    <i class="fa fa-stop mr-2"></i>取消定时
+                                </button>
+                                <button id="timer-close" class="w-full py-3 mt-3 text-gray-400 hover:text-white transition-colors text-sm">
+                                    关闭
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- 语速调节下拉菜单 -->
+                        <div id="speed-menu" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm">
+                            <div class="bg-darker border border-gray-700 rounded-xl p-6 max-w-sm w-full mx-4 shadow-2xl">
+                                <h3 class="text-lg font-bold mb-4 text-center">语速调节</h3>
+                                <div class="space-y-3 mb-4">
+                                    <button class="speed-option w-full py-3 px-4 bg-dark border border-gray-700 rounded-lg hover:border-primary transition-colors text-left flex items-center justify-between" data-speed="0.5">
+                                        <span>0.5x</span>
+                                        <span class="text-gray-400 text-sm">慢速</span>
+                                    </button>
+                                    <button class="speed-option w-full py-3 px-4 bg-dark border border-gray-700 rounded-lg hover:border-primary transition-colors text-left flex items-center justify-between" data-speed="0.75">
+                                        <span>0.75x</span>
+                                        <span class="text-gray-400 text-sm">稍慢</span>
+                                    </button>
+                                    <button class="speed-option w-full py-3 px-4 bg-dark border border-gray-700 rounded-lg border-primary transition-colors text-left flex items-center justify-between" data-speed="1">
+                                        <span class="text-primary">1x</span>
+                                        <span class="text-gray-400 text-sm">正常</span>
+                                    </button>
+                                    <button class="speed-option w-full py-3 px-4 bg-dark border border-gray-700 rounded-lg hover:border-primary transition-colors text-left flex items-center justify-between" data-speed="1.25">
+                                        <span>1.25x</span>
+                                        <span class="text-gray-400 text-sm">稍快</span>
+                                    </button>
+                                    <button class="speed-option w-full py-3 px-4 bg-dark border border-gray-700 rounded-lg hover:border-primary transition-colors text-left flex items-center justify-between" data-speed="1.5">
+                                        <span>1.5x</span>
+                                        <span class="text-gray-400 text-sm">快速</span>
+                                    </button>
+                                    <button class="speed-option w-full py-3 px-4 bg-dark border border-gray-700 rounded-lg hover:border-primary transition-colors text-left flex items-center justify-between" data-speed="2">
+                                        <span>2x</span>
+                                        <span class="text-gray-400 text-sm">极快</span>
+                                    </button>
+                                </div>
+                                <button id="speed-close" class="w-full py-3 text-gray-400 hover:text-white transition-colors text-sm">
+                                    关闭
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 右侧：节目信息和列表 -->
+                <div class="lg:w-1/2" data-animation="slide-left">
+                    <!-- 节目简介 -->
+                    <div class="mb-12">
+                        <h2 class="text-2xl font-light mb-6 flex items-center">
+                            <span class="w-1 h-6 bg-primary mr-3"></span>
+                            节目简介
+                        </h2>
+                        <div class="bg-dark bg-opacity-50 p-6 rounded-lg border border-gray-800">
+                            <p class="text-gray-300 mb-4 leading-relaxed">
+                                在这一期节目中，我们将踏上九界的奇幻旅程，探索平行世界中的神秘文明和古老传说。我们邀请了奇幻作家SAGEBOOK，一起揭开九界的神秘面纱：
+                            </p>
+                            <ul class="list-disc pl-5 mb-4 text-gray-300 space-y-2">
+                                <li>九界的起源与古老传说</li>
+                                <li>平行世界中的奇异生物与文明</li>
+                                <li>穿越时空的冒险与成长</li>
+                                <li>九界守护者的使命与挑战</li>
+                            </ul>
+                            <p class="text-gray-300 leading-relaxed">
+                                无论你是奇幻文学爱好者，还是对平行世界充满好奇的探索者，这一期节目都将带你进入一个充满想象力的奇妙世界，体验不同维度的冒险与感动。
+                            </p>
+                        </div>
+                        
+                        <div class="mt-6 flex flex-wrap gap-3">
+                            <span class="px-3 py-1 bg-primary bg-opacity-20 text-primary rounded-full text-xs">#九界</span>
+                            <span class="px-3 py-1 bg-primary bg-opacity-20 text-primary rounded-full text-xs">#奇幻冒险</span>
+                            <span class="px-3 py-1 bg-primary bg-opacity-20 text-primary rounded-full text-xs">#平行世界</span>
+                            <span class="px-3 py-1 bg-primary bg-opacity-20 text-primary rounded-full text-xs">#SAGEBOOK</span>
+                        </div>
+                    </div>
+                    
+                    <!-- 节目列表 -->
+                    <div>
+                        <h2 class="text-2xl font-light mb-6 flex items-center">
+                            <span class="w-1 h-6 bg-primary mr-3"></span>
+                            节目列表
+                        </h2>
+                        <div class="space-y-4 max-h-96 overflow-y-auto pr-2" id="episode-list">
+                            <!-- 节目 1 (当前播放) -->
+                            <div class="episode-card p-4 bg-primary bg-opacity-10 border-l-4 border-primary rounded-r-lg cursor-pointer" data-episode="24">
+                                <div class="flex justify-between items-start">
+                                    <div>
+                                        <div class="flex items-center mb-1">
+                                            <span class="text-primary text-sm font-medium mr-2">第24集</span>
+                                            <span class="text-xs text-gray-400">45:00</span>
+                                        </div>
+                                        <h3 class="text-lg font-light mb-1">九界之河一</h3>
+                                        <p class="text-sm text-gray-400">探索九界的神秘世界，揭开古老文明的面纱。</p>
+                                    </div>
+                                    <div class="flex flex-col items-center">
+                                        <span class="text-xs bg-primary text-white px-2 py-0.5 rounded-full mb-2">正在播放</span>
+                                        <div class="audio-wave h-4">
+                                            <span></span>
+                                            <span></span>
+                                            <span></span>
+                                            <span></span>
+                                            <span></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- 节目 2 -->
+                            <div class="episode-card p-4 bg-dark bg-opacity-50 border-l-4 border-transparent hover:border-primary hover:bg-opacity-70 cursor-pointer transition-colors" data-episode="23">
+                                <div class="flex justify-between items-start">
+                                    <div>
+                                        <div class="flex items-center mb-1">
+                                            <span class="text-white text-sm font-medium mr-2">第23集</span>
+                                            <span class="text-xs text-gray-400">42:18</span>
+                                        </div>
+                                        <h3 class="text-lg font-light mb-1">九界之-刘浪浪</h3>
+                                        <p class="text-sm text-gray-400">跟随刘浪浪的冒险，探索九界中的未知领域。</p>
+                                    </div>
+                                    <button class="text-white hover:text-primary transition-colors">
+                                        <i class="fa fa-play-circle text-xl"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <!-- 节目 3 -->
+                            <div class="episode-card p-4 bg-dark bg-opacity-50 border-l-4 border-transparent hover:border-primary hover:bg-opacity-70 cursor-pointer transition-colors" data-episode="22">
+                                <div class="flex justify-between items-start">
+                                    <div>
+                                        <div class="flex items-center mb-1">
+                                            <span class="text-white text-sm font-medium mr-2">第22集</span>
+                                            <span class="text-xs text-gray-400">38:45</span>
+                                        </div>
+                                        <h3 class="text-lg font-light mb-1">九界之-甘道夫</h3>
+                                        <p class="text-sm text-gray-400">甘道夫的智慧之旅，揭示九界的深层秘密。</p>
+                                    </div>
+                                    <button class="text-white hover:text-primary transition-colors">
+                                        <i class="fa fa-play-circle text-xl"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <!-- 节目 4 -->
+                            <div class="episode-card p-4 bg-dark bg-opacity-50 border-l-4 border-transparent hover:border-primary hover:bg-opacity-70 cursor-pointer transition-colors" data-episode="21">
+                                <div class="flex justify-between items-start">
+                                    <div>
+                                        <div class="flex items-center mb-1">
+                                            <span class="text-white text-sm font-medium mr-2">第21集</span>
+                                            <span class="text-xs text-gray-400">40:22</span>
+                                        </div>
+                                        <h3 class="text-lg font-light mb-1">九界之河二</h3>
+                                        <p class="text-sm text-gray-400">继续探索九界之河的奥秘，发现隐藏的宝藏。</p>
+                                    </div>
+                                    <button class="text-white hover:text-primary transition-colors">
+                                        <i class="fa fa-play-circle text-xl"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <!-- 节目 5 -->
+                            <div class="episode-card p-4 bg-dark bg-opacity-50 border-l-4 border-transparent hover:border-primary hover:bg-opacity-70 cursor-pointer transition-colors" data-episode="20">
+                                <div class="flex justify-between items-start">
+                                    <div>
+                                        <div class="flex items-center mb-1">
+                                            <span class="text-white text-sm font-medium mr-2">第20集</span>
+                                            <span class="text-xs text-gray-400">43:15</span>
+                                        </div>
+                                        <h3 class="text-lg font-light mb-1">九界之守护者</h3>
+                                        <p class="text-sm text-gray-400">九界守护者的故事，守护着平行世界的平衡。</p>
+                                    </div>
+                                    <button class="text-white hover:text-primary transition-colors">
+                                        <i class="fa fa-play-circle text-xl"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <button class="w-full mt-6 py-3 bg-dark bg-opacity-50 text-white border border-gray-700 rounded-lg hover:bg-opacity-70 transition-colors text-sm font-light flex items-center justify-center group">
+                            查看全部 32 集
+                            <i class="fa fa-angle-down ml-2 transition-transform duration-300 group-hover:rotate-180"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 页脚 -->
+    <footer class="bg-darker py-12 border-t border-gray-800">
+        <div class="container mx-auto px-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
+                                <div>
+                    <h3 class="text-lg font-bold mb-6 text-white">联系我们</h3>
+                    <ul class="space-y-3">
+                        <li class="flex items-start">
+                            <i class="fa fa-envelope text-primary mt-1 mr-3"></i>
+                            <span class="text-gray-400">9JIE@9JIE-podcast.com</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fa fa-phone text-primary mt-1 mr-3"></i>
+                            <span class="text-gray-400">+……(^_^)v 23 5767 80910</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fa fa-map-marker text-primary mt-1 mr-3"></i>
+                            <span class="text-gray-400">Surface Fixed Address (Olympus Mons 奥林帕斯山)<br>18.65°N, 226.20°E, Mars Planet, Solar System</span>
+                        </li>
+                    </ul>
+                </div>
+
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 移动端菜单切换
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+            
+            mobileMenuButton.addEventListener('click', function() {
+                mobileMenu.classList.toggle('hidden');
+            });
+
+            // 播放/暂停功能
+            const playButton = document.getElementById('play-button');
+            const vinylRecord = document.getElementById('vinyl-record');
+            let isPlaying = true;
+            
+            playButton.addEventListener('click', function() {
+                const icon = this.querySelector('i');
+                if (icon.classList.contains('fa-play')) {
+                    icon.classList.remove('fa-play');
+                    icon.classList.add('fa-pause');
+                    vinylRecord.style.animationPlayState = 'running';
+                    isPlaying = true;
+                } else {
+                    icon.classList.remove('fa-pause');
+                    icon.classList.add('fa-play');
+                    vinylRecord.style.animationPlayState = 'paused';
+                    isPlaying = false;
+                }
+            });
+
+            // 进度条交互
+            const progressBar = document.getElementById('progress-bar');
+            const progressBarFill = document.getElementById('progress-bar-fill');
+            
+            progressBar.addEventListener('click', function(e) {
+                const rect = this.getBoundingClientRect();
+                const position = (e.clientX - rect.left) / rect.width;
+                progressBarFill.style.width = `${position * 100}%`;
+            });
+
+            // 节目选择
+            const episodeCards = document.querySelectorAll('.episode-card');
+            
+            episodeCards.forEach(card => {
+                card.addEventListener('click', function() {
+                    // 移除所有卡片的活动状态
+                    episodeCards.forEach(c => {
+                        c.classList.remove('bg-primary', 'bg-opacity-10', 'border-primary');
+                        c.classList.add('bg-dark', 'bg-opacity-50', 'border-transparent');
+                        
+                        // 移除所有播放波形
+                        const waveElement = c.querySelector('.audio-wave');
+                        if (waveElement) {
+                            waveElement.parentElement.previousElementSibling.remove();
+                            waveElement.remove();
+                        }
+                        
+                        // 添加播放按钮
+                        const buttonContainer = c.querySelector('.flex.justify-between');
+                        if (!buttonContainer.querySelector('button')) {
+                            const button = document.createElement('button');
+                            button.className = 'text-white hover:text-primary transition-colors';
+                            button.innerHTML = '<i class="fa fa-play-circle text-xl"></i>';
+                            buttonContainer.appendChild(button);
+                        }
+                    });
+                    
+                    // 添加活动状态到点击的卡片
+                    this.classList.remove('bg-dark', 'bg-opacity-50', 'border-transparent');
+                    this.classList.add('bg-primary', 'bg-opacity-10', 'border-primary');
+                    
+                    // 移除播放按钮
+                    const playButton = this.querySelector('button');
+                    if (playButton) {
+                        playButton.remove();
+                    }
+                    
+                    // 添加正在播放标签和波形
+                    const buttonContainer = this.querySelector('.flex.justify-between');
+                    const statusSpan = document.createElement('span');
+                    statusSpan.className = 'text-xs bg-primary text-white px-2 py-0.5 rounded-full mb-2';
+                    statusSpan.textContent = '正在播放';
+                    
+                    const waveDiv = document.createElement('div');
+                    waveDiv.className = 'audio-wave h-4';
+                    waveDiv.innerHTML = `
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    `;
+                    
+                    const statusContainer = document.createElement('div');
+                    statusContainer.className = 'flex flex-col items-center';
+                    statusContainer.appendChild(statusSpan);
+                    statusContainer.appendChild(waveDiv);
+                    
+                    buttonContainer.appendChild(statusContainer);
+                    
+                    // 更新当前播放信息
+                    const episodeTitle = this.querySelector('h3').textContent;
+                    const episodeNumber = this.getAttribute('data-episode');
+                    document.querySelector('.w-full.max-w-md h2').textContent = episodeTitle;
+                });
+            });
+
+            // 模拟音频进度
+            let progress = 30; // 初始进度百分比
+            const progressInterval = setInterval(() => {
+                if (isPlaying) {
+                    progress += 0.05;
+                    if (progress > 100) {
+                        progress = 0;
+                        // 这里可以添加自动播放下一集的逻辑
+                    }
+                    progressBarFill.style.width = `${progress}%`;
+                    
+                    // 更新时间显示
+                    const currentMinutes = Math.floor((progress / 100) * 45);
+                    const currentSeconds = Math.floor(((progress / 100) * 45 * 60) % 60);
+                    const formattedTime = `${currentMinutes.toString().padStart(2, '0')}:${currentSeconds.toString().padStart(2, '0')}`;
+                    document.querySelector('.flex.justify-between.text-xs.text-gray-400 span:first-child').textContent = formattedTime;
+                }
+            }, 100);
+
+            // 元素动画
+            const animatedElements = document.querySelectorAll('[data-animation]');
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const animation = entry.target.getAttribute('data-animation');
+                        const delay = entry.target.getAttribute('data-delay') || 0;
+                        
+                        setTimeout(() => {
+                            entry.target.classList.add(`animate-${animation}`);
+                        }, delay);
+                        
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, {
+                threshold: 0.1
+            });
+            
+            animatedElements.forEach(element => {
+                observer.observe(element);
+            });            // ============ 功能按钮实现 ============
+            
+            // 1. 随机播放
+            const shuffleBtn = document.getElementById('shuffle-btn');
+            let shuffleMode = false;
+            if (shuffleBtn) {
+                shuffleBtn.addEventListener('click', function() {
+                    shuffleMode = !shuffleMode;
+                    this.classList.toggle('control-active');
+                    if (shuffleMode) {
+                        showToast('随机播放已开启');
+                    } else {
+                        showToast('随机播放已关闭');
+                    }
+                });
+            }
+            
+            // 2. 循环播放
+            const loopBtn = document.getElementById('loop-btn');
+            const loopBadge = document.getElementById('loop-badge');
+            let loopMode = 0; // 0: 不循环, 1: 循环全部, 2: 循环单曲
+            if (loopBtn) {
+                loopBtn.addEventListener('click', function() {
+                    loopMode = (loopMode + 1) % 3;
+                    this.classList.toggle('control-active', loopMode > 0);
+                    if (loopBadge) {
+                        if (loopMode === 0) {
+                            loopBadge.classList.add('hidden');
+                        } else {
+                            loopBadge.classList.remove('hidden');
+                            loopBadge.textContent = loopMode === 1 ? '↻' : '1';
+                        }
+                    }
+                    if (audio) audio.loop = (loopMode === 2);
+                    const messages = ['循环播放已关闭', '循环播放已开启（全部）', '单曲循环已开启'];
+                    showToast(messages[loopMode]);
+                });
+            }
+            
+            // 3. 收藏功能
+            const favoriteBtn = document.getElementById('favorite-btn');
+            let isFavorited = false;
+            if (favoriteBtn) {
+                favoriteBtn.addEventListener('click', function() {
+                    isFavorited = !isFavorited;
+                    const icon = this.querySelector('i');
+                    if (isFavorited) {
+                        icon.classList.remove('fa-heart-o');
+                        icon.classList.add('fa-heart');
+                        this.classList.add('control-active');
+                        showToast('已添加到收藏');
+                        saveToFavorites();
+                    } else {
+                        icon.classList.remove('fa-heart');
+                        icon.classList.add('fa-heart-o');
+                        this.classList.remove('control-active');
+                        showToast('已取消收藏');
+                        removeFromFavorites();
+                    }
+                });
+            }
+            
+            function saveToFavorites() {
+                const currentCard = document.querySelector('.episode-card.bg-primary');
+                if (!currentCard) return;
+                const episode = currentCard.getAttribute('data-episode');
+                const src = currentCard.getAttribute('data-src');
+                const title = currentCard.querySelector('h3')?.textContent || '';
+                let favorites = JSON.parse(localStorage.getItem('9jie_favorites') || '[]');
+                if (!favorites.find(f => f.src === src)) {
+                    favorites.push({ episode, src, title, time: new Date().toISOString() });
+                    localStorage.setItem('9jie_favorites', JSON.stringify(favorites));
+                }
+            }
+            
+            function removeFromFavorites() {
+                const currentCard = document.querySelector('.episode-card.bg-primary');
+                if (!currentCard) return;
+                const src = currentCard.getAttribute('data-src');
+                let favorites = JSON.parse(localStorage.getItem('9jie_favorites') || '[]');
+                favorites = favorites.filter(f => f.src !== src);
+                localStorage.setItem('9jie_favorites', JSON.stringify(favorites));
+            }
+            
+            // 4. 分享功能
+            const shareBtn = document.getElementById('share-btn');
+            if (shareBtn) {
+                shareBtn.addEventListener('click', function() {
+                    const currentCard = document.querySelector('.episode-card.bg-primary');
+                    const title = currentCard?.querySelector('h3')?.textContent || '九界播客';
+                    const url = window.location.href;
+                    if (navigator.share) {
+                        navigator.share({ title, url })
+                            .catch(e => console.log('分享取消'));
+                    } else {
+                        // 复制链接
+                        navigator.clipboard.writeText(url).then(() => {
+                            showToast('链接已复制到剪贴板');
+                        }).catch(() => {
+                            // Fallback
+                            const input = document.createElement('input');
+                            input.value = url;
+                            document.body.appendChild(input);
+                            input.select();
+                            document.execCommand('copy');
+                            document.body.removeChild(input);
+                            showToast('链接已复制到剪贴板');
+                        });
+                    }
+                });
+            }
+            
+            // 5. 定时关闭
+            const timerBtn = document.getElementById('timer-btn');
+            const timerMenu = document.getElementById('timer-menu');
+            const timerBadge = document.getElementById('timer-badge');
+            const timerCancel = document.getElementById('timer-cancel');
+            const timerClose = document.getElementById('timer-close');
+            const timerCustom = document.getElementById('timer-custom');
+            const timerCustomConfirm = document.getElementById('timer-custom-confirm');
+            let timerTimeout = null;
+            let timerMinutes = 0;
+            
+            if (timerBtn) {
+                timerBtn.addEventListener('click', function() {
+                    if (timerMenu) timerMenu.classList.remove('hidden');
+                });
+            }
+            
+            document.querySelectorAll('.timer-option').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const minutes = parseInt(this.getAttribute('data-minutes'));
+                    setTimer(minutes);
+                    if (timerMenu) timerMenu.classList.add('hidden');
+                });
+            });
+            
+            if (timerCustomConfirm) {
+                timerCustomConfirm.addEventListener('click', function() {
+                    const minutes = parseInt(timerCustom?.value);
+                    if (minutes && minutes > 0 && minutes <= 180) {
+                        setTimer(minutes);
+                        if (timerMenu) timerMenu.classList.add('hidden');
+                    } else {
+                        showToast('请输入1-180之间的数字');
+                    }
+                });
+            }
+            
+            if (timerCancel) {
+                timerCancel.addEventListener('click', function() {
+                    clearTimer();
+                    if (timerMenu) timerMenu.classList.add('hidden');
+                });
+            }
+            
+            if (timerClose) {
+                timerClose.addEventListener('click', function() {
+                    if (timerMenu) timerMenu.classList.add('hidden');
+                });
+            }
+            
+            function setTimer(minutes) {
+                clearTimer();
+                timerMinutes = minutes;
+                const ms = minutes * 60 * 1000;
+                timerTimeout = setTimeout(() => {
+                    if (audio) audio.pause();
+                    showToast('定时关闭：播放已停止');
+                    clearTimer();
+                }, ms);
+                if (timerBadge) {
+                    timerBadge.classList.remove('hidden');
+                    timerBadge.textContent = `${minutes}m`;
+                }
+                timerBtn?.classList.add('control-active');
+                showToast(`定时关闭已设置：${minutes} 分钟后`);
+            }
+            
+            function clearTimer() {
+                if (timerTimeout) {
+                    clearTimeout(timerTimeout);
+                    timerTimeout = null;
+                }
+                timerMinutes = 0;
+                if (timerBadge) timerBadge.classList.add('hidden');
+                timerBtn?.classList.remove('control-active');
+            }
+            
+            // 6. 语速调节
+            const speedBtn = document.getElementById('speed-btn');
+            const speedMenu = document.getElementById('speed-menu');
+            const speedBadge = document.getElementById('speed-badge');
+            const speedClose = document.getElementById('speed-close');
+            const speeds = [0.5, 0.75, 1, 1.25, 1.5, 2];
+            let currentSpeed = 1;
+            
+            if (speedBtn) {
+                speedBtn.addEventListener('click', function() {
+                    if (speedMenu) speedMenu.classList.remove('hidden');
+                });
+            }
+            
+            document.querySelectorAll('.speed-option').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const speed = parseFloat(this.getAttribute('data-speed'));
+                    setSpeed(speed);
+                    if (speedMenu) speedMenu.classList.add('hidden');
+                });
+            });
+            
+            if (speedClose) {
+                speedClose.addEventListener('click', function() {
+                    if (speedMenu) speedMenu.classList.add('hidden');
+                });
+            }
+            
+            function setSpeed(speed) {
+                currentSpeed = speed;
+                if (audio) audio.playbackRate = speed;
+                if (speedBadge) {
+                    speedBadge.classList.remove('hidden');
+                    speedBadge.textContent = `${speed}x`;
+                }
+                speedBtn?.classList.add('control-active');
+                // 更新选中状态
+                document.querySelectorAll('.speed-option').forEach(btn => {
+                    const s = parseFloat(btn.getAttribute('data-speed'));
+                    btn.classList.toggle('border-primary', s === speed);
+                    btn.classList.toggle('bg-opacity-20', s === speed);
+                    if (s === speed) {
+                        btn.querySelector('span:first-child')?.classList.add('text-primary');
+                    } else {
+                        btn.querySelector('span:first-child')?.classList.remove('text-primary');
+                    }
+                });
+                showToast(`语速已设置为 ${speed}x`);
+            }
+            
+            // Toast 提示
+            function showToast(message) {
+                let toast = document.getElementById('toast');
+                if (!toast) {
+                    toast = document.createElement('div');
+                    toast.id = 'toast';
+                    toast.className = 'fixed bottom-8 left-1/2 transform -translate-x-1/2 bg-darker border border-gray-700 text-white px-6 py-3 rounded-lg shadow-2xl z-50 transition-all duration-300 opacity-0';
+                    document.body.appendChild(toast);
+                }
+                toast.textContent = message;
+                toast.classList.remove('opacity-0');
+                toast.classList.add('opacity-100');
+                setTimeout(() => {
+                    toast.classList.remove('opacity-100');
+                    toast.classList.add('opacity-0');
+                }, 2000);
+            }
+            
+            // 前进/后退功能
+            const prevButton = document.getElementById('prev-button');
+            const nextButton = document.getElementById('next-button');
+            
+            function playEpisodeByIndex(index) {
+                if (index >= 0 && index < episodeCards.length) {
+                    episodeCards[index].click();
+                }
+            }
+            
+            if (prevButton) {
+                prevButton.addEventListener('click', function() {
+                    const currentCard = document.querySelector('.episode-card.bg-primary');
+                    let currentIndex = 0;
+                    if (currentCard) {
+                        episodeCards.forEach((card, i) => {
+                            if (card === currentCard) currentIndex = i;
+                        });
+                    }
+                    const prevIndex = currentIndex > 0 ? currentIndex - 1 : episodeCards.length - 1;
+                    playEpisodeByIndex(prevIndex);
+                });
+            }
+            
+            if (nextButton) {
+                nextButton.addEventListener('click', function() {
+                    const currentCard = document.querySelector('.episode-card.bg-primary');
+                    let currentIndex = -1;
+                    if (currentCard) {
+                        episodeCards.forEach((card, i) => {
+                            if (card === currentCard) currentIndex = i;
+                        });
+                    }
+                    const nextIndex = currentIndex < episodeCards.length - 1 ? currentIndex + 1 : 0;
+                    playEpisodeByIndex(nextIndex);
+                });
+            }
+            
+            // 监听音频结束（随机/循环逻辑）
+            if (audio) {
+                audio.addEventListener('ended', function() {
+                    if (loopMode === 2) return; // 单曲循环由 audio.loop 处理
+                    if (shuffleMode) {
+                        // 随机播放下一首
+                        const cards = Array.from(episodeCards);
+                        const currentIndex = cards.findIndex(c => c.classList.contains('bg-primary'));
+                        let nextIndex;
+                        do {
+                            nextIndex = Math.floor(Math.random() * cards.length);
+                        } while (nextIndex === currentIndex && cards.length > 1);
+                        if (cards[nextIndex]) cards[nextIndex].click();
+                    } else if (loopMode === 1) {
+                        // 循环全部
+                        const cards = Array.from(episodeCards);
+                        const currentIndex = cards.findIndex(c => c.classList.contains('bg-primary'));
+                        const nextIndex = (currentIndex + 1) % cards.length;
+                    if (cards[nextIndex]) cards[nextIndex].click();
+                    }
+                });
+            }
+            
+            // ============ 分享下拉菜单 ============
+            const shareButton = document.getElementById('share-button');
+            const shareButtonMobile = document.getElementById('share-button-mobile');
+            const shareDropdown = document.getElementById('share-dropdown');
+            
+            function toggleShareDropdown(e) {
+                e.stopPropagation();
+                if (shareDropdown) {
+                    shareDropdown.classList.toggle('hidden');
+                }
+            }
+            
+            if (shareButton && shareDropdown) {
+                shareButton.addEventListener('click', toggleShareDropdown);
+            }
+            
+            if (shareButtonMobile && shareDropdown) {
+                shareButtonMobile.addEventListener('click', toggleShareDropdown);
+            }
+            
+            // 点击其他地方关闭下拉菜单
+            document.addEventListener('click', function(event) {
+                if (shareDropdown && !shareDropdown.contains(event.target) && 
+                    (!shareButton || !shareButton.contains(event.target)) &&
+                    (!shareButtonMobile || !shareButtonMobile.contains(event.target))) {
+                    shareDropdown.classList.add('hidden');
+                }
+            });
+            
+            // 微信分享
+            const shareWechat = shareDropdown.querySelector('.share-wechat');
+            if (shareWechat) {
+                shareWechat.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    showToast('请截图或使用微信扫一扫分享');
+                    shareDropdown.classList.add('hidden');
+                });
+            }
+            
+            // 复制链接
+            const shareLink = shareDropdown.querySelector('.share-link');
+            if (shareLink) {
+                shareLink.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const url = window.location.href;
+                    if (navigator.clipboard) {
+                        navigator.clipboard.writeText(url).then(() => {
+                            showToast('链接已复制到剪贴板');
+                        });
+                    } else {
+                        // Fallback
+                        const input = document.createElement('input');
+                        input.value = url;
+                        document.body.appendChild(input);
+                        input.select();
+                        document.execCommand('copy');
+                        document.body.removeChild(input);
+                        showToast('链接已复制到剪贴板');
+                    }
+                    shareDropdown.classList.add('hidden');
+                });
+            }
+            
+            // 微博分享
+            const shareWeibo = shareDropdown.querySelector('.share-weibo');
+            if (shareWeibo) {
+                shareWeibo.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const url = encodeURIComponent(window.location.href);
+                    const title = encodeURIComponent(document.title);
+                    window.open(`https://service.weibo.com/share/share.php?url=${url}&title=${title}`, '_blank');
+                    shareDropdown.classList.add('hidden');
+                });
+            }
+            
+            // 邮件分享
+            const shareEmail = shareDropdown.querySelector('.share-email');
+            if (shareEmail) {
+                shareEmail.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const url = window.location.href;
+                    const title = document.title;
+                    const mailtoUrl = `mailto:?subject=${encodeURIComponent(title)}&body=${encodeURIComponent('推荐你收听：' + title + ' ' + url)}`;
+                    window.location.href = mailtoUrl;
+                    shareDropdown.classList.add('hidden');
+                });
+            }
+            }
+        });
+    </script>
+</body>
+</html>

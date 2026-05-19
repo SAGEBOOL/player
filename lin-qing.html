@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>林清 - 九界修真世界人物志</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <style>
+        .story-header {
+            background: linear-gradient(135deg, rgba(100, 181, 246, 0.15), rgba(66, 165, 245, 0.08));
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            border: 0.5px solid rgba(100, 181, 246, 0.25);
+        }
+        .story-content {
+            background: linear-gradient(145deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+            backdrop-filter: blur(20px) saturate(180%);
+            border: 0.5px solid rgba(255, 255, 255, 0.15);
+        }
+        .story-divider {
+            background: linear-gradient(90deg, transparent, rgba(100, 181, 246, 0.5), transparent);
+        }
+        .chapter-title {
+            color: #64b5f6;
+        }
+        .back-button {
+            background: linear-gradient(135deg, rgba(100, 181, 246, 0.9), rgba(66, 165, 245, 0.9));
+            transition: all 0.3s ease;
+        }
+        .back-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(100, 181, 246, 0.4);
+        }
+        .ice-effect {
+            background: linear-gradient(135deg, rgba(100, 181, 246, 0.2), rgba(66, 165, 245, 0.1));
+            border: 1px solid rgba(100, 181, 246, 0.3);
+        }
+        .sword-icon {
+            font-size: 1.5rem;
+            filter: drop-shadow(0 0 8px rgba(100, 181, 246, 0.6));
+        }
+    </style>
+</head>
+<body class="min-h-screen text-white" style="background: linear-gradient(135deg, #0a0a1a 0%, #1a1a3e 50%, #0a0a2a 100%);">
+    
+    <!-- 返回按钮 -->
+    <div class="fixed top-6 left-6 z-50">
+        <a href="index.html" class="back-button px-6 py-3 rounded-full font-bold text-white shadow-lg flex items-center space-x-2" style="box-shadow: 0 4px 15px rgba(100, 181, 246, 0.3);">
+            <span>←</span>
+            <span>返回百科</span>
+        </a>
+    </div>
+
+    <!-- 主内容区 -->
+    <div class="container mx-auto px-4 py-24 max-w-6xl">
+        
+        <!-- 人物标题区 -->
+        <div class="story-header rounded-3xl p-8 mb-8 shadow-2xl">
+            <div class="flex flex-col md:flex-row items-center space-y-6 md:space-y-0 md:space-x-8">
+                <!-- 人物头像 -->
+                <div class="w-48 h-auto rounded-2xl flex items-center justify-center shadow-2xl" style="background: linear-gradient(135deg, #64b5f6, #42a5f5); box-shadow: 0 20px 60px rgba(100, 181, 246, 0.3);">
+                    <img src="assets/images/林清.png" alt="林清" class="w-full h-auto rounded-2xl object-contain" style="box-shadow: 0 8px 24px rgba(0,0,0,0.3);">
+                </div>
+                
+                <!-- 人物信息 -->
+                <div class="flex-1 text-center md:text-left">
+                    <h1 class="text-5xl font-bold mb-4" style="color: #64b5f6; text-shadow: 0 0 30px rgba(100, 181, 246, 0.5);">❄️ 林清</h1>
+                    <p class="text-xl mb-2" style="color: #8892b0;">河一的前世恋人 · 万年守候者</p>
+                    <p class="text-lg" style="color: #ccd6f6;">外冷内热的冰山美人 · 左手剑修</p>
+                    
+                    <!-- 标签 -->
+                    <div class="flex flex-wrap gap-2 mt-4 justify-center md:justify-start">
+                        <span class="px-4 py-2 rounded-full text-sm font-bold" style="background: rgba(100, 181, 246, 0.2); color: #64b5f6; border: 1px solid rgba(100, 181, 246, 0.3);">爱情线</span>
+                        <span class="px-4 py-2 rounded-full text-sm font-bold" style="background: rgba(236, 72, 153, 0.2); color: #ec4899; border: 1px solid rgba(236, 72, 153, 0.3);">道侣</span>
+                        <span class="px-4 py-2 rounded-full text-sm font-bold" style="background: rgba(139, 92, 246, 0.2); color: #a78bfa; border: 1px solid rgba(139, 92, 246, 0.3);">隐藏身份</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 人物简介 -->
+        <div class="story-content rounded-3xl p-8 mb-8">
+            <h2 class="text-3xl font-bold mb-6 chapter-title">📖 人物简介</h2>
+            <div class="story-divider h-px mb-6"></div>
+            
+            <div class="space-y-4" style="color: #ccd6f6; line-height: 1.8;">
+                <p>林清，形如高山雪莲般冷艳的女子，高马尾，身着黑色战斗服，左手无名指佩戴着一朵精致的莲花戒指。</p>
+                <p>她是<strong style="color: #64b5f6;">河一的前世恋人</strong>，在漫长的万年岁月中默默守候，等待着他转世的归来。</p>
+                <p>外表冷漠如冰，内心却炽热如火。因修炼《冰心诀》的反噬作用，情绪时常时冷时热，如同冰川与火焰的交织。</p>
+                <p>擅长<strong style="color: #64b5f6;">左手剑术</strong>，配合冰心诀，能够以冻结血液为代价燃烧灵魂，释放出惊人的战斗力。</p>
+            </div>
+
+            <!-- 人物特征卡片 -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-8">
+                <div class="ice-effect rounded-xl p-4 text-center">
+                    <div class="sword-icon mb-2">⚔️</div>
+                    <h3 class="font-bold mb-1" style="color: #64b5f6;">战斗风格</h3>
+                    <p class="text-sm" style="color: #8892b0;">左手剑 · 冰心诀</p>
+                </div>
+                <div class="ice-effect rounded-xl p-4 text-center">
+                    <div class="sword-icon mb-2">❄️</div>
+                    <h3 class="font-bold mb-1" style="color: #64b5f6;">性格特征</h3>
+                    <p class="text-sm" style="color: #8892b0;">外冷内热 · 情绪时冷时热</p>
+                </div>
+                <div class="ice-effect rounded-xl p-4 text-center">
+                    <div class="sword-icon mb-2">💍</div>
+                    <h3 class="font-bold mb-1" style="color: #64b5f6;">身份标识</h3>
+                    <p class="text-sm" style="color: #8892b0;">莲花戒指 · 万年守候</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 身世与隐藏身份 -->
+        <div class="story-content rounded-3xl p-8 mb-8">
+            <h2 class="text-3xl font-bold mb-6 chapter-title">🎭 身世与隐藏身份</h2>
+            <div class="story-divider h-px mb-6"></div>
+            
+            <div class="space-y-6" style="color: #ccd6f6; line-height: 1.8;">
+                <div class="ice-effect rounded-xl p-6">
+                    <h3 class="text-xl font-bold mb-3" style="color: #ec4899;">💔 万年守候</h3>
+                    <p>林清的真实身份是<strong style="color: #ec4899;">河一前世的恋人</strong>。在一万年前的那场大战中，河一为了守护九界而陨落，林清拼死保住了他的最后一缕残魂。</p>
+                    <p class="mt-2">从此，她在时光的缝隙中守候了整整一万年，只为了等待他的转世归来。</p>
+                </div>
+
+                <div class="ice-effect rounded-xl p-6">
+                    <h3 class="text-xl font-bold mb-3" style="color: #64b5f6;">🧪 隐藏身份</h3>
+                    <p>在九界的传说中，林清只是一个神秘的冰系剑修。没有人知道她与河一的前世渊源，更没有人知道她已经等待了万年。</p>
+                    <p class="mt-2">她刻意保持冷漠，不敢轻易相认，生怕这只是幻影，生怕再次失去。</p>
+                </div>
+
+                <div class="ice-effect rounded-xl p-6">
+                    <h3 class="text-xl font-bold mb-3" style="color: #a78bfa;">💭 内心的挣扎</h3>
+                    <p>当她第一次见到河一的时候，内心的震撼几乎让她失控。那张脸，那个气质，分明就是"那个人"！</p>
+                    <p class="mt-2">但她不敢相认。她不断地测试他，试探他，想要确认他是否就是她等待了万年的那个灵魂。</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 能力设定 -->
+        <div class="story-content rounded-3xl p-8 mb-8">
+            <h2 class="text-3xl font-bold mb-6 chapter-title">⚔️ 核心能力</h2>
+            <div class="story-divider h-px mb-6"></div>
+            
+            <div class="space-y-6">
+                <!-- 左手剑术 -->
+                <div class="ice-effect rounded-xl p-6">
+                    <h3 class="text-xl font-bold mb-3" style="color: #64b5f6;">⚔️ 左手剑术</h3>
+                    <p class="mb-3" style="color: #ccd6f6;">林清擅长使用左手剑，剑法诡异莫测，与常规的右手剑法完全不同。她的剑招冰冷凌厉，每一剑都带着万年冰封的寒意。</p>
+                    <div class="rounded-lg p-4" style="background: rgba(100, 181, 246, 0.1); border-left: 4px solid #64b5f6;">
+                        <p class="text-sm" style="color: #8892b0;">💡 剑法特点：以守为攻，后发先至，剑意如冰川般冷冽而持久。</p>
+                    </div>
+                </div>
+
+                <!-- 冰心诀 -->
+                <div class="ice-effect rounded-xl p-6">
+                    <h3 class="text-xl font-bold mb-3" style="color: #42a5f5;">❄️ 冰心诀</h3>
+                    <p class="mb-3" style="color: #ccd6f6;">林清修炼的顶级功法，能够冻结敌人的血液，同时燃烧自己的灵魂。这是一门极端的功法，威力巨大，但反噬也同样可怕。</p>
+                    <div class="rounded-lg p-4" style="background: rgba(66, 165, 245, 0.1); border-left: 4px solid #42a5f5;">
+                        <p class="text-sm" style="color: #8892b0;">⚠️ 功法反噬：每次使用都会让情绪时冷时热，如同冰川与火焰在体内交织。</p>
+                    </div>
+                </div>
+
+                <!-- 万年守候 -->
+                <div class="ice-effect rounded-xl p-6">
+                    <h3 class="text-xl font-bold mb-3" style="color: #ec4899;">💎 万年守候</h3>
+                    <p class="mb-3" style="color: #ccd6f6;">林清在万年的守候中，领悟了时间与空间的奥秘。她能够在时空的缝隙中自由穿行，也能够感知到河一灵魂的波动。</p>
+                    <div class="rounded-lg p-4" style="background: rgba(236, 72, 153, 0.1); border-left: 4px solid #ec4899;">
+                        <p class="text-sm" style="color: #8892b0;">✨ 特殊能力：能够感知河一的位置和状态，无论他身在何方。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 与河一的关系 -->
+        <div class="story-content rounded-3xl p-8 mb-8">
+            <h2 class="text-3xl font-bold mb-6 chapter-title">💞 与河一的关系</h2>
+            <div class="story-divider h-px mb-6"></div>
+            
+            <div class="space-y-6" style="color: #ccd6f6; line-height: 1.8;">
+                <div class="ice-effect rounded-xl p-6">
+                    <h3 class="text-xl font-bold mb-3" style="color: #64b5f6;">🌟 初见</h3>
+                    <p>当林清第一次见到河一的时候，她几乎不敢相信自己的眼睛。那张脸，那个气质，分明就是"那个人"！</p>
+                    <p class="mt-2">但她不敢相认。她不断地告诉自己，这可能只是幻影，可能只是相似，可能不是他...</p>
+                </div>
+
+                <div class="ice-effect rounded-xl p-6">
+                    <h3 class="text-xl font-bold mb-3" style="color: #42a5f5;">🧪 测试</h3>
+                    <p>林清开始不断地测试河一。她故意刁难他，故意冷落他，想要看看他的反应。</p>
+                    <p class="mt-2">如果他是"那个人"，他一定会理解她的冷漠；如果他是"那个人"，他一定会用同样的方式回应她。</p>
+                </div>
+
+                <div class="ice-effect rounded-xl p-6">
+                    <h3 class="text-xl font-bold mb-3" style="color: #ec4899;">💔 守护</h3>
+                    <p>虽然不敢相认，但林清一直在暗中守护着河一。每当他遇到危险，总会有一道冰冷的剑光出现，击退敌人后又悄然消失。</p>
+                    <p class="mt-2">河一一直觉得很奇怪，那个神秘的剑修到底是谁？为什么每次救了他之后就消失不见？</p>
+                </div>
+
+                <div class="ice-effect rounded-xl p-6">
+                    <h3 class="text-xl font-bold mb-3" style="color: #a78bfa;">💎 真相</h3>
+                    <p>随着故事的发展，河一逐渐发现了林清的真实身份。当他把那朵破碎的莲花戒指重新拼合的时候，林清终于崩溃了。</p>
+                    <p class="mt-2">一万年的守候，一万年的孤独，在这一刻化作了滚滚热泪。</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 经典台词 -->
+        <div class="story-content rounded-3xl p-8 mb-8">
+            <h2 class="text-3xl font-bold mb-6 chapter-title">💬 经典台词</h2>
+            <div class="story-divider h-px mb-6"></div>
+            
+            <div class="space-y-4">
+                <div class="ice-effect rounded-xl p-6">
+                    <p class="text-lg italic" style="color: #64b5f6;">"你以为你是谁？你也配提'那个人'的名字？"</p>
+                    <p class="text-right mt-2" style="color: #8892b0;">——初次见面时，故意刁难河一</p>
+                </div>
+
+                <div class="ice-effect rounded-xl p-6">
+                    <p class="text-lg italic" style="color: #42a5f5;">"冰心诀的反噬...又来了。这一次，好像比以往都要强烈..."</p>
+                    <p class="text-right mt-2" style="color: #8892b0;">——独自承受功法反噬时</p>
+                </div>
+
+                <div class="ice-effect rounded-xl p-6">
+                    <p class="text-lg italic" style="color: #ec4899;">"一万年了...我等了一万年...你终于...终于回来了..."</p>
+                    <p class="text-right mt-2" style="color: #8892b0;">——身份暴露，情绪崩溃时</p>
+                </div>
+
+                <div class="ice-effect rounded-xl p-6">
+                    <p class="text-lg italic" style="color: #a78bfa;">"就算你不是'那个人'，我也愿意...再等你一万年。"</p>
+                    <p class="text-right mt-2" style="color: #8892b0;">——最终接受河一（可能不是前世那个人）时</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 相关剧情 -->
+        <div class="story-content rounded-3xl p-8 mb-8">
+            <h2 class="text-3xl font-bold mb-6 chapter-title">📚 相关剧情</h2>
+            <div class="story-divider h-px mb-6"></div>
+            
+            <div class="space-y-4">
+                <div class="ice-effect rounded-xl p-6 flex items-center justify-between">
+                    <div>
+                        <h3 class="font-bold" style="color: #64b5f6;">第7卷：平行相遇</h3>
+                        <p class="text-sm" style="color: #8892b0;">河一在平行世界中首次遇见林清</p>
+                    </div>
+                    <span class="text-2xl">📖</span>
+                </div>
+
+                <div class="ice-effect rounded-xl p-6 flex items-center justify-between">
+                    <div>
+                        <h3 class="font-bold" style="color: #42a5f5;">第14卷：羁绊加深</h3>
+                        <p class="text-sm" style="color: #8892b0;">林清不断测试河一，羁绊逐渐加深</p>
+                    </div>
+                    <span class="text-2xl">💞</span>
+                </div>
+
+                <div class="ice-effect rounded-xl p-6 flex items-center justify-between">
+                    <div>
+                        <h3 class="font-bold" style="color: #ec4899;">隐藏卷：万年守候</h3>
+                        <p class="text-sm" style="color: #8892b0;">揭示林清的真实身份和万年守候的真相</p>
+                    </div>
+                    <span class="text-2xl">💎</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 人物关系网 -->
+        <div class="story-content rounded-3xl p-8 mb-8">
+            <h2 class="text-3xl font-bold mb-6 chapter-title">🕸️ 人物关系网</h2>
+            <div class="story-divider h-px mb-6"></div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="ice-effect rounded-xl p-4 flex items-center space-x-4">
+                    <div class="w-12 h-12 rounded-full flex items-center justify-center text-2xl" style="background: linear-gradient(135deg, #64ffda, #4fd1c5);">
+                        🧔
+                    </div>
+                    <div class="flex-1">
+                        <h3 class="font-bold" style="color: #64ffda;">河一</h3>
+                        <p class="text-sm" style="color: #8892b0;">道侣 · 前世恋人</p>
+                    </div>
+                    <span class="px-3 py-1 rounded-full text-xs font-bold" style="background: rgba(236, 72, 153, 0.2); color: #ec4899;">道侣</span>
+                </div>
+
+                <div class="ice-effect rounded-xl p-4 flex items-center space-x-4">
+                    <div class="w-12 h-12 rounded-full flex items-center justify-center text-2xl" style="background: linear-gradient(135deg, #fbbf24, #f59e0b);">
+                        🧙
+                    </div>
+                    <div class="flex-1">
+                        <h3 class="font-bold" style="color: #fbbf24;">刘浪浪</h3>
+                        <p class="text-sm" style="color: #8892b0;">盟友 · 河一的兄弟</p>
+                    </div>
+                    <span class="px-3 py-1 rounded-full text-xs font-bold" style="background: rgba(16, 185, 129, 0.2); color: #10b981;">盟友</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 返回按钮 -->
+        <div class="text-center mt-12">
+            <a href="index.html" class="back-button px-8 py-4 rounded-full font-bold text-white shadow-lg text-lg inline-flex items-center space-x-2">
+                <span>←</span>
+                <span>返回百科首页</span>
+            </a>
+        </div>
+    </div>
+
+</body>
+</html>

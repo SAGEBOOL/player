@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>甘道夫 - 九界修真世界人物志</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <style>
+        .story-header {
+            background: linear-gradient(135deg, rgba(234, 179, 8, 0.15), rgba(202, 138, 4, 0.08));
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            border: 0.5px solid rgba(234, 179, 8, 0.25);
+        }
+        .story-content {
+            background: linear-gradient(145deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+            backdrop-filter: blur(20px) saturate(180%);
+            border: 0.5px solid rgba(255, 255, 255, 0.15);
+        }
+        .story-divider {
+            background: linear-gradient(90deg, transparent, rgba(234, 179, 8, 0.5), transparent);
+        }
+        .chapter-title {
+            color: #eab308;
+        }
+        .back-button {
+            background: linear-gradient(135deg, rgba(234, 179, 8, 0.9), rgba(202, 138, 4, 0.9));
+            transition: all 0.3s ease;
+        }
+        .back-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(234, 179, 8, 0.4);
+        }
+        .dao-effect {
+            background: linear-gradient(135deg, rgba(234, 179, 8, 0.2), rgba(202, 138, 4, 0.1));
+            border: 1px solid rgba(234, 179, 8, 0.3);
+        }
+        .dao-icon {
+            font-size: 1.5rem;
+            filter: drop-shadow(0 0 8px rgba(234, 179, 8, 0.6));
+        }
+    </style>
+</head>
+<body class="min-h-screen text-white" style="background: linear-gradient(135deg, #0a0a1a 0%, #1a1a0a 50%, #0a0a0a 100%);">
+    
+    <!-- 返回按钮 -->
+    <div class="fixed top-6 left-6 z-50">
+        <a href="index.html" class="back-button px-6 py-3 rounded-full font-bold text-white shadow-lg flex items-center space-x-2" style="box-shadow: 0 4px 15px rgba(234, 179, 8, 0.3);">
+            <span>←</span>
+            <span>返回百科</span>
+        </a>
+    </div>
+
+    <!-- 主内容区 -->
+    <div class="container mx-auto px-4 py-24 max-w-6xl">
+        
+        <!-- 人物标题区 -->
+        <div class="story-header rounded-3xl p-8 mb-8 shadow-2xl">
+            <div class="flex flex-col md:flex-row items-center space-y-6 md:space-y-0 md:space-x-8">
+                <!-- 人物头像 -->
+                <div class="w-48 h-auto rounded-2xl flex items-center justify-center shadow-2xl" style="background: linear-gradient(135deg, #eab308, #ca8a04); box-shadow: 0 20px 60px rgba(234, 179, 8, 0.3);">
+                    <img src="assets/images/甘道夫.png" alt="甘道夫" class="w-full h-auto rounded-2xl object-contain" style="box-shadow: 0 8px 24px rgba(0,0,0,0.3);">
+                </div>
+                
+                <!-- 人物信息 -->
+                <div class="flex-1 text-center md:text-left">
+                    <h1 class="text-5xl font-bold mb-4" style="color: #eab308; text-shadow: 0 0 30px rgba(234, 179, 8, 0.5);">⚔️ 甘道夫</h1>
+                    <p class="text-xl mb-2" style="color: #fef08a;">甘承春 · 武当修道同学/修真界道门大佬</p>
+                    <p class="text-lg" style="color: #fefce8;">稳重可靠的兄弟 · 道门守护者</p>
+                    
+                    <!-- 标签 -->
+                    <div class="flex flex-wrap gap-2 mt-4 justify-center md:justify-start">
+                        <span class="px-4 py-2 rounded-full text-sm font-bold" style="background: rgba(234, 179, 8, 0.2); color: #eab308; border: 1px solid rgba(234, 179, 8, 0.3);">主角团</span>
+                        <span class="px-4 py-2 rounded-full text-sm font-bold" style="background: rgba(59, 130, 246, 0.2); color: #3b82f6; border: 1px solid rgba(59, 130, 246, 0.3);">兄弟团</span>
+                        <span class="px-4 py-2 rounded-full text-sm font-bold" style="background: rgba(16, 185, 129, 0.2); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.3);">道门大佬</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 人物简介 -->
+        <div class="story-content rounded-3xl p-8 mb-8">
+            <h2 class="text-3xl font-bold mb-6 chapter-title">📖 人物简介</h2>
+            <div class="story-divider h-px mb-6"></div>
+            
+            <div class="space-y-4" style="color: #ccd6f6; line-height: 1.8;">
+                <p>甘道夫，本名甘承春，武当修道同学，后成为修真界道门大佬。他是<strong style="color: #eab308;">刘浪浪的兄弟</strong>，虽然一度对立，但最终和解，同心共护九界。</p>
+                <p>性格<strong style="color: #eab308;">稳重可靠、行事沉稳、有担当</strong>，是兄弟团中最值得信赖的存在。</p>
+                <p>擅长<strong style="color: #eab308;">修界门、守护道统</strong>，掌握道门秘法，是道门中的顶尖高手。</p>
+                <p>从最初的对立，到最终的和解，甘道夫与刘浪浪兄弟同心，共同守护九界，是主角团中不可或缺的一员。</p>
+            </div>
+
+            <!-- 人物特征卡片 -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-8">
+                <div class="dao-effect rounded-xl p-4 text-center">
+                    <div class="dao-icon mb-2">⚔️</div>
+                    <h3 class="font-bold mb-1" style="color: #eab308;">身份</h3>
+                    <p class="text-sm" style="color: #fef08a;">道门大佬 · 兄弟团</p>
+                </div>
+                <div class="dao-effect rounded-xl p-4 text-center">
+                    <div class="dao-icon mb-2">🛡️</div>
+                    <h3 class="font-bold mb-1" style="color: #eab308;">战斗风格</h3>
+                    <p class="text-sm" style="color: #fef08a;">守护道统 · 道门秘法</p>
+                </div>
+                <div class="dao-effect rounded-xl p-4 text-center">
+                    <div class="dao-icon mb-2">🎭</div>
+                    <h3 class="font-bold mb-1" style="color: #eab308;">性格特征</h3>
+                    <p class="text-sm" style="color: #fef08a;">稳重可靠 · 有担当</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 身世与转变 -->
+        <div class="story-content rounded-3xl p-8 mb-8">
+            <h2 class="text-3xl font-bold mb-6 chapter-title">🎭 身世与转变</h2>
+            <div class="story-divider h-px mb-6"></div>
+            
+            <div class="space-y-6" style="color: #ccd6f6; line-height: 1.8;">
+                <div class="dao-effect rounded-xl p-6">
+                    <h3 class="text-xl font-bold mb-3" style="color: #eab308;">🏫 武当修道</h3>
+                    <p>甘道夫本名甘承春，曾是武当修道的同学。他天资聪颖，修道刻苦，很快就在道门中崭露头角。</p>
+                    <p class="mt-2">他与刘浪浪曾经是好友，但因为理念不同，最终分道扬镳。</p>
+                </div>
+
+                <div class="dao-effect rounded-xl p-6">
+                    <h3 class="text-xl font-bold mb-3" style="color: #ca8a04;">⚔️ 道门之争</h3>
+                    <p>成为道门大佬后，甘道夫与刘浪浪的矛盾逐渐加深。两人多次交手，难分伯仲。</p>
+                    <p class="mt-2">但实际上，两人内心都舍不得对方。只是立场不同，不得不为。</p>
+                </div>
+
+                <div class="dao-effect rounded-xl p-6">
+                    <h3 class="text-xl font-bold mb-3" style="color: #fef08a;">🤝 兄弟和解</h3>
+                    <p>在面对九界危机时，甘道夫终于放下成见，与刘浪浪握手言和。</p>
+                    <p class="mt-2">两人兄弟同心，共护九界，成为了最可靠的战友。</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 核心能力 -->
+        <div class="story-content rounded-3xl p-8 mb-8">
+            <h2 class="text-3xl font-bold mb-6 chapter-title">⚔️ 核心能力</h2>
+            <div class="story-divider h-px mb-6"></div>
+            
+            <div class="space-y-6">
+                <!-- 修界门 -->
+                <div class="dao-effect rounded-xl p-6">
+                    <h3 class="text-xl font-bold mb-3" style="color: #eab308;">🏛️ 修界门</h3>
+                    <p class="mb-3" style="color: #ccd6f6;">甘道夫擅长修缮和守护界门，能够修复九界之间的通道，维持各界之间的联系。</p>
+                    <div class="rounded-lg p-4" style="background: rgba(234, 179, 8, 0.1); border-left: 4px solid #eab308;">
+                        <p class="text-sm" style="color: #fef08a;">🛠️ 特殊能力：能够修复被玄宸封锁的界门，重建九界通道。</p>
+                    </div>
+                </div>
+
+                <!-- 守护道统 -->
+                <div class="dao-effect rounded-xl p-6">
+                    <h3 class="text-xl font-bold mb-3" style="color: #ca8a04;">🛡️ 守护道统</h3>
+                    <p class="mb-3" style="color: #ccd6f6;">甘道夫守护着道门的千年传承，他能够将道门秘法发挥到极致，守护同道中人。</p>
+                    <div class="rounded-lg p-4" style="background: rgba(202, 138, 4, 0.1); border-left: 4px solid #ca8a04;">
+                        <p class="text-sm" style="color: #fef08a;">🛡️ 守护能力：能够为同道中人施加守护结界，抵御外敌。</p>
+                    </div>
+                </div>
+
+                <!-- 道门秘法 -->
+                <div class="dao-effect rounded-xl p-6">
+                    <h3 class="text-xl font-bold mb-3" style="color: #fef08a;">✨ 道门秘法</h3>
+                    <p class="mb-3" style="color: #ccd6f6;">甘道夫掌握着道门的诸多秘法，包括符箓、阵法、炼丹等。他的道法修为，在九界中也是顶尖的存在。</p>
+                    <div class="rounded-lg p-4" style="background: rgba(254, 240, 138, 0.1); border-left: 4px solid #fef08a;">
+                        <p class="text-sm" style="color: #fef08a;">✨ 秘法大全：符箓、阵法、炼丹...道门秘法无所不精。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 与主角团的关系 -->
+        <div class="story-content rounded-3xl p-8 mb-8">
+            <h2 class="text-3xl font-bold mb-6 chapter-title">💞 与主角团的关系</h2>
+            <div class="story-divider h-px mb-6"></div>
+            
+            <div class="space-y-6" style="color: #ccd6f6; line-height: 1.8;">
+                <div class="dao-effect rounded-xl p-6">
+                    <h3 class="text-xl font-bold mb-3" style="color: #eab308;">🧙 刘浪浪 - 兄弟</h3>
+                    <p>甘道夫与刘浪浪曾经是好友，但因理念不同分道扬镳。经过多次波折，两人最终和解，兄弟同心。</p>
+                    <p class="mt-2">如今，两人是最可靠的战友，共同守护九界。</p>
+                </div>
+
+                <div class="dao-effect rounded-xl p-6">
+                    <h3 class="text-xl font-bold mb-3" style="color: #ca8a04;">🧔 河一 - 兄弟</h3>
+                    <p>甘道夫与河一也是兄弟关系。他非常尊重河一的人品和修为，两人配合默契。</p>
+                    <p class="mt-2">在多次战斗中，甘道夫与河一并肩作战，结下了深厚的友谊。</p>
+                </div>
+
+                <div class="dao-effect rounded-xl p-6">
+                    <h3 class="text-xl font-bold mb-3" style="color: #fef08a;">💪 张雷生 - 兄弟</h3>
+                    <p>甘道夫与张雷生也是兄弟团的一员。虽然张雷生性格张扬，但甘道夫总是默默守护在他身边。</p>
+                    <p class="mt-2">两人的组合，一个沉稳，一个张扬，互补性极强。</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 经典台词 -->
+        <div class="story-content rounded-3xl p-8 mb-8">
+            <h2 class="text-3xl font-bold mb-6 chapter-title">💬 经典台词</h2>
+            <div class="story-divider h-px mb-6"></div>
+            
+            <div class="space-y-4">
+                <div class="dao-effect rounded-xl p-6">
+                    <p class="text-lg italic" style="color: #eab308;">"刘浪浪，你我还是走到了对立面...但我的心，从未变过。"</p>
+                    <p class="text-right mt-2" style="color: #fef08a;">——与刘浪浪对峙时</p>
+                </div>
+
+                <div class="dao-effect rounded-xl p-6">
+                    <p class="text-lg italic" style="color: #ca8a04;">"道门传承，不能在我手中断绝。这一战，我甘承春，绝不退后半步！"</p>
+                    <p class="text-right mt-2" style="color: #fef08a;">——守护道门时</p>
+                </div>
+
+                <div class="dao-effect rounded-xl p-6">
+                    <p class="text-lg italic" style="color: #fef08a;">"兄弟...终于，又可以并肩作战了。"</p>
+                    <p class="text-right mt-2" style="color: #fef08a;">——与刘浪浪和解时</p>
+                </div>
+
+                <div class="dao-effect rounded-xl p-6">
+                    <p class="text-lg italic" style="color: #eab308;">"九界存亡，在此一战。兄弟们，跟我来！"</p>
+                    <p class="text-right mt-2" style="color: #fef08a;">——最终决战时</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 相关剧情 -->
+        <div class="story-content rounded-3xl p-8 mb-8">
+            <h2 class="text-3xl font-bold mb-6 chapter-title">📚 相关剧情</h2>
+            <div class="story-divider h-px mb-6"></div>
+            
+            <div class="space-y-4">
+                <div class="dao-effect rounded-xl p-6 flex items-center justify-between">
+                    <div>
+                        <h3 class="font-bold" style="color: #eab308;">第3卷：兄弟重聚</h3>
+                        <p class="text-sm" style="color: #fef08a;">甘道夫与刘浪浪重逢</p>
+                    </div>
+                    <span class="text-2xl">⚔️</span>
+                </div>
+
+                <div class="dao-effect rounded-xl p-6 flex items-center justify-between">
+                    <div>
+                        <h3 class="font-bold" style="color: #ca8a04;">第16卷：道门之争</h3>
+                        <p class="text-sm" style="color: #fef08a;">甘道夫与刘浪浪的理念之争</p>
+                    </div>
+                    <span class="text-2xl">🏛️</span>
+                </div>
+
+                <div class="dao-effect rounded-xl p-6 flex items-center justify-between">
+                    <div>
+                        <h3 class="font-bold" style="color: #fef08a;">第22卷：和解同心</h3>
+                        <p class="text-sm" style="color: #fef08a;">甘道夫与刘浪浪和解，兄弟同心</p>
+                    </div>
+                    <span class="text-2xl">🤝</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 人物关系网 -->
+        <div class="story-content rounded-3xl p-8 mb-8">
+            <h2 class="text-3xl font-bold mb-6 chapter-title">🕸️ 人物关系网</h2>
+            <div class="story-divider h-px mb-6"></div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="dao-effect rounded-xl p-4 flex items-center space-x-4">
+                    <div class="w-12 h-12 rounded-full flex items-center justify-center text-2xl" style="background: linear-gradient(135deg, #fbbf24, #f59e0b);">
+                        🧙
+                    </div>
+                    <div class="flex-1">
+                        <h3 class="font-bold" style="color: #fbbf24;">刘浪浪</h3>
+                        <p class="text-sm" style="color: #fef08a;">兄弟 · 曾经的对手</p>
+                    </div>
+                    <span class="px-3 py-1 rounded-full text-xs font-bold" style="background: rgba(59, 130, 246, 0.2); color: #3b82f6;">兄弟</span>
+                </div>
+
+                <div class="dao-effect rounded-xl p-4 flex items-center space-x-4">
+                    <div class="w-12 h-12 rounded-full flex items-center justify-center text-2xl" style="background: linear-gradient(135deg, #64ffda, #4fd1c5);">
+                        🧔
+                    </div>
+                    <div class="flex-1">
+                        <h3 class="font-bold" style="color: #64ffda;">河一</h3>
+                        <p class="text-sm" style="color: #fef08a;">兄弟 · 战友</p>
+                    </div>
+                    <span class="px-3 py-1 rounded-full text-xs font-bold" style="background: rgba(59, 130, 246, 0.2); color: #3b82f6;">兄弟</span>
+                </div>
+
+                <div class="dao-effect rounded-xl p-4 flex items-center space-x-4">
+                    <div class="w-12 h-12 rounded-full flex items-center justify-center text-2xl" style="background: linear-gradient(135deg, #60a5fa, #3b82f6);">
+                        💪
+                    </div>
+                    <div class="flex-1">
+                        <h3 class="font-bold" style="color: #60a5fa;">张雷生</h3>
+                        <p class="text-sm" style="color: #fef08a;">兄弟 · 互补战友</p>
+                    </div>
+                    <span class="px-3 py-1 rounded-full text-xs font-bold" style="background: rgba(59, 130, 246, 0.2); color: #3b82f6;">兄弟</span>
+                </div>
+
+                <div class="dao-effect rounded-xl p-4 flex items-center space-x-4">
+                    <div class="w-12 h-12 rounded-full flex items-center justify-center text-2xl" style="background: linear-gradient(135deg, #8b5cf6, #7c3aed);">
+                        🔮
+                    </div>
+                    <div class="flex-1">
+                        <h3 class="font-bold" style="color: #8b5cf6;">天道老人</h3>
+                        <p class="text-sm" style="color: #fef08a;">盟友 · 昔日战友</p>
+                    </div>
+                    <span class="px-3 py-1 rounded-full text-xs font-bold" style="background: rgba(16, 185, 129, 0.2); color: #10b981;">盟友</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 返回按钮 -->
+        <div class="text-center mt-12">
+            <a href="index.html" class="back-button px-8 py-4 rounded-full font-bold text-white shadow-lg text-lg inline-flex items-center space-x-2">
+                <span>←</span>
+                <span>返回百科首页</span>
+            </a>
+        </div>
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,559 @@
+/* 九界修真世界 - 百科系统样式 (lifeline配色 + iPhone液态玻璃圆弧容器) */
+
+/* ==================== 全局样式 ==================== */
+body {
+    background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
+    background-attachment: fixed;
+    min-height: 100vh;
+    color: #e0e0e0;
+    position: relative;
+}
+
+body::before {
+    display: none;
+}
+
+/* iPhone液态玻璃圆弧容器基础类 */
+.glass-arc {
+    /* 液态玻璃核心效果 */
+    background: linear-gradient(
+        135deg,
+        rgba(255, 255, 255, 0.15) 0%,
+        rgba(255, 255, 255, 0.08) 50%,
+        rgba(255, 255, 255, 0.05) 100%
+    );
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    /* 圆弧边框 - iPhone底部栏风格 */
+    border: 0.5px solid rgba(255, 255, 255, 0.18);
+    border-radius: 40px;
+    /* 内发光高光 */
+    box-shadow: 
+        inset 0 1px 1px rgba(255, 255, 255, 0.15),
+        inset 0 -1px 1px rgba(0, 0, 0, 0.1),
+        0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+/* 容器样式 */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* ==================== 导航栏 ==================== */
+nav {
+    background: linear-gradient(
+        180deg,
+        rgba(26, 26, 46, 0.9) 0%,
+        rgba(26, 26, 46, 0.7) 100%
+    );
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border-bottom: 0.5px solid rgba(255, 255, 255, 0.1);
+}
+
+nav h1 {
+    background: linear-gradient(90deg, #f39c12, #e74c3c, #9b59b6, #3498db, #2ecc71);
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: gradient 3s ease infinite;
+}
+
+@keyframes gradient {
+    0%, to { background-position: 0% center; }
+    50% { background-position: 200% center; }
+}
+
+/* ==================== 通用卡片 - iPhone液态玻璃圆弧风格 ==================== */
+.card-glass {
+    background: linear-gradient(
+        135deg,
+        rgba(255, 255, 255, 0.18) 0%,
+        rgba(255, 255, 255, 0.1) 30%,
+        rgba(255, 255, 255, 0.06) 100%
+    );
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border: 0.5px solid rgba(255, 255, 255, 0.2);
+    border-radius: 40px;
+    box-shadow: 
+        inset 0 1px 1px rgba(255, 255, 255, 0.2),
+        inset 0 -1px 1px rgba(0, 0, 0, 0.15),
+        0 8px 32px rgba(0, 0, 0, 0.25);
+}
+
+.card-hover:hover {
+    transform: translateY(-5px);
+    box-shadow: 
+        inset 0 1px 1px rgba(255, 255, 255, 0.25),
+        inset 0 -1px 1px rgba(0, 0, 0, 0.15),
+        0 15px 40px rgba(0, 0, 0, 0.35),
+        0 0 30px rgba(100, 255, 218, 0.15);
+    border-color: rgba(100, 255, 218, 0.4);
+}
+
+/* ==================== 文字颜色 ==================== */
+.text-primary { color: #ccd6f6; }
+.text-secondary { color: #8892b0; }
+.text-accent { color: #64ffda; }
+.text-highlight { color: #ff9f1c; }
+
+/* ==================== 背景色 ==================== */
+.bg-card { 
+    background: linear-gradient(
+        135deg,
+        rgba(255, 255, 255, 0.12) 0%,
+        rgba(255, 255, 255, 0.06) 100%
+    );
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 0.5px solid rgba(255, 255, 255, 0.12);
+    border-radius: 32px;
+}
+.bg-card-dark { background: rgba(0, 0, 0, 0.3); }
+.bg-accent { background: linear-gradient(135deg, #667eea, #764ba2); }
+
+/* ==================== 人物卡牌 ==================== */
+.character-card {
+    background: linear-gradient(
+        145deg,
+        rgba(255, 255, 255, 0.15) 0%,
+        rgba(255, 255, 255, 0.08) 50%,
+        rgba(255, 255, 255, 0.04) 100%
+    );
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border: 0.5px solid rgba(255, 255, 255, 0.18);
+    border-radius: 32px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow: hidden;
+    cursor: pointer;
+    box-shadow: 
+        inset 0 1px 1px rgba(255, 255, 255, 0.15),
+        inset 0 -1px 1px rgba(0, 0, 0, 0.1),
+        0 8px 24px rgba(0, 0, 0, 0.25);
+}
+
+.character-card:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 
+        inset 0 1px 2px rgba(255, 255, 255, 0.2),
+        inset 0 -1px 1px rgba(0, 0, 0, 0.1),
+        0 20px 50px rgba(0, 0, 0, 0.35),
+        0 0 40px rgba(100, 255, 218, 0.2);
+    border-color: rgba(100, 255, 218, 0.5);
+}
+
+.character-card .h-32 {
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.4), rgba(118, 75, 162, 0.3));
+    border-radius: 32px 32px 0 0;
+}
+
+/* ==================== 体系层级样式 ==================== */
+.system-layer {
+    background: linear-gradient(
+        135deg,
+        rgba(255, 255, 255, 0.1) 0%,
+        rgba(255, 255, 255, 0.05) 100%
+    );
+    backdrop-filter: blur(16px) saturate(160%);
+    -webkit-backdrop-filter: blur(16px) saturate(160%);
+    border: 0.5px solid rgba(255, 255, 255, 0.1);
+    border-radius: 24px;
+    border-left: 4px solid;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+    box-shadow: 
+        inset 0 1px 1px rgba(255, 255, 255, 0.1),
+        0 4px 16px rgba(0, 0, 0, 0.2);
+}
+
+.system-layer:hover {
+    transform: translateX(8px) scale(1.01);
+    background: linear-gradient(
+        135deg,
+        rgba(255, 255, 255, 0.15) 0%,
+        rgba(255, 255, 255, 0.08) 100%
+    );
+    box-shadow: 
+        inset 0 1px 1px rgba(255, 255, 255, 0.15),
+        0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+/* ==================== 时间轴样式 ==================== */
+.timeline-container {
+    position: relative;
+    padding-left: 40px;
+}
+
+.timeline-container::before {
+    content: '';
+    position: absolute;
+    left: 15px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: linear-gradient(to bottom, #667eea, #764ba2, #64ffda);
+}
+
+.timeline-item {
+    position: relative;
+    margin-bottom: 24px;
+    padding: 24px;
+    background: linear-gradient(
+        135deg,
+        rgba(255, 255, 255, 0.1) 0%,
+        rgba(255, 255, 255, 0.05) 100%
+    );
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border: 0.5px solid rgba(255, 255, 255, 0.12);
+    border-radius: 28px;
+    box-shadow: 
+        inset 0 1px 1px rgba(255, 255, 255, 0.12),
+        0 6px 20px rgba(0, 0, 0, 0.2);
+}
+
+.timeline-item::before {
+    content: '';
+    position: absolute;
+    left: -30px;
+    top: 28px;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    border: 3px solid #0f3460;
+    box-shadow: 0 0 0 3px rgba(100, 255, 218, 0.4), 0 0 20px rgba(100, 255, 218, 0.3);
+}
+
+/* ==================== 关系图谱容器 ==================== */
+#relationship-graph {
+    width: 100%;
+    height: 400px;
+    background: linear-gradient(
+        135deg,
+        rgba(0, 0, 0, 0.4) 0%,
+        rgba(0, 0, 0, 0.25) 100%
+    );
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-radius: 32px;
+    border: 0.5px solid rgba(255, 255, 255, 0.1);
+    position: relative;
+    overflow: hidden;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.graph-node {
+    position: absolute;
+    padding: 10px 16px;
+    background: linear-gradient(
+        135deg,
+        rgba(20, 20, 35, 0.95) 0%,
+        rgba(30, 30, 50, 0.9) 100%
+    );
+    backdrop-filter: blur(16px) saturate(180%);
+    -webkit-backdrop-filter: blur(16px) saturate(180%);
+    border: 0.5px solid rgba(100, 255, 218, 0.35);
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    font-size: 14px;
+    font-weight: 500;
+    color: #ccd6f6;
+    box-shadow: 
+        inset 0 1px 1px rgba(255, 255, 255, 0.08),
+        0 4px 16px rgba(0, 0, 0, 0.3);
+}
+
+.graph-node:hover {
+    transform: scale(1.15);
+    border-color: #64ffda;
+    box-shadow: 
+        inset 0 1px 1px rgba(255, 255, 255, 0.12),
+        0 0 30px rgba(100, 255, 218, 0.4),
+        0 8px 24px rgba(0, 0, 0, 0.4);
+    z-index: 10;
+}
+
+/* ==================== 模态框 - iPhone液态玻璃圆弧 ==================== */
+#character-modal {
+    background: rgba(0, 0, 0, 0.75);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+}
+
+#character-modal > div,
+.modal-content {
+    background: linear-gradient(
+        160deg,
+        rgba(30, 30, 55, 0.98) 0%,
+        rgba(22, 33, 62, 0.95) 50%,
+        rgba(15, 52, 96, 0.9) 100%
+    );
+    backdrop-filter: blur(30px) saturate(200%);
+    -webkit-backdrop-filter: blur(30px) saturate(200%);
+    border: 0.5px solid rgba(255, 255, 255, 0.2);
+    border-radius: 40px;
+    box-shadow: 
+        inset 0 1px 2px rgba(255, 255, 255, 0.1),
+        inset 0 -1px 1px rgba(0, 0, 0, 0.1),
+        0 25px 60px rgba(0, 0, 0, 0.5);
+}
+
+.modal-header {
+    border-bottom: 0.5px solid rgba(100, 255, 218, 0.25);
+    color: #64ffda;
+    border-radius: 40px 40px 0 0;
+}
+
+.modal-body {
+    color: #ccd6f6;
+}
+
+/* ==================== 灵根测试结果 ==================== */
+.linggen-result {
+    padding: 24px;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    border-radius: 28px;
+    text-align: center;
+    box-shadow: 
+        inset 0 1px 1px rgba(255, 255, 255, 0.2),
+        0 10px 40px rgba(102, 126, 234, 0.4);
+}
+
+/* ==================== 按钮样式 ==================== */
+.btn-primary {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    border: none;
+    border-radius: 24px;
+    padding: 12px 24px;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 
+        inset 0 1px 1px rgba(255, 255, 255, 0.2),
+        0 4px 16px rgba(102, 126, 234, 0.3);
+}
+
+.btn-primary:hover {
+    transform: translateY(-3px);
+    box-shadow: 
+        inset 0 1px 2px rgba(255, 255, 255, 0.25),
+        0 10px 35px rgba(102, 126, 234, 0.5);
+}
+
+.btn-accent {
+    background: linear-gradient(135deg, #64ffda, #22d3ee);
+    color: #1a1a2e;
+    font-weight: 600;
+    border-radius: 24px;
+}
+
+/* 筛选按钮 */
+.filter-btn {
+    padding: 10px 20px;
+    border-radius: 24px;
+    border: 0.5px solid rgba(255, 255, 255, 0.2);
+    background: linear-gradient(
+        135deg,
+        rgba(255, 255, 255, 0.08) 0%,
+        rgba(255, 255, 255, 0.04) 100%
+    );
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    color: #8892b0;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 
+        inset 0 1px 1px rgba(255, 255, 255, 0.08),
+        0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.filter-btn:hover {
+    border-color: #64ffda;
+    color: #64ffda;
+    background: linear-gradient(
+        135deg,
+        rgba(100, 255, 218, 0.12) 0%,
+        rgba(100, 255, 218, 0.06) 100%
+    );
+}
+
+.filter-btn.active {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    border-color: transparent;
+    box-shadow: 
+        inset 0 1px 2px rgba(255, 255, 255, 0.2),
+        0 4px 20px rgba(102, 126, 234, 0.4);
+}
+
+/* ==================== 输入框 ==================== */
+input, select {
+    background: linear-gradient(
+        135deg,
+        rgba(0, 0, 0, 0.4) 0%,
+        rgba(0, 0, 0, 0.25) 100%
+    );
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 0.5px solid rgba(255, 255, 255, 0.15);
+    border-radius: 20px;
+    color: #e0e0e0;
+    padding: 12px 16px;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+input:focus, select:focus {
+    outline: none;
+    border-color: #64ffda;
+    box-shadow: 
+        inset 0 2px 4px rgba(0, 0, 0, 0.2),
+        0 0 0 3px rgba(100, 255, 218, 0.15);
+}
+
+/* ==================== 标签/徽章 ==================== */
+.badge {
+    padding: 6px 16px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.badge-primary {
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.35), rgba(118, 75, 162, 0.25));
+    color: #64ffda;
+    border: 0.5px solid rgba(100, 255, 218, 0.35);
+}
+
+.badge-warning {
+    background: rgba(255, 159, 28, 0.2);
+    color: #ff9f1c;
+    border-radius: 20px;
+}
+
+/* ==================== 动画 ==================== */
+.fade-in {
+    animation: fadeIn 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* ==================== 响应式调整 ==================== */
+@media (max-width: 768px) {
+    .container {
+        padding-left: 16px;
+        padding-right: 16px;
+    }
+    
+    h2 {
+        font-size: 1.5rem;
+    }
+    
+    .character-card .h-32 {
+        height: 120px;
+    }
+    
+    #relationship-graph {
+        height: 300px;
+        border-radius: 28px;
+    }
+    
+    .timeline-container {
+        padding-left: 30px;
+    }
+    
+    .timeline-item::before {
+        left: -25px;
+    }
+    
+    .card-glass,
+    .badge,
+    .filter-btn {
+        border-radius: 28px;
+    }
+}
+
+/* ==================== 滚动条美化 ==================== */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgba(100, 255, 218, 0.3);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(100, 255, 218, 0.5);
+}
+
+/* ==================== 关系图谱SVG样式 ==================== */
+.relation-graph {
+    background: rgba(0, 0, 0, 0.3);
+}
+
+/* ==================== 五行颜色 ==================== */
+.wuxing-gold { background: linear-gradient(135deg, #f39c12, #e67e22); }
+.wuxing-wood { background: linear-gradient(135deg, #27ae60, #2ecc71); }
+.wuxing-water { background: linear-gradient(135deg, #3498db, #2980b9); }
+.wuxing-fire { background: linear-gradient(135deg, #e74c3c, #c0392b); }
+.wuxing-earth { background: linear-gradient(135deg, #9b59b6, #8e44ad); }
+
+/* ==================== 关系类型标签 ==================== */
+.relation-brother { 
+    background: rgba(59, 130, 246, 0.2); 
+    color: #60a5fa;
+    border-radius: 16px;
+}
+.relation-enemy { 
+    background: rgba(239, 68, 68, 0.2); 
+    color: #f87171;
+    border-radius: 16px;
+}
+.relation-lover { 
+    background: rgba(236, 72, 153, 0.2); 
+    color: #f472b6;
+    border-radius: 16px;
+}
+.relation-mentor { 
+    background: rgba(139, 92, 246, 0.2); 
+    color: #a78bfa;
+    border-radius: 16px;
+}
+.relation-ally { 
+    background: rgba(16, 185, 129, 0.2); 
+    color: #34d399;
+    border-radius: 16px;
+}
+
+/* ==================== 模态框内部内容区 - iPhone圆弧风格 ==================== */
+#modal-content > div > div {
+    /* 通用内层容器 */
+    background: linear-gradient(
+        135deg,
+        rgba(255, 255, 255, 0.08) 0%,
+        rgba(255, 255, 255, 0.04) 100%
+    );
+    backdrop-filter: blur(16px) saturate(160%);
+    -webkit-backdrop-filter: blur(16px) saturate(160%);
+    border: 0.5px solid rgba(255, 255, 255, 0.12);
+    border-radius: 28px;
+    box-shadow: 
+        inset 0 1px 1px rgba(255, 255, 255, 0.08),
+        0 4px 16px rgba(0, 0, 0, 0.15);
+}

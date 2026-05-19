@@ -1,0 +1,995 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>9JIE | 播客平台</title>
+    <!-- Tailwind CSS v3 -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome -->
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#FF6B35',
+                        secondary: '#4CC9F0',
+                        dark: '#2A2A2A',
+                        darker: '#121212',
+                        light: '#F8F9FA',
+                        accent: '#FFD166'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                        display: ['Montserrat', 'sans-serif']
+                    },
+                    animation: {
+                        'spin-slow': 'spin 15s linear infinite',
+                        'pulse-slow': 'pulse 3s ease-in-out infinite',
+                        'fade-in': 'fadeIn 0.8s ease-in-out',
+                        'slide-up': 'slideUp 0.8s ease-in-out',
+                        'slide-down': 'slideDown 0.8s ease-in-out',
+                        'slide-left': 'slideLeft 0.8s ease-in-out',
+                        'slide-right': 'slideRight 0.8s ease-in-out',
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' },
+                        },
+                        slideUp: {
+                            '0%': { transform: 'translateY(20px)', opacity: '0' },
+                            '100%': { transform: 'translateY(0)', opacity: '1' },
+                        },
+                        slideDown: {
+                            '0%': { transform: 'translateY(-20px)', opacity: '0' },
+                            '100%': { transform: 'translateY(0)', opacity: '1' },
+                        },
+                        slideLeft: {
+                            '0%': { transform: 'translateX(20px)', opacity: '0' },
+                            '100%': { transform: 'translateX(0)', opacity: '1' },
+                        },
+                        slideRight: {
+                            '0%': { transform: 'translateX(-20px)', opacity: '0' },
+                            '100%': { transform: 'translateX(0)', opacity: '1' },
+                        },
+                    }
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .text-shadow {
+                text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            }
+            .vinyl-shadow {
+                filter: drop-shadow(0 10px 8px rgb(0 0 0 / 0.04)) drop-shadow(0 4px 3px rgb(0 0 0 / 0.1));
+            }
+            .text-thin {
+                font-weight: 300;
+            }
+            .text-light {
+                font-weight: 100;
+            }
+        }
+    </style>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #121212;
+            color: #FFFFFF;
+            overflow-x: hidden;
+        }
+        
+        /* 黑胶唱片样式 */
+        .vinyl-record {
+            position: relative;
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            background: radial-gradient(circle at center, #000000 0%, #333333 100%);
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+            overflow: hidden;
+        }
+        
+        .vinyl-record::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: radial-gradient(circle at center, #2A2A2A 0%, #121212 100%);
+            z-index: 1;
+        }
+        
+        .vinyl-record::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #FF6B35;
+            z-index: 2;
+        }
+        
+        .vinyl-grooves {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: repeating-radial-gradient(circle at center, 
+                rgba(255, 255, 255, 0.1) 0px, 
+                rgba(255, 255, 255, 0.1) 2px, 
+                transparent 2px, 
+                transparent 4px);
+        }
+        
+        .vinyl-label {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            overflow: hidden;
+            z-index: 2;
+            border: 2px solid #4CC9F0;
+        }
+        
+        .vinyl-label-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+        
+        .vinyl-ring {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 320px;
+            height: 320px;
+            border-radius: 50%;
+            border: 3px solid #FF6B35;
+            opacity: 0.7;
+        }
+        
+        /* 唱针样式 */
+        .tonearm {
+            position: absolute;
+            top: -20px;
+            right: -20px;
+            width: 150px;
+            height: 150px;
+            transform-origin: top right;
+            transform: rotate(-30deg);
+            z-index: 10;
+        }
+        
+        .tonearm-base {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: #444444;
+            border: 2px solid #666666;
+        }
+        
+        .tonearm-arm {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            width: 120px;
+            height: 4px;
+            background: #666666;
+            transform-origin: top right;
+            transform: rotate(-45deg);
+        }
+        
+        .tonearm-head {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 10px;
+            height: 30px;
+            background: #FF6B35;
+            border-radius: 2px;
+            transform-origin: top center;
+            transform: rotate(45deg);
+        }
+        
+        /* 音频波形动画 */
+        .audio-wave {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 40px;
+            gap: 3px;
+        }
+        
+        .audio-wave span {
+            display: block;
+            width: 3px;
+            height: 100%;
+            background-color: #FF6B35;
+            border-radius: 3px;
+            animation: wave 1.2s linear infinite;
+            transform-origin: bottom;
+        }
+        
+        .audio-wave span:nth-child(2) {
+            animation-delay: 0.1s;
+        }
+        
+        .audio-wave span:nth-child(3) {
+            animation-delay: 0.2s;
+        }
+        
+        .audio-wave span:nth-child(4) {
+            animation-delay: 0.3s;
+        }
+        
+        .audio-wave span:nth-child(5) {
+            animation-delay: 0.4s;
+        }
+        
+        @keyframes wave {
+            0% {
+                height: 10%;
+            }
+            50% {
+                height: 100%;
+            }
+            100% {
+                height: 10%;
+            }
+        }
+        
+        /* 进度条样式 */
+        .progress-bar {
+            height: 4px;
+            background: #444444;
+            border-radius: 2px;
+            overflow: hidden;
+            cursor: pointer;
+        }
+        
+        .progress-bar-fill {
+            height: 100%;
+            background: #FF6B35;
+            border-radius: 2px;
+            width: 30%;
+            transition: width 0.1s linear;
+        }
+        
+        /* 滚动条样式 */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #121212;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: #FF6B35;
+            border-radius: 3px;
+        }
+        
+        /* 响应式调整 */
+        @media (max-width: 768px) {
+            .vinyl-record {
+                width: 200px;
+                height: 200px;
+            }
+            
+            .vinyl-record::before {
+                width: 60px;
+                height: 60px;
+            }
+            
+            .vinyl-record::after {
+                width: 12px;
+                height: 12px;
+            }
+            
+            .vinyl-ring {
+                width: 220px;
+                height: 220px;
+            }
+            
+            .tonearm {
+                width: 100px;
+                height: 100px;
+            }
+            
+            .tonearm-arm {
+                width: 80px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部导航栏 -->
+    <nav class="fixed top-0 left-0 w-full bg-darker bg-opacity-90 backdrop-blur-md z-50 border-b border-gray-800">
+        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="index.html" class="flex items-center space-x-2">
+                <div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center">
+                    <i class="fa fa-podcast text-white text-xl"></i>
+                </div>
+                <span class="text-2xl font-bold">9JIE</span>
+            </a>
+            
+            <div class="hidden md:flex items-center justify-center flex-grow">
+                <a href="#" class="font-medium text-white hover:text-primary transition-colors">关于我们</a>
+            </div>
+            
+            <div class="flex items-center space-x-4">
+                <div class="relative">
+                    <button id="share-button" class="hidden md:block px-4 py-2 bg-primary text-white rounded-full hover:bg-opacity-90 transition-colors">
+                        分享
+                    </button>
+                    
+                    <div id="share-dropdown" class="hidden absolute bottom-full mb-2 right-0 bg-darker border border-gray-800 rounded-lg shadow-lg p-4 w-64 z-50">
+                        <h4 class="text-white font-medium mb-3">分享到</h4>
+                        <div class="grid grid-cols-2 gap-3">
+                            <a href="#" class="flex items-center space-x-3 p-2 rounded-md hover:bg-gray-800 transition-colors share-link">
+                                <i class="fa fa-link text-primary"></i>
+                                <span class="text-gray-300">复制链接</span>
+                            </a>
+                            <a href="#" class="flex items-center space-x-3 p-2 rounded-md hover:bg-gray-800 transition-colors share-email">
+                                <i class="fa fa-envelope text-primary"></i>
+                                <span class="text-gray-300">邮件</span>
+                            </a>
+                            <a href="#" class="flex items-center space-x-3 p-2 rounded-md hover:bg-gray-800 transition-colors share-wechat">
+                                <i class="fa fa-wechat text-primary"></i>
+                                <span class="text-gray-300">微信</span>
+                            </a>
+                            <a href="#" class="flex items-center space-x-3 p-2 rounded-md hover:bg-gray-800 transition-colors share-weibo">
+                                <i class="fa fa-weibo text-primary"></i>
+                                <span class="text-gray-300">微博</span>
+                            </a>
+                        </div>
+                    </div>
+
+                </div>
+                <button class="md:hidden text-white text-xl" id="mobile-menu-button">
+                    <i class="fa fa-bars"></i>
+                </button>
+            </div>
+        </div>
+        
+        <!-- 移动端菜单 -->
+        <div id="mobile-menu" class="hidden md:hidden bg-darker border-t border-gray-800 absolute w-full">
+            <div class="container mx-auto px-6 py-4 flex flex-col space-y-4">
+                <a href="index.html" class="font-medium text-white hover:text-primary transition-colors py-2">首页</a>
+                <a href="#" class="font-medium text-white hover:text-primary transition-colors py-2">发现</a>
+
+                <a href="#" class="font-medium text-white hover:text-primary transition-colors py-2">关于我们</a>
+                <button class="w-full px-4 py-2 bg-primary text-white rounded-full hover:bg-opacity-90 transition-colors" id="share-button-mobile">
+                    分享
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 英雄区域 -->
+    <section class="pt-32 pb-24 relative overflow-hidden">
+        <!-- 顶部装饰条 -->
+        <div class="w-full h-1 bg-primary absolute top-0 left-0"></div>
+        
+        <div class="container mx-auto px-6">
+            <div class="flex flex-col items-center text-center">
+                <div class="mb-12" data-animation="fade-in">
+                    <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight">
+                        探索<span class="text-primary">九界</span>的无限可能
+                    </h1>
+                    <p class="text-lg text-gray-300 mb-8 max-w-lg mx-auto">
+                        <span style="font-family: 'FangSong', '仿宋', serif;">平行时间里的你，将与故事里的角色一起，开启奇妙旅程。</span>
+                    </p>
+                    <div class="flex flex-wrap gap-4 justify-center">
+                        <button id="hero-play-btn" class="px-6 py-3 bg-primary text-white rounded-full hover:bg-opacity-90 transition-all transform hover:scale-105 flex items-center">
+                            <i class="fa fa-play mr-2" id="hero-play-icon"></i> <span id="hero-play-text">开始收听</span>
+                        </button>
+                        <button onclick="location.href='novel-intro.html'" class="px-6 py-3 bg-transparent border-2 border-white text-white rounded-full hover:bg-white hover:text-dark transition-all">
+                            了解更多
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="flex justify-center" data-animation="slide-up" data-delay="200">
+                    <div class="relative">
+                        <div class="vinyl-ring animate-pulse-slow"></div>
+                        <div class="vinyl-record animate-spin-slow" id="hero-vinyl-record">
+                            <div class="vinyl-grooves"></div>
+                            <div class="vinyl-label" style="width: 100px; height: 100px;">
+                                <img src="assets/images/月下孤城01.png" alt="月下孤城" class="vinyl-label-img" id="hero-vinyl-img">
+                            </div>
+                        </div>
+                        <div class="tonearm">
+                            <div class="tonearm-base"></div>
+                            <div class="tonearm-arm"></div>
+                            <div class="tonearm-head"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 精选播客 -->
+    <section class="py-16 bg-dark">
+        <div class="container mx-auto px-6">
+            <div class="mb-12">
+                <div class="flex items-center justify-between mb-2">
+                    <h2 class="text-3xl font-light">精选播客</h2>
+                    <a href="#" class="text-primary font-medium hover:underline flex items-center group">
+                        查看全部 <i class="fa fa-arrow-right ml-2 transition-transform duration-300 group-hover:translate-x-1"></i>
+                    </a>
+                </div>
+                <div class="w-full h-px bg-gray-700"></div>
+            </div>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- 播客卡片 1 -->
+                <div class="bg-darker rounded-lg overflow-hidden shadow-lg transition-all duration-300 hover:shadow-primary/20 hover:translate-y-[-5px]" data-animation="fade-in" data-delay="100">
+                    <div class="relative">
+                        <div class="aspect-w-1 aspect-h-1 bg-dark flex items-center justify-center">
+                        <div class="vinyl-record w-48 h-48 animate-spin-slow">
+                            <div class="vinyl-grooves"></div>
+                            <div class="vinyl-label">
+                                <img src="assets/images/河一.png" alt="河一" class="vinyl-label-img">
+                            </div>
+                        </div>
+                        </div>
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex items-end">
+                            <div class="p-6">
+                                <h3 class="text-xl font-bold mb-1">九界之河一</h3>
+                                <p class="text-gray-300 mb-4">SAGEBOOK</p>
+                                <a href="vinyl-player.html" class="px-4 py-2 bg-primary text-white rounded-full hover:bg-opacity-90 transition-colors text-sm flex items-center w-fit">
+                                    <i class="fa fa-play mr-2"></i> 收听
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 播客卡片 2 -->
+                <div class="bg-darker rounded-lg overflow-hidden shadow-lg transition-all duration-300 hover:shadow-primary/20 hover:translate-y-[-5px]" data-animation="fade-in" data-delay="200">
+                    <div class="relative">
+                        <div class="aspect-w-1 aspect-h-1 bg-dark flex items-center justify-center">
+                        <div class="vinyl-record w-48 h-48 animate-spin-slow">
+                            <div class="vinyl-grooves"></div>
+                            <div class="vinyl-label">
+                                <img src="assets/images/刘浪浪.png" alt="刘浪浪" class="vinyl-label-img">
+                            </div>
+                        </div>
+                    </div>
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex items-end">
+                            <div class="p-6">
+                                <h3 class="text-xl font-bold mb-1">九界之-刘浪浪</h3>
+                                <p class="text-gray-300 mb-4">文二ᵃⁱ</p>
+                                <a href="player-liulanglang.html" class="px-4 py-2 bg-primary text-white rounded-full hover:bg-opacity-90 transition-colors text-sm flex items-center w-fit">
+                                    <i class="fa fa-play mr-2"></i> 收听
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 播客卡片 3 -->
+                <div class="bg-darker rounded-lg overflow-hidden shadow-lg transition-all duration-300 hover:shadow-primary/20 hover:translate-y-[-5px]" data-animation="fade-in" data-delay="300">
+                    <div class="relative">
+                        <div class="aspect-w-1 aspect-h-1 bg-dark flex items-center justify-center">
+                        <div class="vinyl-record w-48 h-48 animate-spin-slow">
+                            <div class="vinyl-grooves"></div>
+                            <div class="vinyl-label">
+                                <img src="assets/images/甘道夫.png" alt="甘道夫" class="vinyl-label-img">
+                            </div>
+                        </div>
+                    </div>
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex items-end">
+                            <div class="p-6">
+                                <h3 class="text-xl font-bold mb-1">九界之-甘道夫</h3>
+                                <p class="text-gray-300 mb-4">Ganccnet</p>
+                                <a href="player-gandalf.html" class="px-4 py-2 bg-primary text-white rounded-full hover:bg-opacity-90 transition-colors text-sm flex items-center w-fit">
+                                    <i class="fa fa-play mr-2"></i> 收听
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+
+    <!-- 订阅区域 -->
+    <section class="py-16 bg-dark relative overflow-hidden">
+        <div class="container mx-auto px-6 relative z-10">
+            <div class="max-w-3xl mx-auto text-center" data-animation="fade-in">
+                <h2 class="text-3xl font-bold mb-6">订阅最新更新</h2>
+                <p class="text-gray-300 mb-8">获取最新播客上线通知和独家内容，直接发送到您的邮箱。</p>
+                
+                <form class="flex flex-col sm:flex-row gap-4 max-w-lg mx-auto">
+                    <input type="email" placeholder="您的邮箱地址" class="flex-grow px-4 py-3 bg-darker border border-gray-700 text-white placeholder-gray-500 focus:outline-none focus:border-primary">
+                    <button type="submit" class="px-6 py-3 bg-primary text-white rounded-full hover:bg-opacity-90 transition-colors">
+                        订阅
+                    </button>
+                </form>
+                
+                <p class="text-sm text-gray-500 mt-4">我们尊重您的隐私，不会向第三方分享您的信息。</p>
+            </div>
+        </div>
+        
+        <!-- 背景装饰 -->
+        <div class="absolute top-0 left-0 w-full h-full opacity-10">
+            <div class="absolute top-10 left-10 w-40 h-40 rounded-full bg-primary blur-3xl"></div>
+            <div class="absolute bottom-10 right-10 w-60 h-60 rounded-full bg-primary blur-3xl"></div>
+        </div>
+    </section>
+
+    <!-- 页脚 -->
+    <footer class="bg-darker py-12 border-t border-gray-800">
+        <div class="container mx-auto px-6">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-12">
+                <div>
+                    <div class="flex items-center space-x-2 mb-6">
+                        <div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center">
+                            <i class="fa fa-podcast text-white text-xl"></i>
+                        </div>
+                        <span class="text-2xl font-bold">9JIE</span>
+                    </div>
+                    <p class="text-gray-400 mb-6">
+                        探索声音的无限可能，发现最优质的播客内容。
+                    </p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-400 hover:text-primary transition-colors">
+                            <i class="fa fa-weibo text-xl"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-primary transition-colors">
+                            <i class="fa fa-wechat text-xl"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-primary transition-colors">
+                            <i class="fa fa-twitter text-xl"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-primary transition-colors">
+                            <i class="fa fa-instagram text-xl"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <div>
+                    <h3 class="text-lg font-bold mb-6 text-white">匿名留言区</h3>
+                    <div class="bg-dark bg-opacity-30 rounded-lg p-4">
+                        <div id="message-board" class="h-48 overflow-hidden relative mb-4">
+                            <div id="message-scroll">
+                                <div class="mb-3 p-3 bg-dark bg-opacity-50 rounded-lg border border-gray-700">
+                                    <div class="flex justify-between items-start">
+                                        <div class="flex-1">
+                                            <p class="text-gray-300 text-sm" style="font-family: 'FangSong', '仿宋', serif;">「九界的故事太精彩了，每次听都有新发现！」</p>
+                                            <span class="text-xs text-gray-500 mt-1 block" style="font-family: 'FangSong', '仿宋', serif;">匿名用户</span>
+                                        </div>
+                                        <button class="like-btn flex items-center gap-1 text-red-500 transition-colors ml-2" data-likes="12">
+                                            <i class="fa fa-heart"></i>
+                                            <span class="text-xs like-count">12</span>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="mb-3 p-3 bg-dark bg-opacity-50 rounded-lg border border-gray-700">
+                                    <div class="flex justify-between items-start">
+                                        <div class="flex-1">
+                                            <p class="text-gray-300 text-sm" style="font-family: 'FangSong', '仿宋', serif;">「河一的声音很有磁性，睡前必听！」</p>
+                                            <span class="text-xs text-gray-500 mt-1 block" style="font-family: 'FangSong', '仿宋', serif;">匿名用户</span>
+                                        </div>
+                                        <button class="like-btn flex items-center gap-1 text-red-500 transition-colors ml-2" data-likes="8">
+                                            <i class="fa fa-heart"></i>
+                                            <span class="text-xs like-count">8</span>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="mb-3 p-3 bg-dark bg-opacity-50 rounded-lg border border-gray-700">
+                                    <div class="flex justify-between items-start">
+                                        <div class="flex-1">
+                                            <p class="text-gray-300 text-sm" style="font-family: 'FangSong', '仿宋', serif;">「希望多出一些悬疑题材的播客～」</p>
+                                            <span class="text-xs text-gray-500 mt-1 block" style="font-family: 'FangSong', '仿宋', serif;">匿名用户</span>
+                                        </div>
+                                        <button class="like-btn flex items-center gap-1 text-red-500 transition-colors ml-2" data-likes="15">
+                                            <i class="fa fa-heart"></i>
+                                            <span class="text-xs like-count">15</span>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="mb-3 p-3 bg-dark bg-opacity-50 rounded-lg border border-gray-700">
+                                    <div class="flex justify-between items-start">
+                                        <div class="flex-1">
+                                            <p class="text-gray-300 text-sm" style="font-family: 'FangSong', '仿宋', serif;">「这个平台的界面设计很棒，黑胶唱片动画太酷了！」</p>
+                                            <span class="text-xs text-gray-500 mt-1 block" style="font-family: 'FangSong', '仿宋', serif;">匿名用户</span>
+                                        </div>
+                                        <button class="like-btn flex items-center gap-1 text-red-500 transition-colors ml-2" data-likes="20">
+                                            <i class="fa fa-heart"></i>
+                                            <span class="text-xs like-count">20</span>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="mb-3 p-3 bg-dark bg-opacity-50 rounded-lg border border-gray-700">
+                                    <div class="flex justify-between items-start">
+                                        <div class="flex-1">
+                                            <p class="text-gray-300 text-sm" style="font-family: 'FangSong', '仿宋', serif;">「已经推荐给所有朋友了，九界加油！」</p>
+                                            <span class="text-xs text-gray-500 mt-1 block" style="font-family: 'FangSong', '仿宋', serif;">匿名用户</span>
+                                        </div>
+                                        <button class="like-btn flex items-center gap-1 text-red-500 transition-colors ml-2" data-likes="6">
+                                            <i class="fa fa-heart"></i>
+                                            <span class="text-xs like-count">6</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex gap-2 mb-3">
+                            <input type="text" placeholder="匿名留言..." class="flex-1 bg-dark text-white px-4 py-2 rounded-full border border-gray-700 focus:border-primary text-sm">
+                            <button class="px-4 py-2 bg-primary text-white rounded-full hover:bg-opacity-90 transition-colors text-sm send-message">发送</button>
+                        </div>
+                        <div class="text-center text-gray-400 text-xs">
+                            <span>本博客内容已累计播放 5W+，您是第 </span>
+                            <span id="visitor-count" class="text-primary font-bold">3590</span>
+                            <span> 位听友</span>
+                        </div>
+                    </div>
+                </div>
+                
+
+                <div>
+                    <h3 class="text-lg font-bold mb-6 text-white">联系我们</h3>
+                    <ul class="space-y-3">
+                        <li class="flex items-start">
+                            <i class="fa fa-envelope text-primary mt-1 mr-3"></i>
+                            <span class="text-gray-400">9JIE@9JIE-podcast.com</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fa fa-phone text-primary mt-1 mr-3"></i>
+                            <span class="text-gray-400">+……(^_^)v 23 5767 80910</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fa fa-map-marker text-primary mt-1 mr-3"></i>
+                            <span class="text-gray-400">Surface Fixed Address (Olympus Mons 奥林帕斯山)<br>18.65°N, 226.20°E, Mars Planet, Solar System</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-800 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center">
+                <p class="text-gray-500 text-sm mb-4 md:mb-0">
+                    &copy; 2026 9JIE 播客平台及作者. 保留所有权利.
+                </p>
+                <div class="flex space-x-6">
+                    <a href="privacy-policy.html" class="text-gray-500 hover:text-primary text-sm transition-colors">隐私政策</a>
+                    <a href="terms-of-service.html" class="text-gray-500 hover:text-primary text-sm transition-colors">服务条款</a>
+                    <a href="cookie-policy.html" class="text-gray-500 hover:text-primary text-sm transition-colors">Cookie 政策</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 移动端菜单切换
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+            
+            mobileMenuButton.addEventListener('click', function() {
+                mobileMenu.classList.toggle('hidden');
+            });
+
+            
+            // ============ 分享功能 ============
+            const shareButton = document.getElementById('share-button');
+            const shareButtonMobile = document.getElementById('share-button-mobile');
+            const shareDropdown = document.getElementById('share-dropdown');
+            
+            function toggleShareDropdown(e) {
+                e.stopPropagation();
+                if (shareDropdown) {
+                    shareDropdown.classList.toggle('hidden');
+                }
+            }
+            
+            if (shareButton && shareDropdown) {
+                shareButton.addEventListener('click', toggleShareDropdown);
+            }
+            
+            if (shareButtonMobile && shareDropdown) {
+                shareButtonMobile.addEventListener('click', toggleShareDropdown);
+            }
+            
+            // 点击其他地方关闭下拉菜单
+            document.addEventListener('click', function(event) {
+                if (shareDropdown && !shareDropdown.contains(event.target) && 
+                    (!shareButton || !shareButton.contains(event.target)) &&
+                    (!shareButtonMobile || !shareButtonMobile.contains(event.target))) {
+                    shareDropdown.classList.add('hidden');
+                }
+            });
+            
+            // 复制链接
+            const shareLink = shareDropdown?.querySelector('.share-link');
+            if (shareLink) {
+                shareLink.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const url = window.location.href;
+                    if (navigator.clipboard) {
+                        navigator.clipboard.writeText(url).then(() => {
+                            alert('链接已复制到剪贴板');
+                        });
+                    } else {
+                        const input = document.createElement('input');
+                        input.value = url;
+                        document.body.appendChild(input);
+                        input.select();
+                        document.execCommand('copy');
+                        document.body.removeChild(input);
+                        alert('链接已复制到剪贴板');
+                    }
+                    shareDropdown.classList.add('hidden');
+                });
+            }
+            
+            // 邮件分享
+            const shareEmail = shareDropdown?.querySelector('.share-email');
+            if (shareEmail) {
+                shareEmail.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const url = window.location.href;
+                    const title = document.title;
+                    const mailtoUrl = `mailto:?subject=${encodeURIComponent(title)}&body=${encodeURIComponent('推荐你收听：' + title + ' ' + url)}`;
+                    window.location.href = mailtoUrl;
+                    shareDropdown.classList.add('hidden');
+                });
+            }
+            
+            // 微信分享
+            const shareWechat = shareDropdown?.querySelector('.share-wechat');
+            if (shareWechat) {
+                shareWechat.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    alert('请截图或使用微信扫一扫分享');
+                    shareDropdown.classList.add('hidden');
+                });
+            }
+            
+            // 微博分享
+            const shareWeibo = shareDropdown?.querySelector('.share-weibo');
+            if (shareWeibo) {
+                shareWeibo.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const url = encodeURIComponent(window.location.href);
+                    const title = encodeURIComponent(document.title);
+                    window.open(`https://service.weibo.com/share/share.php?url=${url}&title=${title}`, '_blank');
+                    shareDropdown.classList.add('hidden');
+                });
+            }
+
+            // 元素动画
+            const animatedElements = document.querySelectorAll('[data-animation]');
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const animation = entry.target.getAttribute('data-animation');
+                        const delay = entry.target.getAttribute('data-delay') || 0;
+                        
+                        setTimeout(() => {
+                            entry.target.classList.add(`animate-${animation}`);
+                        }, delay);
+                        
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, {
+                threshold: 0.1
+            });
+            
+            animatedElements.forEach(element => {
+                observer.observe(element);
+            });
+        });
+
+        // 匿名留言滚动效果（无缝循环）
+        const messageScroll = document.getElementById('message-scroll');
+        const messageBoard = document.getElementById('message-board');
+        
+        if (messageScroll && messageBoard) {
+            // 复制一份内容实现无缝循环
+            const clone = messageScroll.innerHTML;
+            messageScroll.innerHTML += clone;
+            
+            let scrollPosition = 0;
+            const originalHeight = messageScroll.scrollHeight / 2;
+            const boardHeight = messageBoard.offsetHeight;
+            
+            messageScroll.style.transform = `translateY(${boardHeight}px)`;
+            
+            setInterval(() => {
+                scrollPosition -= 1;
+                if (Math.abs(scrollPosition) >= originalHeight) {
+                    // 无缝重置到开始位置
+                    scrollPosition = 0;
+                }
+                messageScroll.style.transform = `translateY(${scrollPosition}px)`;
+            }, 50);
+        }
+
+        // 点赞功能（默认红色，点击取消变灰色，带动画）
+        let visitorCount = 3590;
+        const visitorCountEl = document.getElementById('visitor-count');
+        
+        document.addEventListener('click', function(e) {
+            if (e.target.closest('.like-btn')) {
+                const btn = e.target.closest('.like-btn');
+                const countEl = btn.querySelector('.like-count');
+                let count = parseInt(btn.getAttribute('data-likes'));
+                
+                // 添加点击放大动画
+                btn.style.transform = 'scale(1.3)';
+                setTimeout(() => {
+                    btn.style.transform = 'scale(1)';
+                }, 200);
+                
+                if (btn.classList.contains('liked')) {
+                    // 已点赞，取消点赞
+                    btn.classList.remove('liked');
+                    btn.classList.remove('text-gray-500');
+                    btn.classList.add('text-red-500');
+                    count--;
+                } else {
+                    // 未点赞，添加点赞
+                    btn.classList.add('liked');
+                    btn.classList.remove('text-red-500');
+                    btn.classList.add('text-gray-500');
+                    count++;
+                    
+                    // 增加听友计数
+                    visitorCount++;
+                    visitorCountEl.textContent = visitorCount;
+                }
+                
+                btn.setAttribute('data-likes', count);
+                countEl.textContent = count;
+            }
+        });
+
+        // 发送留言功能
+        const sendButtons = document.querySelectorAll('.send-message');
+        sendButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const input = this.previousElementSibling;
+                const message = input.value.trim();
+                if (message) {
+                    const initialLikes = Math.floor(Math.random() * 10) + 1;
+                    const messageHTML = `
+                        <div class="mb-3 p-3 bg-dark bg-opacity-50 rounded-lg border border-gray-700">
+                            <div class="flex justify-between items-start">
+                                <div class="flex-1">
+                                    <p class="text-gray-300 text-sm" style="font-family: 'FangSong', '仿宋', serif;">「${message}」</p>
+                                    <span class="text-xs text-gray-500 mt-1 block" style="font-family: 'FangSong', '仿宋', serif;">匿名用户</span>
+                                </div>
+                                <button class="like-btn flex items-center gap-1 text-red-500 transition-colors ml-2" data-likes="${initialLikes}">
+                                    <i class="fa fa-heart"></i>
+                                    <span class="text-xs like-count">${initialLikes}</span>
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                    
+                    // 添加到前半部分
+                    messageScroll.insertAdjacentHTML('beforeend', messageHTML);
+                    // 添加到后半部分（复制区域）实现无缝循环
+                    messageScroll.insertAdjacentHTML('beforeend', messageHTML);
+                    
+                    input.value = '';
+                }
+            });
+            
+            // 回车键发送
+            const input = button.previousElementSibling;
+            input.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    button.click();
+                }
+            });
+        });
+    </script>
+    
+    <!-- 首页随机播放音频 -->
+    <audio id="hero-audio" preload="metadata"></audio>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const heroTracks = [
+                { src: 'assets/music/月下孤城01.mp3', img: 'assets/images/月下孤城01.png', title: '月下孤城 - 第一章' },
+                { src: 'assets/music/月下孤城02.mp3', img: 'assets/images/月下孤城02.png', title: '月下孤城 - 第二章' },
+                { src: 'assets/music/月下孤城03.mp3', img: 'assets/images/月下孤城03.png', title: '月下孤城 - 第三章' }
+            ];
+            
+            const heroAudio = document.getElementById('hero-audio');
+            const heroPlayBtn = document.getElementById('hero-play-btn');
+            const heroPlayIcon = document.getElementById('hero-play-icon');
+            const heroPlayText = document.getElementById('hero-play-text');
+            const heroVinylImg = document.getElementById('hero-vinyl-img');
+            const heroVinylRecord = document.getElementById('hero-vinyl-record');
+            
+            let currentTrackIndex = -1;
+            let isPlaying = false;
+            
+            function playRandomTrack() {
+                let newIndex;
+                do {
+                    newIndex = Math.floor(Math.random() * heroTracks.length);
+                } while (newIndex === currentTrackIndex && heroTracks.length > 1);
+                currentTrackIndex = newIndex;
+                
+                const track = heroTracks[currentTrackIndex];
+                heroAudio.src = track.src;
+                heroVinylImg.src = track.img;
+                heroAudio.play().catch(e => console.log('播放失败:', e));
+            }
+            
+            if (heroPlayBtn) {
+                heroPlayBtn.addEventListener('click', function() {
+                    if (isPlaying) {
+                        heroAudio.pause();
+                    } else {
+                        if (currentTrackIndex === -1 || !heroAudio.src) {
+                            playRandomTrack();
+                        } else {
+                            heroAudio.play().catch(e => console.log('播放失败:', e));
+                        }
+                    }
+                });
+            }
+            
+            if (heroAudio) {
+                heroAudio.addEventListener('play', function() {
+                    isPlaying = true;
+                    heroPlayIcon.classList.remove('fa-play');
+                    heroPlayIcon.classList.add('fa-pause');
+                    heroPlayText.textContent = '暂停播放';
+                    if (heroVinylRecord) heroVinylRecord.style.animationPlayState = 'running';
+                });
+                
+                heroAudio.addEventListener('pause', function() {
+                    isPlaying = false;
+                    heroPlayIcon.classList.remove('fa-pause');
+                    heroPlayIcon.classList.add('fa-play');
+                    heroPlayText.textContent = '继续播放';
+                    if (heroVinylRecord) heroVinylRecord.style.animationPlayState = 'paused';
+                });
+                
+                heroAudio.addEventListener('ended', function() {
+                    playRandomTrack();
+                });
+            }
+        });
+    </script>
+</body>
+</html>

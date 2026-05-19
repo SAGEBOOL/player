@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>天道老人 - 九界修真世界人物志</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <style>
+        .story-header {
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.15), rgba(124, 58, 237, 0.08));
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            border: 0.5px solid rgba(139, 92, 246, 0.25);
+        }
+        .story-content {
+            background: linear-gradient(145deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+            backdrop-filter: blur(20px) saturate(180%);
+            border: 0.5px solid rgba(255, 255, 255, 0.15);
+        }
+        .story-divider {
+            background: linear-gradient(90deg, transparent, rgba(139, 92, 246, 0.5), transparent);
+        }
+        .chapter-title {
+            color: #8b5cf6;
+        }
+        .back-button {
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.9), rgba(124, 58, 237, 0.9));
+            transition: all 0.3s ease;
+        }
+        .back-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(139, 92, 246, 0.4);
+        }
+        .mystic-effect {
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(124, 58, 237, 0.1));
+            border: 1px solid rgba(139, 92, 246, 0.3);
+        }
+        .prophecy-icon {
+            font-size: 1.5rem;
+            filter: drop-shadow(0 0 8px rgba(139, 92, 246, 0.6));
+        }
+    </style>
+</head>
+<body class="min-h-screen text-white" style="background: linear-gradient(135deg, #0a0a1a 0%, #1a0a2e 50%, #0a0a3a 100%);">
+    
+    <!-- 返回按钮 -->
+    <div class="fixed top-6 left-6 z-50">
+        <a href="index.html" class="back-button px-6 py-3 rounded-full font-bold text-white shadow-lg flex items-center space-x-2" style="box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);">
+            <span>←</span>
+            <span>返回百科</span>
+        </a>
+    </div>
+
+    <!-- 主内容区 -->
+    <div class="container mx-auto px-4 py-24 max-w-6xl">
+        
+        <!-- 人物标题区 -->
+        <div class="story-header rounded-3xl p-8 mb-8 shadow-2xl">
+            <div class="flex flex-col md:flex-row items-center space-y-6 md:space-y-0 md:space-x-8">
+                <!-- 人物头像 -->
+                <div class="w-48 h-auto rounded-2xl flex items-center justify-center shadow-2xl" style="background: linear-gradient(135deg, #8b5cf6, #7c3aed); box-shadow: 0 20px 60px rgba(139, 92, 246, 0.3);">
+                    <img src="assets/images/天道老人.png" alt="天道老人" class="w-full h-auto rounded-2xl object-contain" style="box-shadow: 0 8px 24px rgba(0,0,0,0.3);">
+                </div>
+                
+                <!-- 人物信息 -->
+                <div class="flex-1 text-center md:text-left">
+                    <h1 class="text-5xl font-bold mb-4" style="color: #8b5cf6; text-shadow: 0 0 30px rgba(139, 92, 246, 0.5);">🔮 天道老人</h1>
+                    <p class="text-xl mb-2" style="color: #a78bfa;">九界守护者 · 天道法则化身</p>
+                    <p class="text-lg" style="color: #c4b5fd;">神秘莫测的引路人 · 亦正亦邪</p>
+                    
+                    <!-- 标签 -->
+                    <div class="flex flex-wrap gap-2 mt-4 justify-center md:justify-start">
+                        <span class="px-4 py-2 rounded-full text-sm font-bold" style="background: rgba(139, 92, 246, 0.2); color: #8b5cf6; border: 1px solid rgba(139, 92, 246, 0.3);">神秘引路人</span>
+                        <span class="px-4 py-2 rounded-full text-sm font-bold" style="background: rgba(234, 179, 8, 0.2); color: #eab308; border: 1px solid rgba(234, 179, 8, 0.3);">导师</span>
+                        <span class="px-4 py-2 rounded-full text-sm font-bold" style="background: rgba(16, 185, 129, 0.2); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.3);">守护者</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 人物简介 -->
+        <div class="story-content rounded-3xl p-8 mb-8">
+            <h2 class="text-3xl font-bold mb-6 chapter-title">📖 人物简介</h2>
+            <div class="story-divider h-px mb-6"></div>
+            
+            <div class="space-y-4" style="color: #ccd6f6; line-height: 1.8;">
+                <p>天道老人，九界守护者之一，天道法则的化身。他神秘莫测，智慧超群，行踪不定，是主角团最重要的引路人。</p>
+                <p>他能够<strong style="color: #8b5cf6;">推演天道</strong>，预知未来，但却总是以一种看似随意的方式点拨主角，让人摸不透他的真实意图。</p>
+                <p>性格<strong style="color: #8b5cf6;">亦正亦邪</strong>，时而慈祥如祖父，时而严厉如师尊，时而疯癫如狂人。</p>
+                <p>掌握<strong style="color: #8b5cf6;">时空穿梭</strong>之术，能够在九界之中自由来去，是少数不受玄宸封锁影响的存在。</p>
+            </div>
+
+            <!-- 人物特征卡片 -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-8">
+                <div class="mystic-effect rounded-xl p-4 text-center">
+                    <div class="prophecy-icon mb-2">🔮</div>
+                    <h3 class="font-bold mb-1" style="color: #8b5cf6;">身份</h3>
+                    <p class="text-sm" style="color: #a78bfa;">天道法则化身 · 守护者</p>
+                </div>
+                <div class="mystic-effect rounded-xl p-4 text-center">
+                    <div class="prophecy-icon mb-2">🌟</div>
+                    <h3 class="font-bold mb-1" style="color: #8b5cf6;">能力特征</h3>
+                    <p class="text-sm" style="color: #a78bfa;">预言推演 · 天道法则</p>
+                </div>
+                <div class="mystic-effect rounded-xl p-4 text-center">
+                    <div class="prophecy-icon mb-2">🎭</div>
+                    <h3 class="font-bold mb-1" style="color: #8b5cf6;">性格特征</h3>
+                    <p class="text-sm" style="color: #a78bfa;">亦正亦邪 · 神秘莫测</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 身世与使命 -->
+        <div class="story-content rounded-3xl p-8 mb-8">
+            <h2 class="text-3xl font-bold mb-6 chapter-title">🎭 身世与使命</h2>
+            <div class="story-divider h-px mb-6"></div>
+            
+            <div class="space-y-6" style="color: #ccd6f6; line-height: 1.8;">
+                <div class="mystic-effect rounded-xl p-6">
+                    <h3 class="text-xl font-bold mb-3" style="color: #8b5cf6;">🌌 天道法则化身</h3>
+                    <p>天道老人并非凡人，而是天道法则的化身。他诞生于九界初开之时，是九界意志的具现化。</p>
+                    <p class="mt-2">他不属于任何一届，却守护着所有界。他的存在，是为了维持九界的平衡。</p>
+                </div>
+
+                <div class="mystic-effect rounded-xl p-6">
+                    <h3 class="text-xl font-bold mb-3" style="color: #7c3aed;">🎯 引导主角</h3>
+                    <p>天道老人一直在暗中观察刘浪浪的成长。他从刘浪浪还是个凡人少年时，就开始布局引导。</p>
+                    <p class="mt-2">入梦点拨、留下线索、适时出现...他的每一次出现，都是精心计算好的。</p>
+                </div>
+
+                <div class="mystic-effect rounded-xl p-6">
+                    <h3 class="text-xl font-bold mb-3" style="color: #a78bfa;">🌀 亦正亦邪</h3>
+                    <p>天道老人的行为常常让人摸不透。他时而帮助主角团，时而袖手旁观，甚至有时会设置障碍。</p>
+                    <p class="mt-2">但其实，他所做的一切，都是为了让自己浪浪成长，为了让他能够承担起守护九界的责任。</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 核心能力 -->
+        <div class="story-content rounded-3xl p-8 mb-8">
+            <h2 class="text-3xl font-bold mb-6 chapter-title">✨ 核心能力</h2>
+            <div class="story-divider h-px mb-6"></div>
+            
+            <div class="space-y-6">
+                <!-- 天道法则 -->
+                <div class="mystic-effect rounded-xl p-6">
+                    <h3 class="text-xl font-bold mb-3" style="color: #8b5cf6;">🌌 天道法则</h3>
+                    <p class="mb-3" style="color: #ccd6f6;">天道老人作为天道法则的化身，能够操控九界的基础规则。他能够改写功法、调整灵根、甚至逆转时空。</p>
+                    <div class="rounded-lg p-4" style="background: rgba(139, 92, 246, 0.1); border-left: 4px solid #8b5cf6;">
+                        <p class="text-sm" style="color: #a78bfa;">💡 终极能力：能够改写九界法则，是玄宸最忌惮的存在。</p>
+                    </div>
+                </div>
+
+                <!-- 预言推演 -->
+                <div class="mystic-effect rounded-xl p-6">
+                    <h3 class="text-xl font-bold mb-3" style="color: #7c3aed;">🔮 预言推演</h3>
+                    <p class="mb-3" style="color: #ccd6f6;">天道老人能够推演天机，预知未来。但他的预言总是含糊不清，需要主角自己去领悟。</p>
+                    <div class="rounded-lg p-4" style="background: rgba(124, 58, 237, 0.1); border-left: 4px solid #7c3aed;">
+                        <p class="text-sm" style="color: #a78bfa;">🔮 预言特点：含糊不清，需要悟性。往往一语双关，暗藏玄机。</p>
+                    </div>
+                </div>
+
+                <!-- 时空穿梭 -->
+                <div class="mystic-effect rounded-xl p-6">
+                    <h3 class="text-xl font-bold mb-3" style="color: #a78bfa;">⏳ 时空穿梭</h3>
+                    <p class="mb-3" style="color: #ccd6f6;">天道老人能够在九界之中自由穿梭，不受玄宸的时空封锁影响。他甚至能够穿越到过去和未来。</p>
+                    <div class="rounded-lg p-4" style="background: rgba(167, 139, 250, 0.1); border-left: 4px solid #a78bfa;">
+                        <p class="text-sm" style="color: #a78bfa;">⏰ 时空能力：不受任何封锁限制，唯一能够在九界自由穿梭的存在。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 与主角团的关系 -->
+        <div class="story-content rounded-3xl p-8 mb-8">
+            <h2 class="text-3xl font-bold mb-6 chapter-title">💫 与主角团的关系</h2>
+            <div class="story-divider h-px mb-6"></div>
+            
+            <div class="space-y-6" style="color: #ccd6f6; line-height: 1.8;">
+                <div class="mystic-effect rounded-xl p-6">
+                    <h3 class="text-xl font-bold mb-3" style="color: #8b5cf6;">🌟 刘浪浪 - 弟子</h3>
+                    <p>天道老人是刘浪浪的引路人。从刘浪浪还是个凡人少年时，就开始在梦中点拨他，引导他走上修真之路。</p>
+                    <p class="mt-2">但天道老人的教育方式很特别——他不会直接告诉刘浪浪该怎么做，而是通过设置考验、留下线索，让他自己去领悟。</p>
+                </div>
+
+                <div class="mystic-effect rounded-xl p-6">
+                    <h3 class="text-xl font-bold mb-3" style="color: #7c3aed;">🧔 河一 - 观察对象</h3>
+                    <p>天道老人也很关注河一。作为界域风水师，河一的能力对九界的平衡至关重要。</p>
+                    <p class="mt-2">天道老人曾经在暗中帮助过河一，但他从不对河一明说，只是默默守护。</p>
+                </div>
+
+                <div class="mystic-effect rounded-xl p-6">
+                    <h3 class="text-xl font-bold mb-3" style="color: #a78bfa;">⚔️ 玄宸 - 旧友变敌人</h3>
+                    <p>玄宸曾经是天道老人的战友，两人并肩作战，守护九界。但玄宸的堕落，让两人反目成仇。</p>
+                    <p class="mt-2">天道老人一直在寻找机会，希望能够让玄宸迷途知返。但他也知道，这可能只是奢望。</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 经典台词 -->
+        <div class="story-content rounded-3xl p-8 mb-8">
+            <h2 class="text-3xl font-bold mb-6 chapter-title">💬 经典台词</h2>
+            <div class="story-divider h-px mb-6"></div>
+            
+            <div class="space-y-4">
+                <div class="mystic-effect rounded-xl p-6">
+                    <p class="text-lg italic" style="color: #8b5cf6;">"天道轮回，自有其序。你现在要做的，不是追问为什么，而是去经历。"</p>
+                    <p class="text-right mt-2" style="color: #a78bfa;">——在梦中点拨刘浪浪时</p>
+                </div>
+
+                <div class="mystic-effect rounded-xl p-6">
+                    <p class="text-lg italic" style="color: #7c3aed;">"九界如棋，众生如子。但真正的棋手...或许并不是我。"</p>
+                    <p class="text-right mt-2" style="color: #a78bfa;">——下棋时自言自语</p>
+                </div>
+
+                <div class="mystic-effect rounded-xl p-6">
+                    <p class="text-lg italic" style="color: #a78bfa;">"玄宸啊玄宸，你还是太年轻了。力量...并不是一切。"</p>
+                    <p class="text-right mt-2" style="color: #a78bfa;">——感叹玄宸的堕落时</p>
+                </div>
+
+                <div class="mystic-effect rounded-xl p-6">
+                    <p class="text-lg italic" style="color: #8b5cf6;">"小子，你还有很长的路要走。但别担心，老头子我...还会再出现的。"</p>
+                    <p class="text-right mt-2" style="color: #a78bfa;">——离开刘浪浪时</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 相关剧情 -->
+        <div class="story-content rounded-3xl p-8 mb-8">
+            <h2 class="text-3xl font-bold mb-6 chapter-title">📚 相关剧情</h2>
+            <div class="story-divider h-px mb-6"></div>
+            
+            <div class="space-y-4">
+                <div class="mystic-effect rounded-xl p-6 flex items-center justify-between">
+                    <div>
+                        <h3 class="font-bold" style="color: #8b5cf6;">第2卷：入梦点拨</h3>
+                        <p class="text-sm" style="color: #a78bfa;">天道老人首次在刘浪浪梦中出现</p>
+                    </div>
+                    <span class="text-2xl">🔮</span>
+                </div>
+
+                <div class="mystic-effect rounded-xl p-6 flex items-center justify-between">
+                    <div>
+                        <h3 class="font-bold" style="color: #7c3aed;">第28卷：天道真相</h3>
+                        <p class="text-sm" style="color: #a78bfa;">揭示天道老人的真实身份和使命</p>
+                    </div>
+                    <span class="text-2xl">🌌</span>
+                </div>
+
+                <div class="mystic-effect rounded-xl p-6 flex items-center justify-between">
+                    <div>
+                        <h3 class="font-bold" style="color: #a78bfa;">隐藏卷：守护者</h3>
+                        <p class="text-sm" style="color: #a78bfa;">天道老人与玄宸的过去</p>
+                    </div>
+                    <span class="text-2xl">🎭</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 人物关系网 -->
+        <div class="story-content rounded-3xl p-8 mb-8">
+            <h2 class="text-3xl font-bold mb-6 chapter-title">🕸️ 人物关系网</h2>
+            <div class="story-divider h-px mb-6"></div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="mystic-effect rounded-xl p-4 flex items-center space-x-4">
+                    <div class="w-12 h-12 rounded-full flex items-center justify-center text-2xl" style="background: linear-gradient(135deg, #fbbf24, #f59e0b);">
+                        🧙
+                    </div>
+                    <div class="flex-1">
+                        <h3 class="font-bold" style="color: #fbbf24;">刘浪浪</h3>
+                        <p class="text-sm" style="color: #a78bfa;">弟子 · 引导对象</p>
+                    </div>
+                    <span class="px-3 py-1 rounded-full text-xs font-bold" style="background: rgba(234, 179, 8, 0.2); color: #eab308;">导师</span>
+                </div>
+
+                <div class="mystic-effect rounded-xl p-4 flex items-center space-x-4">
+                    <div class="w-12 h-12 rounded-full flex items-center justify-center text-2xl" style="background: linear-gradient(135deg, #dc2626, #b91c1c);">
+                        😈
+                    </div>
+                    <div class="flex-1">
+                        <h3 class="font-bold" style="color: #dc2626;">玄宸</h3>
+                        <p class="text-sm" style="color: #a78bfa;">旧友 · 如今的敌人</p>
+                    </div>
+                    <span class="px-3 py-1 rounded-full text-xs font-bold" style="background: rgba(239, 68, 68, 0.2); color: #ef4444;">宿敌</span>
+                </div>
+
+                <div class="mystic-effect rounded-xl p-4 flex items-center space-x-4">
+                    <div class="w-12 h-12 rounded-full flex items-center justify-center text-2xl" style="background: linear-gradient(135deg, #3b82f6, #2563eb);">
+                        ⚔️
+                    </div>
+                    <div class="flex-1">
+                        <h3 class="font-bold" style="color: #3b82f6;">甘道夫</h3>
+                        <p class="text-sm" style="color: #a78bfa;">盟友 · 昔日战友</p>
+                    </div>
+                    <span class="px-3 py-1 rounded-full text-xs font-bold" style="background: rgba(16, 185, 129, 0.2); color: #10b981;">盟友</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 返回按钮 -->
+        <div class="text-center mt-12">
+            <a href="index.html" class="back-button px-8 py-4 rounded-full font-bold text-white shadow-lg text-lg inline-flex items-center space-x-2">
+                <span>←</span>
+                <span>返回百科首页</span>
+            </a>
+        </div>
+    </div>
+
+</body>
+</html>

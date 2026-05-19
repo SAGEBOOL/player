@@ -1,0 +1,144 @@
+/**
+ * 3D卡片轮播组件 - 样式表
+ * 可从用户提供的播放器代码中提取复用
+ */
+
+/* ========== 3D变换工具类 ========== */
+.perspective-1200 {
+    perspective: 1200px;
+}
+
+.preserve-3d {
+    transform-style: preserve-3d;
+}
+
+/* ========== 轮播容器 ========== */
+.carousel-stage {
+    position: relative;
+    width: 300px;
+    height: 400px;
+    margin: 20px auto;
+    cursor: grab;
+}
+
+.carousel-stage:active {
+    cursor: grabbing;
+}
+
+.carousel-track {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transform-style: preserve-3d;
+}
+
+/* ========== 卡片样式 ========== */
+.album-card {
+    position: absolute;
+    width: 240px;
+    height: 340px;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275),
+                opacity 0.5s ease,
+                z-index 0.1s ease;
+    cursor: pointer;
+    user-select: none;
+}
+
+.album-card:hover {
+    transform: translate(-50%, -50%) scale(1.05) !important;
+}
+
+/* 卡片封面包装器 */
+.album-cover-wrapper {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    transition: box-shadow 0.3s ease;
+}
+
+.album-card:hover .album-cover-wrapper {
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+}
+
+.album-cover {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+}
+
+/* 卡片信息毛玻璃层 */
+.album-info-glass {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 15px;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
+    backdrop-filter: blur(5px);
+}
+
+.album-title {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+    color: white;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+.album-artist {
+    margin: 5px 0 0;
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.8);
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+/* ========== 动画 ========== */
+.fade-in {
+    animation: fadeIn 0.3s ease-in;
+}
+
+.fade-out {
+    animation: fadeOut 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    to {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+}
+
+/* ========== 响应式设计 ========== */
+@media (max-width: 768px) {
+    .carousel-stage {
+        width: 250px;
+        height: 350px;
+    }
+    
+    .album-card {
+        width: 200px;
+        height: 280px;
+    }
+}

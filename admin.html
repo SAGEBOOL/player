@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>九界修真百科 - 管理后台</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Noto Sans SC', -apple-system, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            color: #e0e0e0;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        /* 顶部导航 */
+        .header {
+            background: linear-gradient(145deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            border: 0.5px solid rgba(255, 255, 255, 0.15);
+            border-radius: 32px;
+            padding: 24px 32px;
+            margin-bottom: 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .header h1 {
+            font-size: 24px;
+            background: linear-gradient(90deg, #64ffda, #22d3ee);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .badge {
+            background: rgba(251, 191, 36, 0.2);
+            color: #fbbf24;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .badge span {
+            font-weight: 700;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-logout {
+            background: rgba(239, 68, 68, 0.2);
+            color: #f87171;
+            border: 0.5px solid rgba(239, 68, 68, 0.3);
+        }
+
+        .btn-logout:hover {
+            background: rgba(239, 68, 68, 0.3);
+        }
+
+        .btn-back {
+            background: rgba(102, 126, 234, 0.2);
+            color: #a78bfa;
+            border: 0.5px solid rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-back:hover {
+            background: rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-wiki {
+            background: rgba(100, 255, 218, 0.2);
+            color: #64ffda;
+            border: 0.5px solid rgba(100, 255, 218, 0.3);
+        }
+
+        .btn-wiki:hover {
+            background: rgba(100, 255, 218, 0.3);
+        }
+
+        /* 登录面板 */
+        .login-panel {
+            max-width: 420px;
+            margin: 100px auto;
+        }
+
+        .login-card {
+            background: linear-gradient(145deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.06));
+            backdrop-filter: blur(24px) saturate(180%);
+            -webkit-backdrop-filter: blur(24px) saturate(180%);
+            border: 0.5px solid rgba(255, 255, 255, 0.18);
+            border-radius: 40px;
+            padding: 48px 40px;
+            text-align: center;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.35);
+        }
+
+        .login-card h2 {
+            font-size: 28px;
+            margin-bottom: 8px;
+            color: #ccd6f6;
+        }
+
+        .login-card p {
+            color: #8892b0;
+            margin-bottom: 32px;
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            color: #ccd6f6;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-wrapper .icon {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .input-wrapper input {
+            width: 100%;
+            padding: 16px 16px 16px 48px;
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.2));
+            border: 0.5px solid rgba(255, 255, 255, 0.12);
+            border-radius: 20px;
+            color: #e0e0e0;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .input-wrapper input:focus {
+            outline: none;
+            border-color: #64ffda;
+            box-shadow: 0 0 0 3px rgba(100, 255, 218, 0.15);
+        }
+
+        .btn-primary {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 24px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 6px 24px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 40px rgba(102, 126, 234, 0.5);
+        }
+
+        .message {
+            padding: 16px;
+            border-radius: 20px;
+            margin-bottom: 24px;
+            text-align: center;
+            font-size: 14px;
+            display: none;
+        }
+
+        .message.error {
+            background: rgba(239, 68, 68, 0.2);
+            border: 0.5px solid rgba(239, 68, 68, 0.4);
+            color: #f87171;
+            display: block;
+        }
+
+        /* 管理面板 */
+        .admin-panel {
+            display: none;
+        }
+
+        .admin-panel.show {
+            display: block;
+        }
+
+        /* 统计卡片 */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 32px;
+        }
+
+        .stat-card {
+            background: linear-gradient(145deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            border: 0.5px solid rgba(255, 255, 255, 0.15);
+            border-radius: 28px;
+            padding: 28px;
+            text-align: center;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+        }
+
+        .stat-card .icon {
+            font-size: 40px;
+            margin-bottom: 12px;
+        }
+
+        .stat-card .number {
+            font-size: 36px;
+            font-weight: 700;
+            color: #64ffda;
+        }
+
+        .stat-card .label {
+            color: #8892b0;
+            font-size: 14px;
+            margin-top: 8px;
+        }
+
+        /* 用户列表 */
+        .users-section {
+            background: linear-gradient(145deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            border: 0.5px solid rgba(255, 255, 255, 0.15);
+            border-radius: 32px;
+            padding: 32px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+        }
+
+        .section-title {
+            font-size: 20px;
+            color: #ccd6f6;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .filter-tabs {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+        }
+
+        .filter-tab {
+            padding: 8px 16px;
+            border-radius: 16px;
+            border: 0.5px solid rgba(255, 255, 255, 0.15);
+            background: transparent;
+            color: #8892b0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 13px;
+        }
+
+        .filter-tab.active {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border-color: transparent;
+        }
+
+        .users-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .users-table th,
+        .users-table td {
+            padding: 16px;
+            text-align: left;
+            border-bottom: 0.5px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .users-table th {
+            color: #8892b0;
+            font-weight: 500;
+            font-size: 13px;
+        }
+
+        .users-table td {
+            color: #ccd6f6;
+            font-size: 14px;
+        }
+
+        .users-table tr:hover {
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .status-badge.authorized {
+            background: rgba(16, 185, 129, 0.2);
+            color: #34d399;
+        }
+
+        .status-badge.pending {
+            background: rgba(251, 191, 36, 0.2);
+            color: #fbbf24;
+        }
+
+        .status-badge.rejected {
+            background: rgba(239, 68, 68, 0.2);
+            color: #f87171;
+        }
+
+        .action-btns {
+            display: flex;
+            gap: 8px;
+        }
+
+        .action-btn {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 12px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .action-btn.authorize {
+            background: rgba(16, 185, 129, 0.2);
+            color: #34d399;
+        }
+
+        .action-btn.authorize:hover {
+            background: rgba(16, 185, 129, 0.35);
+        }
+
+        .action-btn.reject {
+            background: rgba(239, 68, 68, 0.2);
+            color: #f87171;
+        }
+
+        .action-btn.reject:hover {
+            background: rgba(239, 68, 68, 0.35);
+        }
+
+        .action-btn.reset {
+            background: rgba(102, 126, 234, 0.2);
+            color: #a78bfa;
+        }
+
+        .action-btn.reset:hover {
+            background: rgba(102, 126, 234, 0.35);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #8892b0;
+        }
+
+        .empty-state .icon {
+            font-size: 64px;
+            margin-bottom: 16px;
+        }
+
+        .info-text {
+            margin-top: 32px;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 20px;
+            text-align: left;
+        }
+
+        .info-text h4 {
+            color: #ccd6f6;
+            margin-bottom: 12px;
+        }
+
+        .info-text p {
+            color: #8892b0;
+            font-size: 13px;
+            margin-bottom: 8px;
+        }
+
+        .info-text code {
+            background: rgba(100, 255, 218, 0.1);
+            color: #64ffda;
+            padding: 2px 8px;
+            border-radius: 8px;
+            font-size: 12px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px 16px;
+            }
+
+            .header {
+                flex-direction: column;
+                gap: 16px;
+                padding: 20px;
+            }
+
+            .users-table {
+                display: block;
+                overflow-x: auto;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 登录面板 -->
+        <div id="loginPanel" class="login-panel">
+            <div class="login-card">
+                <div style="font-size: 64px; margin-bottom: 16px;">🔐</div>
+                <h2>管理员登录</h2>
+                <p>九界修真百科 - 管理后台</p>
+
+                <div id="loginMessage" class="message"></div>
+
+                <form onsubmit="handleLogin(event)">
+                    <div class="form-group">
+                        <label>管理员账号</label>
+                        <div class="input-wrapper">
+                            <span class="icon">👤</span>
+                            <input type="text" id="adminUsername" placeholder="请输入管理员账号" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>密码</label>
+                        <div class="input-wrapper">
+                            <span class="icon">🔒</span>
+                            <input type="password" id="adminPassword" placeholder="请输入密码" required>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn-primary">登录</button>
+                </form>
+
+                <div class="info-text" style="margin-top: 24px; font-size: 13px; color: #8892b0;">
+                    <p>请输入管理员账号和密码登录</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 管理面板 -->
+        <div id="adminPanel" class="admin-panel">
+            <!-- 顶部导航 -->
+            <div class="header">
+                <h1>📖 九界修真百科 - 管理后台</h1>
+                <div class="header-right">
+                    <div class="badge">
+                        待审核用户: <span id="pendingCount">0</span>
+                    </div>
+                    <button class="btn btn-wiki" onclick="window.location.href='index.html'">进入百科</button>
+                    <button class="btn btn-back" onclick="window.location.href='login.html'">返回登录页</button>
+                    <button class="btn btn-logout" onclick="logout()">退出登录</button>
+                </div>
+            </div>
+
+            <!-- 统计卡片 -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="icon">👥</div>
+                    <div class="number" id="totalUsers">0</div>
+                    <div class="label">总用户数</div>
+                </div>
+                <div class="stat-card">
+                    <div class="icon">⏳</div>
+                    <div class="number" id="pendingUsers">0</div>
+                    <div class="label">待审核</div>
+                </div>
+                <div class="stat-card">
+                    <div class="icon">✅</div>
+                    <div class="number" id="authorizedUsers">0</div>
+                    <div class="label">已授权</div>
+                </div>
+                <div class="stat-card">
+                    <div class="icon">❌</div>
+                    <div class="number" id="rejectedUsers">0</div>
+                    <div class="label">已拒绝</div>
+                </div>
+                <div class="stat-card">
+                    <div class="icon">🔐</div>
+                    <div class="number" id="totalLogins">0</div>
+                    <div class="label">总登录次数</div>
+                </div>
+                <div class="stat-card">
+                    <div class="icon">🟢</div>
+                    <div class="number" id="activeToday">0</div>
+                    <div class="label">今日活跃</div>
+                </div>
+            </div>
+
+            <!-- 用户列表 -->
+            <div class="users-section">
+                <div class="section-title">
+                    👥 用户管理
+                </div>
+
+                <div class="filter-tabs">
+                    <button class="filter-tab active" onclick="filterUsers('all')">全部</button>
+                    <button class="filter-tab" onclick="filterUsers('pending')">待审核</button>
+                    <button class="filter-tab" onclick="filterUsers('authorized')">已授权</button>
+                    <button class="filter-tab" onclick="filterUsers('rejected')">已拒绝</button>
+                </div>
+
+                <table class="users-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>用户名</th>
+                            <th>邮箱</th>
+                            <th>手机号</th>
+                            <th>状态</th>
+                            <th>登录次数</th>
+                            <th>最后登录</th>
+                            <th>访问页面</th>
+                            <th>注册时间</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody id="usersTableBody">
+                    </tbody>
+                </table>
+
+                <div id="emptyState" class="empty-state" style="display: none;">
+                    <div class="icon">📭</div>
+                    <p>暂无用户数据</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="assets/js/auth.js"></script>
+    <script>
+        let allUsers = [];
+        let currentFilter = 'all';
+
+        // 检查是否已登录
+        function checkAdminAuth() {
+            const isAdminLoggedIn = localStorage.getItem('9jie_admin_logged_in');
+            if (isAdminLoggedIn === 'true') {
+                showAdminPanel();
+                loadUsers();
+            }
+        }
+
+        // 显示管理面板
+        function showAdminPanel() {
+            document.getElementById('loginPanel').style.display = 'none';
+            document.getElementById('adminPanel').classList.add('show');
+        }
+
+        // 显示消息
+        function showLoginMessage(text) {
+            const msg = document.getElementById('loginMessage');
+            msg.textContent = text;
+            msg.className = 'message error';
+        }
+
+        // 管理员登录
+        function handleLogin(e) {
+            e.preventDefault();
+            showLoginMessage('');
+
+            const username = document.getElementById('adminUsername').value;
+            const password = document.getElementById('adminPassword').value;
+
+            const result = loginAdmin(username, password);
+
+            if (result.success) {
+                showAdminPanel();
+                loadUsers();
+            } else {
+                showLoginMessage(result.message);
+            }
+        }
+
+        // 退出登录
+        function logout() {
+            localStorage.removeItem('9jie_admin_logged_in');
+            localStorage.removeItem('9jie_admin_username');
+            location.reload();
+        }
+
+        // 加载用户列表
+        function loadUsers() {
+            const data = getAdminUserList();
+            
+            if (data.success) {
+                allUsers = data.users;
+                updateStats(allUsers);
+                renderUsers(allUsers);
+            }
+        }
+
+        // 更新统计
+        function updateStats(users) {
+            document.getElementById('totalUsers').textContent = users.length;
+            document.getElementById('pendingUsers').textContent = users.filter(u => u.status === 'pending').length;
+            document.getElementById('authorizedUsers').textContent = users.filter(u => u.status === 'authorized').length;
+            document.getElementById('rejectedUsers').textContent = users.filter(u => u.status === 'rejected').length;
+            document.getElementById('pendingCount').textContent = users.filter(u => u.status === 'pending').length;
+
+            // 新增统计：总登录次数和今日活跃
+            const pageStatsData = getPageStats ? getPageStats() : { totalLogins: 0, activeToday: 0 };
+            document.getElementById('totalLogins').textContent = pageStatsData.totalLogins || users.reduce((sum, u) => sum + (u.login_count || 0), 0);
+            document.getElementById('activeToday').textContent = pageStatsData.activeToday || 0;
+        }
+
+        // 筛选用户
+        function filterUsers(status) {
+            currentFilter = status;
+            document.querySelectorAll('.filter-tab').forEach(tab => {
+                const text = tab.textContent;
+                tab.classList.toggle('active', 
+                    (status === 'all' && text.includes('全部')) ||
+                    (status === 'pending' && text.includes('待审核')) ||
+                    (status === 'authorized' && text.includes('已授权')) ||
+                    (status === 'rejected' && text.includes('已拒绝'))
+                );
+            });
+
+            const filtered = status === 'all' ? allUsers : allUsers.filter(u => u.status === status);
+            renderUsers(filtered);
+        }
+
+        // 渲染用户列表
+        function renderUsers(users) {
+            const tbody = document.getElementById('usersTableBody');
+            const emptyState = document.getElementById('emptyState');
+
+            if (users.length === 0) {
+                tbody.innerHTML = '';
+                emptyState.style.display = 'block';
+                return;
+            }
+
+            emptyState.style.display = 'none';
+            tbody.innerHTML = users.map(user => {
+                const loginCount = user.login_count || 0;
+                const lastLogin = user.last_login ? new Date(user.last_login).toLocaleString('zh-CN') : '-';
+                const pageViewsCount = user.page_views ? Object.values(user.page_views).reduce((a, b) => a + b, 0) : 0;
+
+                return `<tr>
+                    <td>#${user.id}</td>
+                    <td><strong>${user.username}</strong></td>
+                    <td>${user.email || '-'}</td>
+                    <td>${user.phone || '-'}</td>
+                    <td>
+                        <span class="status-badge ${user.status}">
+                            ${user.status === 'authorized' ? '已授权' : user.status === 'pending' ? '待审核' : '已拒绝'}
+                        </span>
+                    </td>
+                    <td>${loginCount}</td>
+                    <td>${lastLogin}</td>
+                    <td>${pageViewsCount}</td>
+                    <td>${new Date(user.created_at).toLocaleString('zh-CN')}</td>
+                    <td class="action-btns">
+                        ${user.status !== 'authorized' ? `<button class="action-btn authorize" onclick="authorizeUser(${user.id}, 'authorize')">授权</button>` : ''}
+                        ${user.status !== 'rejected' ? `<button class="action-btn reject" onclick="authorizeUser(${user.id}, 'reject')">拒绝</button>` : ''}
+                        ${user.status !== 'pending' ? `<button class="action-btn reset" onclick="authorizeUser(${user.id}, 'reset')">重置</button>` : ''}
+                    </td>
+                </tr>`
+            }).join('');
+        }
+
+        // 授权/拒绝/重置用户
+        function authorizeUser(userId, action) {
+            if (!confirm('确定要执行此操作吗？')) return;
+            
+            const users = getUsers();
+            const userIndex = users.findIndex(u => u.id === userId);
+            
+            if (userIndex === -1) {
+                alert('用户不存在');
+                return;
+            }
+            
+            const user = users[userIndex];
+            
+            switch(action) {
+                case 'authorize':
+                    user.status = 'authorized';
+                    user.authorized_at = new Date().toISOString();
+                    user.authorized_by = 'admin';
+                    break;
+                case 'reject':
+                    user.status = 'rejected';
+                    break;
+                case 'reset':
+                    user.status = 'pending';
+                    user.authorized_at = null;
+                    user.authorized_by = null;
+                    break;
+            }
+            
+            users[userIndex] = user;
+            saveUsers(users);
+            
+            // 重新加载用户列表
+            loadUsers();
+            
+            const actionText = action === 'authorize' ? '授权' : action === 'reject' ? '拒绝' : '重置';
+            alert(`${actionText}操作成功！`);
+        }
+
+        // 初始化
+        checkAdminAuth();
+    </script>
+</body>
+</html>

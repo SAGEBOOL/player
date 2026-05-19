@@ -1,0 +1,19 @@
+{
+    "name": "九界修真世界 - 百科系统",
+    "short_name": "九界百科",
+    "description": "九界修真世界观百科全书，包含人物图鉴、七大体系可视化、故事线梳理",
+    "start_url": "/index.html",
+    "display": "standalone",
+    "background_color": "#f9fafb",
+    "theme_color": "#4A1B0C",
+    "orientation": "portrait-primary",
+    "icons": [
+        {
+            "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧙</text></svg>",
+            "sizes": "any",
+            "type": "image/svg+xml"
+        }
+    ],
+    "categories": ["books", "entertainment", "games"],
+    "lang": "zh-CN"
+}

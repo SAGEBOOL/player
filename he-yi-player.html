@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="description" content="九界归尘 - 九界修真世界有声书播客">
+    <title>九界归尘 - 九界修真世界</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#1a1a2e">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <style>
+        body { background: #0f0f1a; color: #e0e0e0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+        .back-btn { position: fixed; top: 20px; left: 20px; z-index: 100; background: rgba(255,255,255,0.1); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.2); border-radius: 50%; width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; color: #64ffda; font-size: 24px; cursor: pointer; text-decoration: none; transition: all 0.3s ease; }
+        .back-btn:hover { background: rgba(100,255,218,0.2); transform: scale(1.1); }
+        .author-avatars { position: fixed; top: 20px; left: 80px; z-index: 100; display: flex; gap: 12px; }
+        .author-avatar { position: relative; width: 48px; height: 48px; border-radius: 50%; border: 2px solid rgba(255,255,255,0.3); cursor: pointer; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); overflow: hidden; background: rgba(100,255,218,0.15); display: flex; align-items: center; justify-content: center; color: #64ffda; font-size: 11px; font-weight: bold; backdrop-filter: blur(10px); }
+        .author-avatar:hover { border-color: #64ffda; transform: scale(1.15); }
+        .author-avatar.active { border-color: #64ffda; box-shadow: 0 0 15px rgba(100,255,218,0.4); transform: scale(1.15); }
+        .author-avatar img { width: 100%; height: 100%; object-fit: cover; }
+        .author-tooltip {
+            position: absolute;
+            top: 58px;
+            left: 50%;
+            transform: translateX(-50%) translateY(6px);
+            background: rgba(15, 15, 26, 0.95);
+            backdrop-filter: blur(16px) saturate(180%);
+            -webkit-backdrop-filter: blur(16px) saturate(180%);
+            border: 0.5px solid rgba(100, 255, 218, 0.25);
+            border-radius: 12px;
+            padding: 10px 14px;
+            font-family: "FangSong", "STFangsong", "仿宋", serif;
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.9);
+            white-space: nowrap;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 200;
+            pointer-events: none;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+            letter-spacing: 0.5px;
+        }
+        .author-tooltip::before {
+            content: '';
+            position: absolute;
+            top: -6px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-left: 6px solid transparent;
+            border-right: 6px solid transparent;
+            border-bottom: 6px solid rgba(15, 15, 26, 0.95);
+        }
+        .author-avatar:hover .author-tooltip,
+        .author-avatar.active .author-tooltip {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(-50%) translateY(0);
+        }
+        #comment-scroll-container { height: 220px; overflow: hidden; position: relative; margin-bottom: 20px; background: rgba(0,0,0,0.2); border-radius: 12px; padding: 12px; box-sizing: border-box; }
+        .comment-item { padding: 8px 12px; background: rgba(255, 255, 255, 0.03); border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.08); color: #ccd6f6; font-size: 13px; line-height: 1.5; font-family: "FangSong", "STFangsong", "仿宋", serif; display: flex; flex-direction: column; gap: 4px; margin-bottom: 8px; }
+        .comment-like { align-self: flex-end; background: none; border: none; cursor: pointer; font-size: 14px; transition: transform 0.2s; color: #fff; padding: 0; line-height: 1; }
+        .comment-like.liked { color: #fff; }
+        .comment-item .comment-author { color: #64ffda; font-size: 11px; display: flex; justify-content: space-between; align-items: center; }
+        .comment-item .comment-time { color: #6b7280; font-size: 10px; }
+        .carousel-stage-3d { position: relative; width: 80vw; max-width: 340px; height: 60vw; max-height: 420px; min-height: 280px; margin: 10px auto; cursor: grab; perspective: 1200px; touch-action: none; }
+        .carousel-stage-3d:active { cursor: grabbing; }
+        .carousel-track-3d { position: relative; width: 100%; height: 100%; transform-style: preserve-3d; }
+        .podcast-3d-card { position: absolute; width: 55vw; max-width: 220px; height: 75vw; max-height: 300px; min-height: 200px; left: 50%; top: 50%; transform: translate(-50%, -50%); transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.5s ease, z-index 0.1s ease; cursor: pointer; user-select: none; border-radius: 16px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+        .podcast-3d-card-inner { position: relative; width: 100%; height: 100%; background: linear-gradient(135deg, rgba(100, 255, 218, 0.08), rgba(167, 139, 250, 0.08)); border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 16px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; box-sizing: border-box; }
+        .podcast-3d-card.active .podcast-3d-card-inner { background: linear-gradient(135deg, rgba(100, 255, 218, 0.15), rgba(167, 139, 250, 0.15)); border-color: rgba(100, 255, 218, 0.4); }
+        .podcast-3d-card-icon { padding: 0; overflow: hidden; }
+        .podcast-3d-card-icon img { width: 100%; height: 100%; object-fit: cover; border-radius: 16px; }
+        .podcast-3d-card-title { color: #e0e0e0; font-size: 13px; font-weight: bold; text-align: center; line-height: 1.4; max-width: 90%; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+        .podcast-3d-card-playing { position: absolute; bottom: 10px; right: 10px; font-size: 20px; animation: pulse 1.5s infinite; }
+        @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.2); } }
+        #progressBarBg { position: relative; width: 100%; height: 4px; background: rgba(255,255,255,0.2); border-radius: 2px; overflow: hidden; cursor: pointer; }
+        #progressBarFill { position: absolute; top: 0; left: 0; height: 100%; background: linear-gradient(to right, #3B82F6, #10B981); border-radius: 2px; transition: width 0.3s ease; }
+    </style>
+</head>
+<body>
+    <a href="he-yi.html" class="back-btn" title="返回人物图谱">←</a>
+    <div class="author-avatars">
+        <div class="author-avatar active" data-author="河一" onclick="filterByAuthor(this)" title="河一">
+            <img src="assets/images/河一.png" alt="河一" onerror="this.parentNode.innerHTML='河一'">
+            <div class="author-tooltip">界域风水师，稳重可靠、刚正不阿，从封闭派到开放派的思想转变。</div>
+        </div>
+        <div class="author-avatar" data-author="刘浪浪" onclick="filterByAuthor(this)" title="刘浪浪">
+            <img src="assets/images/刘浪浪.png" alt="刘浪浪" onerror="this.parentNode.innerHTML='刘浪浪'">
+            <div class="author-tooltip">重生者，系统持有者。从凡人少年成长为九界守护者，只想保护自己在乎的人。</div>
+        </div>
+        <div class="author-avatar" data-author="甘道夫" onclick="filterByAuthor(this)" title="甘道夫">
+            <img src="assets/images/甘道夫.png" alt="甘道夫" onerror="this.parentNode.innerHTML='甘道夫'">
+            <div class="author-tooltip">武当修道，后成道门大佬。刘浪浪的兄弟，一度对立终和解。</div>
+        </div>
+    </div>
+
+    <div style="max-width: 100vw; width: 100%; margin: 0 auto; padding: 60px 10px 10px; box-sizing: border-box; position: relative;">
+        <h2 style="text-align: center; font-size: 24px; color: #64ffda; margin-bottom: 10px;">🎧 九界归尘</h2>
+        <p style="text-align: center; color: #8892b0; margin-bottom: 20px;">点击曲目即可播放</p>
+        <div class="carousel-stage-3d" id="carousel-stage-3d">
+            <div class="carousel-track-3d" id="carousel-track-3d"></div>
+        </div>
+        <div id="subtitle-wrap" style="display: none; text-align: center; margin: 10px 0; min-height: 60px; padding: 12px 16px; background: rgba(0,0,0,0.5); border-radius: 12px; backdrop-filter: blur(10px);">
+            <p id="subtitle" style="margin: 0; font-size: 15px; color: #e0e0e0; line-height: 1.6; font-family: FangSong, STFangsong, 仿宋, serif;"></p>
+        </div>
+        <div style="text-align: center; margin: 30px 0;">
+            <div id="songInfoText" style="transition: opacity 0.3s ease, transform 0.3s ease;">
+                <h2 id="songTitle" style="margin: 0; font-size: 28px; font-weight: 700; color: white;">选择曲目</h2>
+                <p id="songArtist" style="margin: 8px 0 0; font-size: 18px; color: rgba(255,255,255,0.8);">九界归尘</p>
+            </div>
+            <div style="width: 100%; margin-top: 20px;">
+                <div id="progressBarBg"><div id="progressBarFill"></div></div>
+                <div style="display: flex; justify-content: space-between; margin-top: 8px; font-size: 12px; color: rgba(255,255,255,0.6);">
+                    <span id="currentTime">0:00</span>
+                    <span id="totalTime">0:00</span>
+                </div>
+            </div>
+        </div>
+        <div style="width: 100%; margin-top: 20px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; background: rgba(255,255,255,0.1); backdrop-filter: blur(10px); border-radius: 12px; border: 1px solid rgba(255,255,255,0.2);">
+                <div style="display: flex; align-items: center; gap: 15px;">
+                    <button id="prevBtn" style="display: flex; justify-content: center; align-items: center; width: 40px; height: 40px; border-radius: 50%; background: rgba(255,255,255,0.1); border: none; color: white; cursor: pointer;">⏮</button>
+                    <button id="playBtn" style="display: flex; justify-content: center; align-items: center; width: 50px; height: 50px; border-radius: 50%; background: linear-gradient(45deg, #3B82F6, #10B981); border: none; color: white; cursor: pointer;">▶️</button>
+                    <button id="nextBtn" style="display: flex; justify-content: center; align-items: center; width: 40px; height: 40px; border-radius: 50%; background: rgba(255,255,255,0.1); border: none; color: white; cursor: pointer;">⏭</button>
+                </div>
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <img id="miniCover" src="assets/images/河一.png" style="width: 40px; height: 40px; border-radius: 6px; object-fit: cover;">
+                    <div style="display: flex; flex-direction: column; justify-content: center;">
+                        <p id="miniTitle" style="margin: 0; font-size: 14px; font-weight: 600; color: white;">选择曲目</p>
+                        <p id="miniArtist" style="margin: 2px 0 0; font-size: 12px; color: rgba(255,255,255,0.7);">九界归尘</p>
+                    </div>
+                </div>
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <button id="bgmToggleBtn" onclick="toggleBgm()" style="display: flex; justify-content: center; align-items: center; width: 40px; height: 40px; border-radius: 50%; background: rgba(255,255,255,0.1); border: none; color: white; cursor: pointer;">🔊</button>
+                    <button onclick="toggleSharePanel()" style="display: flex; justify-content: center; align-items: center; width: 40px; height: 40px; border-radius: 50%; background: rgba(255,255,255,0.1); border: none; color: white; cursor: pointer;">🔗</button>
+                    <button id="sleepTimerBtn" onclick="toggleSleepPanel()" style="display: flex; justify-content: center; align-items: center; width: 40px; height: 40px; border-radius: 50%; background: rgba(255,255,255,0.1); border: none; color: white; cursor: pointer;">⏱️</button>
+                </div>
+            </div>
+        </div>
+        <div id="share-panel" style="display: none; background: rgba(26,26,46,0.95); border: 1px solid rgba(255,255,255,0.15); border-radius: 16px; padding: 16px; margin-top: 16px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                <h4 style="color: #e0e0e0; font-size: 14px; font-weight: bold;">分享播客</h4>
+                <button onclick="toggleSharePanel()" style="background: none; border: none; color: #8892b0; cursor: pointer; font-size: 20px;">×</button>
+            </div>
+            <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+                <button onclick="copyPodcastLink()" style="flex: 1; min-width: 120px; background: rgba(100,255,218,0.1); border: 1px solid rgba(100,255,218,0.3); color: #64ffda; padding: 10px 16px; border-radius: 12px; cursor: pointer; font-size: 13px;">📋 复制链接</button>
+                <button onclick="shareToWeChat()" style="flex: 1; min-width: 120px; background: rgba(7,193,96,0.1); border: 1px solid rgba(7,193,96,0.3); color: #07c160; padding: 10px 16px; border-radius: 12px; cursor: pointer; font-size: 13px;">💬 微信</button>
+                <button onclick="shareToWeibo()" style="flex: 1; min-width: 120px; background: rgba(230,22,45,0.1); border: 1px solid rgba(230,22,45,0.3); color: #e6162d; padding: 10px 16px; border-radius: 12px; cursor: pointer; font-size: 13px;">📢 微博</button>
+            </div>
+        </div>
+        <div id="sleep-panel" style="display: none; background: rgba(26,26,46,0.95); border: 1px solid rgba(255,255,255,0.15); border-radius: 16px; padding: 16px; margin-top: 16px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                <h4 style="color: #e0e0e0; font-size: 14px; font-weight: bold;">⏱️ 定时关闭</h4>
+                <button onclick="toggleSleepPanel()" style="background: none; border: none; color: #8892b0; cursor: pointer; font-size: 20px;">×</button>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+                <button onclick="setSleepTimer('off')" class="sleep-option" data-mode="off" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #8892b0; padding: 10px 14px; border-radius: 10px; cursor: pointer; font-size: 13px; text-align: left;">关闭定时</button>
+                <button onclick="setSleepTimer('endOfTrack')" class="sleep-option" data-mode="endOfTrack" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #8892b0; padding: 10px 14px; border-radius: 10px; cursor: pointer; font-size: 13px; text-align: left;">播完本集后关闭</button>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <button onclick="setSleepTimer('afterEpisodes', document.getElementById('sleep-episodes').value)" class="sleep-option" data-mode="afterEpisodes" style="flex: 1; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #8892b0; padding: 10px 14px; border-radius: 10px; cursor: pointer; font-size: 13px; text-align: left;">播完</button>
+                    <select id="sleep-episodes" onchange="if(document.querySelector('.sleep-option[data-mode=afterEpisodes]').style.background.includes('rgba(100,255,218')) setSleepTimer('afterEpisodes', this.value)" style="background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); color: #e0e0e0; padding: 8px 10px; border-radius: 8px; font-size: 13px; cursor: pointer;">
+                        <option value="1">1集</option><option value="2">2集</option><option value="3">3集</option><option value="5">5集</option><option value="10">10集</option>
+                    </select>
+                </div>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <button onclick="setSleepTimer('afterDuration', document.getElementById('sleep-duration').value)" class="sleep-option" data-mode="afterDuration" style="flex: 1; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #8892b0; padding: 10px 14px; border-radius: 10px; cursor: pointer; font-size: 13px; text-align: left;">定时</button>
+                    <select id="sleep-duration" onchange="if(document.querySelector('.sleep-option[data-mode=afterDuration]').style.background.includes('rgba(100,255,218')) setSleepTimer('afterDuration', this.value)" style="background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); color: #e0e0e0; padding: 8px 10px; border-radius: 8px; font-size: 13px; cursor: pointer;">
+                        <option value="0.5">0.5小时</option><option value="1">1小时</option><option value="1.5">1.5小时</option><option value="2">2小时</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div style="max-width: 500px; margin: 30px auto; padding:0 10px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+            <h3 style="color: #e0e0e0; font-size: 18px; font-weight: bold;">💬 听众留言</h3>
+            <span style="color: #64ffda; font-size: 13px;" id="comment-count">0 条留言</span>
+        </div>
+        <div id="comment-scroll-container">
+            <div id="comment-viewport" style="transition: transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);"></div>
+        </div>
+    </div>
+    <script>
+        // ============================================================
+        //  九界归尘 · 播客播放器（完整重写版 2026-05-18）
+        // ============================================================
+
+        // ===== 播放列表 =====
+        const podcastList = [
+            { name: '《九界归尘》开篇', file: 'assets/music/he-yi-opening.mp3', icon: '📖', cover: 'assets/images/河一.png', subtitleFile: 'assets/subtitles/he-yi-opening.txt', author: '河一' },
+            { name: '《九界归尘》第二章：墟界残响', file: 'assets/music/he-y-i-chapter-02.mp3', icon: '📖', subtitleFile: 'assets/subtitles/he-y-i-chapter-02.txt', author: '河一' },
+            { name: '第四章：散修的规矩', file: 'assets/music/第四章-散修的规矩.mp3', icon: '🎧', cover: 'assets/images/第三章-林清.png', subtitleFile: 'assets/subtitles/第四章-散修的规矩.txt', author: '河一' },
+            { name: '《九界归尘》第五章：墟界遗址', file: 'assets/music/第五章-墟界遗址.mp3', icon: '📖', subtitleFile: 'assets/subtitles/第五章-墟界遗址.txt', author: '河一' },
+            { name: '《九界归尘》第六章：归来者', file: 'assets/music/第六章-归来者.mp3', icon: '📖', subtitleFile: 'assets/subtitles/第六章-归来者.txt', author: '河一' },
+            { name: '《九界归尘》第七章：始源追杀', file: 'assets/music/第七章-始源追杀.mp3', icon: '📖', subtitleFile: 'assets/subtitles/第七章-始源追杀.txt', author: '河一' },
+            { name: '《九界归尘》第八章：重回灵溪', file: 'assets/music/第八章-重回灵溪.mp3', icon: '📖', subtitleFile: 'assets/subtitles/第八章-重回灵溪.txt', author: '河一' },
+            { name: '《九界归尘》第九章：月妖娆', file: 'assets/music/第九章-月妖娆.mp3', icon: '📖', cover: 'assets/images/第十章-月妖娆.png', subtitleFile: 'assets/subtitles/第九章-月妖娆.txt', author: '河一' },
+            { name: '《九界归尘》第十一章：暗流涌动', file: 'assets/music/第十一章：暗流涌动.mp3', icon: '📖', subtitleFile: 'assets/subtitles/第十一章-暗流涌动.txt', author: '河一' },
+            { name: '《九界归尘》第十二章：清洗', file: 'assets/music/第十二章：清洗.mp3', icon: '📖', subtitleFile: 'assets/subtitles/第十二章：清洗.txt', author: '河一' },
+            { name: '《九界归尘》第十三章：墟界密使', file: 'assets/music/第十三章：墟界密使.mp3', icon: '📖', subtitleFile: 'assets/subtitles/第十三章：墟界密使.txt', author: '河一' },
+            { name: '《九界归尘》第十四章：残魂渡', file: 'assets/music/第十四章：残魂渡.mp3', icon: '📖', subtitleFile: 'assets/subtitles/第十四章：刘浪浪-残魂渡.txt', author: '河一' },
+            { name: '《九界归尘》第十五章：墟界深处', file: 'assets/music/第十五章：墟界深处.mp3', icon: '📖', subtitleFile: 'assets/subtitles/第十五章：墟界深处.txt', author: '河一' },
+            // 刘浪浪 播客卡片（占位，待替换为实际音频文件）
+            { name: '刘浪浪·重生之路（预览）', file: 'assets/music/preview-yunjian.mp3', icon: '🌀', cover: 'assets/images/刘浪浪.png', subtitleFile: '', author: '刘浪浪' },
+            { name: '刘浪浪·系统觉醒', file: 'assets/music/preview-xiaomo.mp3', icon: '🌀', cover: 'assets/images/刘浪浪.png', subtitleFile: '', author: '刘浪浪' },
+            // 甘道夫 播客卡片（占位，待替换为实际音频文件）
+            { name: '甘道夫·武当修道录', file: 'assets/music/preview-yunxi.mp3', icon: '🗡️', cover: 'assets/images/甘道夫.png', subtitleFile: '', author: '甘道夫' },
+            { name: '甘道夫·道门大佬', file: 'assets/music/preview-yunyang.mp3', icon: '🗡️', cover: 'assets/images/甘道夫.png', subtitleFile: '', author: '甘道夫' }
+        ];
+        window.podcastList = podcastList;
+
+        // 作者筛选
+        function filterByAuthor(el) {
+            var author = el.dataset.author;
+            document.querySelectorAll('.author-avatar').forEach(function(a){ a.classList.remove('active'); });
+            el.classList.add('active');
+            var filtered = podcastList.filter(function(item){ return item.author === author; });
+            if (window.podcast3DCarousel) {
+                window.podcast3DCarousel.items = filtered;
+                window.podcast3DCarousel.activeIndex = 0;
+                window.podcast3DCarousel.render();
+                window.podcast3DCarousel.updateStyles();
+            }
+        }
+
+        // ===== 全局状态 =====
+        let currentPodcastIndex = -1;
+        let isPodcastPlaying = false;
+        let podcastAudio = null;
+        let bgMusic = null;
+        let isBgMusicEnabled = true;
+        let podcastPlaybackRate = 1.0;
+        let sleepTimerMode = 'off';
+        let sleepTimerValue = 0;
+        let sleepTimerTimeout = null;
+        let playedEpisodesCount = 0;
+        let currentSubtitles = [];
+        let isSettingVolume = false;
+
+        // ===== 字幕加载 =====
+        async function loadSubtitleFile(filePath) {
+            if (!filePath) { currentSubtitles = []; return; }
+            try {
+                const response = await fetch(filePath);
+                const text = await response.text();
+                currentSubtitles = text.split('\n').filter(line => line.trim() !== '');
+            } catch (e) {
+                currentSubtitles = [];
+            }
+        }
+
+        // ===== 字幕更新 =====
+        function updateSubtitle(currentTime) {
+            if (!currentSubtitles.length) return;
+            const el = document.getElementById('subtitle');
+            const wrap = document.getElementById('subtitle-wrap');
+            if (!el || !wrap) return;
+            wrap.style.display = 'block';
+            el.style.opacity = '1';
+            const idx = Math.floor(currentTime) % currentSubtitles.length;
+            el.textContent = currentSubtitles[idx] || '';
+        }
+
+        // ===== 时间格式化 =====
+        function formatTime(seconds) {
+            if (!seconds || isNaN(seconds)) return '0:00';
+            const m = Math.floor(seconds / 60);
+            const s = Math.floor(seconds % 60);
+            return m + ':' + (s < 10 ? '0' : '') + s;
+        }
+
+        // ===== 进度条更新 =====
+        function updatePodcastProgress() {
+            if (!podcastAudio) return;
+            const bar = document.getElementById('progressBarFill');
+            const ct = document.getElementById('currentTime');
+            if (bar && podcastAudio.duration) {
+                bar.style.width = ((podcastAudio.currentTime / podcastAudio.duration) * 100) + '%';
+            }
+            if (ct) ct.textContent = formatTime(podcastAudio.currentTime);
+            updateSubtitle(podcastAudio.currentTime);
+        }
+
+        // ===== BGM 初始化 =====
+        function initBgMusic() {
+            if (!bgMusic) {
+                bgMusic = new Audio('assets/music/月下孤城 (1).mp3');
+                bgMusic.loop = true;
+                bgMusic.volume = 0.02;
+                bgMusic.addEventListener('volumechange', () => {
+                    if (isSettingVolume) return;
+                    if (bgMusic.volume > 0.02) {
+                        isSettingVolume = true;
+                        bgMusic.volume = 0.02;
+                        isSettingVolume = false;
+                    }
+                });
+            }
+        }
+
+        // ===== 播放指定曲目 =====
+        function playPodcast(index) {
+            if (!window.podcast3DCarousel) return;
+            const items = window.podcast3DCarousel.items;
+            if (index < 0 || index >= items.length) return;
+
+            if (podcastAudio) {
+                podcastAudio.pause();
+                podcastAudio.currentTime = 0;
+                podcastAudio.removeEventListener('timeupdate', updatePodcastProgress);
+            }
+
+            currentPodcastIndex = index;
+            const track = items[index];
+            podcastAudio = new Audio(track.file);
+            podcastAudio.playbackRate = podcastPlaybackRate;
+
+            if (track.subtitleFile) loadSubtitleFile(track.subtitleFile);
+
+            if (window.podcast3DCarousel) {
+                window.podcast3DCarousel.activeIndex = index;
+                window.podcast3DCarousel.updateStyles();
+            }
+
+            const st = document.getElementById('songTitle');
+            const sa = document.getElementById('songArtist');
+            const mt = document.getElementById('miniTitle');
+            const ma = document.getElementById('miniArtist');
+            if (st) st.textContent = track.name;
+            if (sa) sa.textContent = track.author;
+            if (mt) mt.textContent = track.name;
+            if (ma) ma.textContent = track.author;
+
+            const pb = document.getElementById('playBtn');
+            if (pb) pb.textContent = '⏸️';
+            isPodcastPlaying = true;
+
+            podcastAudio.play().catch(e => {});
+
+            if (window.incrementPlayCount) window.incrementPlayCount();
+
+            if (isBgMusicEnabled) {
+                initBgMusic();
+                bgMusic.volume = 0.02;
+                bgMusic.play().catch(e => {});
+            }
+
+            podcastAudio.addEventListener('timeupdate', updatePodcastProgress);
+            podcastAudio.addEventListener('loadedmetadata', () => {
+                const tt = document.getElementById('totalTime');
+                if (tt) tt.textContent = formatTime(podcastAudio.duration);
+                updateSubtitle(0);
+            });
+            podcastAudio.addEventListener('ended', onTrackEnded);
+        }
+
+        // ===== 单曲结束 =====
+        function onTrackEnded() {
+            playedEpisodesCount++;
+            if (sleepTimerMode === 'endOfTrack') { executeSleepTimer(); return; }
+            if (sleepTimerMode === 'afterEpisodes' && playedEpisodesCount >= sleepTimerValue) { executeSleepTimer(); return; }
+            if (currentPodcastIndex < window.podcast3DCarousel.items.length - 1) {
+                playPodcast(currentPodcastIndex + 1);
+            } else {
+                isPodcastPlaying = false;
+                const pb = document.getElementById('playBtn');
+                if (pb) pb.textContent = '▶️';
+                if (bgMusic) bgMusic.pause();
+                const wrap = document.getElementById('subtitle-wrap');
+                const sub = document.getElementById('subtitle');
+                if (wrap) wrap.style.display = 'none';
+                if (sub) { sub.style.opacity = '0'; sub.textContent = ''; }
+            }
+        }
+
+        // ===== 播放/暂停 =====
+        function togglePodcast() {
+            if (currentPodcastIndex === -1) { playPodcast(0); return; }
+            if (isPodcastPlaying) {
+                podcastAudio.pause();
+                isPodcastPlaying = false;
+                const pb = document.getElementById('playBtn');
+                if (pb) pb.textContent = '▶️';
+                if (bgMusic) bgMusic.pause();
+            } else {
+                podcastAudio.playbackRate = podcastPlaybackRate;
+                podcastAudio.play().catch(e => {});
+                isPodcastPlaying = true;
+                const pb = document.getElementById('playBtn');
+                if (pb) pb.textContent = '⏸️';
+                if (bgMusic && isBgMusicEnabled) bgMusic.play().catch(e => {});
+            }
+        }
+
+        // ===== BGM 开关 =====
+        function toggleBgm() {
+            isBgMusicEnabled = !isBgMusicEnabled;
+            const btn = document.getElementById('bgmToggleBtn');
+            if (isBgMusicEnabled) {
+                if (btn) { btn.textContent = '🔊'; btn.style.background = 'rgba(100,255,218,0.1)'; btn.style.borderColor = 'rgba(100,255,218,0.3)'; btn.style.color = '#64ffda'; }
+                if (bgMusic) { bgMusic.volume = 0.02; bgMusic.play().catch(e => {}); }
+            } else {
+                if (btn) { btn.textContent = '🔇'; btn.style.background = 'rgba(255,255,255,0.05)'; btn.style.borderColor = 'rgba(255,255,255,0.1)'; btn.style.color = '#6b7280'; }
+                if (bgMusic) bgMusic.pause();
+            }
+        }
+
+        // ===== 定时关闭 =====
+        function toggleSleepPanel() {
+            const p = document.getElementById('sleep-panel');
+            const sp = document.getElementById('share-panel');
+            if (p) p.style.display = p.style.display === 'none' ? 'block' : 'none';
+            if (sp) sp.style.display = 'none';
+        }
+        function setSleepTimer(mode, value) {
+            cancelSleepTimer();
+            sleepTimerMode = mode;
+            sleepTimerValue = parseFloat(value) || 0;
+            playedEpisodesCount = 0;
+            document.querySelectorAll('.sleep-option').forEach(btn => {
+                btn.style.background = btn.dataset.mode === mode ? 'rgba(100,255,218,0.15)' : 'rgba(255,255,255,0.05)';
+                btn.style.borderColor = btn.dataset.mode === mode ? 'rgba(100,255,218,0.4)' : 'rgba(255,255,255,0.1)';
+                btn.style.color = btn.dataset.mode === mode ? '#64ffda' : '#8892b0';
+            });
+            applySleepTimer();
+            updateSleepTimerDisplay();
+            if (isPodcastPlaying) showSleepFeedback('✅ 定时关闭已设置');
+        }
+        function applySleepTimer() {
+            if (sleepTimerMode === 'afterDuration' && sleepTimerValue > 0) {
+                sleepTimerTimeout = setTimeout(() => { executeSleepTimer(); }, sleepTimerValue * 3600000);
+            }
+        }
+        function executeSleepTimer() {
+            if (podcastAudio) { podcastAudio.pause(); podcastAudio.currentTime = 0; }
+            isPodcastPlaying = false;
+            const pb = document.getElementById('playBtn');
+            if (pb) pb.textContent = '▶️';
+            if (bgMusic) bgMusic.pause();
+            const wrap = document.getElementById('subtitle-wrap');
+            const sub = document.getElementById('subtitle');
+            if (wrap) wrap.style.display = 'none';
+            if (sub) { sub.style.opacity = '0'; sub.textContent = ''; }
+            sleepTimerMode = 'off'; sleepTimerValue = 0;
+            if (sleepTimerTimeout) { clearTimeout(sleepTimerTimeout); sleepTimerTimeout = null; }
+            document.querySelectorAll('.sleep-option').forEach(btn => {
+                btn.style.background = 'rgba(255,255,255,0.05)';
+                btn.style.borderColor = 'rgba(255,255,255,0.1)';
+                btn.style.color = '#8892b0';
+            });
+            showSleepFeedback('⏱️ 定时关闭已触发');
+            const st = document.getElementById('sleep-status');
+            if (st) st.style.display = 'none';
+        }
+        function cancelSleepTimer() { if (sleepTimerTimeout) { clearTimeout(sleepTimerTimeout); sleepTimerTimeout = null; } }
+        function updateSleepTimerDisplay() {
+            const st = document.getElementById('sleep-status');
+            if (!st) return;
+            if (sleepTimerMode === 'off') { st.style.display = 'none'; return; }
+            st.style.display = 'block';
+            let t = '⏱️ 定时关闭：';
+            if (sleepTimerMode === 'endOfTrack') t += '播完本集';
+            else if (sleepTimerMode === 'afterEpisodes') t += '播完' + sleepTimerValue + '集';
+            else if (sleepTimerMode === 'afterDuration') t += sleepTimerValue + '小时';
+            st.textContent = t;
+        }
+        function showSleepFeedback(msg) {
+            const fb = document.getElementById('sleep-feedback');
+            if (!fb) return;
+            fb.textContent = msg;
+            fb.style.display = 'block';
+            setTimeout(() => { fb.style.display = 'none'; }, 3000);
+        }
+
+        // ===== 分享 =====
+        function toggleSharePanel() {
+            const p = document.getElementById('share-panel');
+            const sp = document.getElementById('sleep-panel');
+            if (p) p.style.display = p.style.display === 'none' ? 'block' : 'none';
+            if (sp) sp.style.display = 'none';
+        }
+        function copyPodcastLink() {
+            navigator.clipboard.writeText(window.location.href.split('#')[0] + '#podcast-player').then(() => showSleepFeedback('✅ 链接已复制'));
+        }
+        function shareToWeChat() { showSleepFeedback('💬 请截图或复制链接分享到微信'); }
+        function shareToWeibo() { showSleepFeedback('📢 请复制链接分享到微博'); }
+
+        // ============================================================
+        //  3D 卡片轮播
+        // ============================================================
+        class Podcast3DCarousel {
+            constructor(containerId, items) {
+                this.container = document.getElementById(containerId);
+                if (!this.container) return;
+                this.track = this.container.querySelector('.carousel-track-3d');
+                this.items = items || [];
+                this.activeIndex = 0;
+                this.startX = 0;
+                this.isDragging = false;
+                this.render();
+                this.bindEvents();
+                this.updateStyles();
+            }
+            render() {
+                if (!this.track) return;
+                this.track.innerHTML = '';
+                this.items.forEach((item, index) => {
+                    const card = document.createElement('div');
+                    card.className = 'podcast-3d-card';
+                    card.dataset.index = index;
+                    const coverHtml = item.cover ? '<img src="' + item.cover + '" style="width:100%;height:100%;object-fit:cover;border-radius:16px;" alt="' + item.name + '" onerror="this.style.display=\'none\';this.parentElement.innerHTML=\'<div style=font-size:48px>' + (item.icon || '📖') + '</div>\'">' : '<div style="font-size:48px">' + (item.icon || '📖') + '</div>';
+                    card.innerHTML = `
+                        <div class="podcast-3d-card-glow"></div>
+                        <div class="podcast-3d-card-inner">
+                            <div class="podcast-3d-card-icon" style="padding:0;overflow:hidden;">${coverHtml}</div>
+                            <div class="podcast-3d-card-title">${item.name}</div>
+                            ${index === this.activeIndex ? '<div class="podcast-3d-card-playing">🎧</div>' : ''}
+                        </div>`;
+                    card.addEventListener('click', () => {
+                        if (index !== this.activeIndex) this.goTo(index);
+                    });
+                    this.track.appendChild(card);
+                });
+            }
+            reRender() {
+                const cards = this.container.querySelectorAll('.podcast-3d-card');
+                let need = false;
+                cards.forEach((card, i) => {
+                    if (i === this.activeIndex && !card.querySelector('.podcast-3d-card-playing')) need = true;
+                });
+                if (need) this.render();
+            }
+            bindEvents() {
+                this.container.addEventListener('mousedown', e => { this.startX = e.clientX; this.isDragging = true; });
+                this.container.addEventListener('mousemove', e => this.handleMove(e.clientX));
+                this.container.addEventListener('mouseup', () => this.handleEnd());
+                this.container.addEventListener('mouseleave', () => this.handleEnd());
+                this.container.addEventListener('touchstart', e => { e.preventDefault(); this.startX = e.touches[0].clientX; this.isDragging = true; }, { passive: false });
+                this.container.addEventListener('touchmove', e => { e.preventDefault(); this.handleMove(e.touches[0].clientX); }, { passive: false });
+                this.container.addEventListener('touchend', () => this.handleEnd());
+                window.addEventListener('resize', () => this.updateStyles());
+            }
+            handleMove(clientX) {
+                if (!this.isDragging) return;
+                const diff = this.startX - clientX;
+                if (Math.abs(diff) > 80) {
+                    if (diff > 0) this.next(); else this.prev();
+                    this.isDragging = false;
+                }
+            }
+            handleEnd() { this.isDragging = false; }
+            updateStyles() {
+                const cards = this.container.querySelectorAll('.podcast-3d-card');
+                cards.forEach((card, index) => {
+                    const s = this.getCardStyle(index);
+                    card.style.transform = 'translate(-50%,-50%) translateX(' + s.x + 'px) scale(' + s.scale + ') rotateY(' + s.rotateY + 'deg) translateZ(' + s.z + 'px)';
+                    card.style.opacity = s.opacity;
+                    card.style.zIndex = s.zIndex;
+                    card.classList.toggle('active', index === this.activeIndex);
+                });
+            }
+            getCardStyle(index) {
+                const diff = index - this.activeIndex;
+                const abs = Math.abs(diff);
+                const vw = window.innerWidth;
+                const offset = Math.min(400, vw * 0.5);
+                const spacing = Math.min(140, vw * 0.25);
+                if (abs > 2) {
+                    return {
+                        x: diff > 0 ? offset : -offset,
+                        scale: 0.5,
+                        z: -300,
+                        opacity: 0,
+                        rotateY: diff * -20,
+                        zIndex: 0
+                    };
+                }
+                return {
+                    x: diff * spacing,
+                    scale: Math.max(0.6, 1 - abs * 0.15),
+                    z: -abs * 120,
+                    opacity: Math.max(0.3, 1 - abs * 0.35),
+                    rotateY: diff * -12,
+                    zIndex: 10 - abs
+                };
+            }
+            goTo(index) {
+                if (index < 0) index = this.items.length - 1;
+                if (index >= this.items.length) index = 0;
+                this.activeIndex = index;
+                this.updateStyles();
+                if (typeof window.playPodcast === 'function') window.playPodcast(index);
+            }
+            next() { this.goTo(this.activeIndex + 1); }
+            prev() { this.goTo(this.activeIndex - 1); }
+        }
+
+        // ============================================================
+        //  播放计数器
+        // ============================================================
+        (function() {
+            const STORAGE_KEY_PLAYS = 'heyi_play_count';
+            let simulated = 50000.00;
+            function updateDisplay() {
+                const le = document.getElementById('listener-count');
+                const pe = document.getElementById('play-count');
+                if (le) le.textContent = (2890 + Math.floor(Math.random() * 100));
+                if (pe) pe.textContent = simulated.toFixed(2);
+            }
+            window.incrementPlayCount = function() {
+                simulated += Math.random() * 0.05;
+                try { localStorage.setItem(STORAGE_KEY_PLAYS, simulated.toFixed(2)); } catch(e) {}
+                updateDisplay();
+            };
+            try {
+                const saved = localStorage.getItem(STORAGE_KEY_PLAYS);
+                if (saved) simulated = parseFloat(saved);
+            } catch(e) {}
+            updateDisplay();
+            setInterval(() => {
+                simulated += Math.random() * 0.01;
+                try { localStorage.setItem(STORAGE_KEY_PLAYS, simulated.toFixed(2)); } catch(e) {}
+                updateDisplay();
+            }, 30000 + Math.random() * 30000);
+        })();
+
+        // ============================================================
+        //  留言区（由下向上滚动 + 点赞）
+        // ============================================================
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                if (window.podcastList && document.getElementById('carousel-track-3d')) {
+                    window.podcast3DCarousel = new Podcast3DCarousel('carousel-stage-3d', window.podcastList);
+                }
+            }, 100);
+
+            const pbg = document.getElementById('progressBarBg');
+            if (pbg) {
+                pbg.addEventListener('click', e => {
+                    if (!podcastAudio || !podcastAudio.duration) return;
+                    const rect = pbg.getBoundingClientRect();
+                    podcastAudio.currentTime = ((e.clientX - rect.left) / rect.width) * podcastAudio.duration;
+                });
+            }
+
+            const playBtn = document.getElementById('playBtn');
+            if (playBtn) playBtn.addEventListener('click', togglePodcast);
+
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            if (prevBtn) prevBtn.addEventListener('click', () => { if (currentPodcastIndex > 0) playPodcast(currentPodcastIndex - 1); });
+            if (nextBtn) nextBtn.addEventListener('click', () => { if (window.podcast3DCarousel && currentPodcastIndex < window.podcast3DCarousel.items.length - 1) playPodcast(currentPodcastIndex + 1); });
+
+            // ===== 留言区 =====
+            const container = document.getElementById('comment-scroll-container');
+            const viewport = document.getElementById('comment-viewport');
+            if (!container || !viewport) return;
+
+            const comments = [
+                { name: '听友_星尘', text: '这集太燃了！河一的成长线写得真好。', likes: Math.floor(Math.random()*50)+3 },
+                { name: '匿名', text: '每天通勤路上都听，已经第三遍了。', likes: Math.floor(Math.random()*50)+3 },
+                { name: '修真爱好者', text: '墟界设定太有意思了，求快更！', likes: Math.floor(Math.random()*50)+3 },
+                { name: '匿名', text: '背景音乐很好听，有没有完整版？', likes: Math.floor(Math.random()*50)+3 },
+                { name: '九界云游客', text: '月妖娆出场那段，鸡皮疙瘩都起来了。', likes: Math.floor(Math.random()*50)+3 },
+                { name: '匿名', text: '作为一个修真小说老读者，这个播客真的一股清流。', likes: Math.floor(Math.random()*50)+3 }
+            ];
+
+            let likeData = {};
+            try { likeData = JSON.parse(localStorage.getItem('heyi_comment_likes')) || {}; } catch(e) {}
+
+            function renderComments() {
+                viewport.innerHTML = '';
+                comments.forEach((c, i) => {
+                    const div = document.createElement('div');
+                    div.className = 'comment-item';
+                    const liked = likeData[i] || false;
+                    const displayLikes = c.likes + (liked ? 1 : 0);
+                    div.innerHTML = '<span class="comment-text">' + c.name + '：' + c.text + '</span><span class="comment-like ' + (liked ? 'liked' : '') + '" data-idx="' + i + '">💗 ' + displayLikes + '</span>';
+                    div.querySelector('.comment-like').addEventListener('click', ev => toggleLike(i, ev));
+                    viewport.appendChild(div);
+                });
+            }
+
+            window.toggleLike = function(idx, ev) {
+                const el = ev.target;
+                const isLiked = el.classList.contains('liked');
+                if (isLiked) {
+                    comments[idx].likes = Math.max(0, comments[idx].likes - 1);
+                    el.classList.remove('liked');
+                } else {
+                    comments[idx].likes += 1;
+                    el.classList.add('liked');
+                }
+                likeData[idx] = !isLiked;
+                try { localStorage.setItem('heyi_comment_likes', JSON.stringify(likeData)); } catch(e) {}
+                el.innerHTML = '💗 ' + comments[idx].likes;
+            };
+
+            renderComments();
+
+            setTimeout(() => {
+                const firstItem = viewport.querySelector('.comment-item');
+                if (!firstItem) return;
+                const singleH = Math.ceil(firstItem.getBoundingClientRect().height());
+                const gap = 8;
+                const step = singleH + gap;
+                container.style.height = (singleH * 5 + gap * 4) + 'px';
+                let pos = 0;
+                setInterval(() => {
+                    pos += 1;
+                    if (pos >= step) {
+                        pos = 0;
+                        viewport.appendChild(viewport.querySelector('.comment-item'));
+                    }
+                    viewport.style.transform = 'translateY(-' + pos + 'px)';
+                }, 50);
+            }, 100);
+        });
+    </script>
+</body>
+</html>

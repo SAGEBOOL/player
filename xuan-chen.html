@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>玄宸 - 九界修真世界人物志</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <style>
+        .story-header {
+            background: linear-gradient(135deg, rgba(220, 38, 38, 0.15), rgba(185, 28, 28, 0.08));
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            border: 0.5px solid rgba(220, 38, 38, 0.25);
+        }
+        .story-content {
+            background: linear-gradient(145deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+            backdrop-filter: blur(20px) saturate(180%);
+            border: 0.5px solid rgba(255, 255, 255, 0.15);
+        }
+        .story-divider {
+            background: linear-gradient(90deg, transparent, rgba(220, 38, 38, 0.5), transparent);
+        }
+        .chapter-title {
+            color: #dc2626;
+        }
+        .back-button {
+            background: linear-gradient(135deg, rgba(220, 38, 38, 0.9), rgba(185, 28, 28, 0.9));
+            transition: all 0.3s ease;
+        }
+        .back-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(220, 38, 38, 0.4);
+        }
+        .dark-effect {
+            background: linear-gradient(135deg, rgba(220, 38, 38, 0.2), rgba(185, 28, 28, 0.1));
+            border: 1px solid rgba(220, 38, 38, 0.3);
+        }
+        .demon-icon {
+            font-size: 1.5rem;
+            filter: drop-shadow(0 0 8px rgba(220, 38, 38, 0.6));
+        }
+    </style>
+</head>
+<body class="min-h-screen text-white" style="background: linear-gradient(135deg, #0a0a1a 0%, #1a0a0a 50%, #0a0a2a 100%);">
+    
+    <!-- 返回按钮 -->
+    <div class="fixed top-6 left-6 z-50">
+        <a href="index.html" class="back-button px-6 py-3 rounded-full font-bold text-white shadow-lg flex items-center space-x-2" style="box-shadow: 0 4px 15px rgba(220, 38, 38, 0.3);">
+            <span>←</span>
+            <span>返回百科</span>
+        </a>
+    </div>
+
+    <!-- 主内容区 -->
+    <div class="container mx-auto px-4 py-24 max-w-6xl">
+        
+        <!-- 人物标题区 -->
+        <div class="story-header rounded-3xl p-8 mb-8 shadow-2xl">
+            <div class="flex flex-col md:flex-row items-center space-y-6 md:space-y-0 md:space-x-8">
+                <!-- 人物头像 -->
+                <div class="w-48 h-auto rounded-2xl flex items-center justify-center shadow-2xl" style="background: linear-gradient(135deg, #dc2626, #b91c1c); box-shadow: 0 20px 60px rgba(220, 38, 38, 0.3);">
+                    <img src="assets/images/玄宸.png" alt="玄宸" class="w-full h-auto rounded-2xl object-contain" style="box-shadow: 0 8px 24px rgba(0,0,0,0.3);">
+                </div>
+                
+                <!-- 人物信息 -->
+                <div class="flex-1 text-center md:text-left">
+                    <h1 class="text-5xl font-bold mb-4" style="color: #dc2626; text-shadow: 0 0 30px rgba(220, 38, 38, 0.5);">😈 玄宸</h1>
+                    <p class="text-xl mb-2" style="color: #fca5a5;">九界之主 · 黑暗势力统治者</p>
+                    <p class="text-lg" style="color: #fecaca;">冷酷无情的反派界主 · 智谋深远</p>
+                    
+                    <!-- 标签 -->
+                    <div class="flex flex-wrap gap-2 mt-4 justify-center md:justify-start">
+                        <span class="px-4 py-2 rounded-full text-sm font-bold" style="background: rgba(220, 38, 38, 0.2); color: #dc2626; border: 1px solid rgba(220, 38, 38, 0.3);">反派阵营</span>
+                        <span class="px-4 py-2 rounded-full text-sm font-bold" style="background: rgba(139, 92, 246, 0.2); color: #a78bfa; border: 1px solid rgba(139, 92, 246, 0.3);">界主</span>
+                        <span class="px-4 py-2 rounded-full text-sm font-bold" style="background: rgba(234, 179, 8, 0.2); color: #eab308; border: 1px solid rgba(234, 179, 8, 0.3);">宿敌</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 人物简介 -->
+        <div class="story-content rounded-3xl p-8 mb-8">
+            <h2 class="text-3xl font-bold mb-6 chapter-title">📖 人物简介</h2>
+            <div class="story-divider h-px mb-6"></div>
+            
+            <div class="space-y-4" style="color: #ccd6f6; line-height: 1.8;">
+                <p>玄宸，九界之主，黑暗势力的统治者。曾经是九界的守护者，却因对力量的渴望和对永恒的统治欲望，堕落为冷酷无情的界主。</p>
+                <p>他掌控着<strong style="color: #dc2626;">九界法则</strong>，能够操控时空，封锁境界，是主角团最强大的敌人。</p>
+                <p>智谋深远，行事果断，为了维持自己的统治，不惜一切代价。他视<strong style="color: #dc2626;">刘浪浪</strong>等主角团为最大的威胁，必欲除之而后快。</p>
+                <p>修炼<strong style="color: #dc2626;">黑暗功法</strong>，能够腐蚀人心，操控黑暗能量，是九界中最危险的存在。</p>
+            </div>
+
+            <!-- 人物特征卡片 -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-8">
+                <div class="dark-effect rounded-xl p-4 text-center">
+                    <div class="demon-icon mb-2">👑</div>
+                    <h3 class="font-bold mb-1" style="color: #dc2626;">身份</h3>
+                    <p class="text-sm" style="color: #fca5a5;">九界之主 · 界主</p>
+                </div>
+                <div class="dark-effect rounded-xl p-4 text-center">
+                    <div class="demon-icon mb-2">⚔️</div>
+                    <h3 class="font-bold mb-1" style="color: #dc2626;">战斗风格</h3>
+                    <p class="text-sm" style="color: #fca5a5;">法则操控 · 黑暗功法</p>
+                </div>
+                <div class="dark-effect rounded-xl p-4 text-center">
+                    <div class="demon-icon mb-2">🧠</div>
+                    <h3 class="font-bold mb-1" style="color: #dc2626;">性格特征</h3>
+                    <p class="text-sm" style="color: #fca5a5;">冷酷无情 · 智谋深远</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 身世与堕落 -->
+        <div class="story-content rounded-3xl p-8 mb-8">
+            <h2 class="text-3xl font-bold mb-6 chapter-title">🎭 身世与堕落</h2>
+            <div class="story-divider h-px mb-6"></div>
+            
+            <div class="space-y-6" style="color: #ccd6f6; line-height: 1.8;">
+                <div class="dark-effect rounded-xl p-6">
+                    <h3 class="text-xl font-bold mb-3" style="color: #dc2626;">🌟 曾经的守护者</h3>
+                    <p>玄宸曾经是九界的守护者之一，与天道老人、甘道夫等人并肩作战，守护九界的平衡。</p>
+                    <p class="mt-2">他天资聪颖，修为深厚，是当时最年轻的界主候选人。</p>
+                </div>
+
+                <div class="dark-effect rounded-xl p-6">
+                    <h3 class="text-xl font-bold mb-3" style="color: #b91c1c;">💀 堕落之夜</h3>
+                    <p>在一次探索时空夹缝的任务中，玄宸发现了黑暗能量的秘密。这种力量太过强大，能够满足他内心深处对永恒和统治的渴望。</p>
+                    <p class="mt-2">他渐渐被黑暗能量腐蚀，最终在一次大战中，背叛了曾经的战友，成为了九界之主。</p>
+                </div>
+
+                <div class="dark-effect rounded-xl p-6">
+                    <h3 class="text-xl font-bold mb-3" style="color: #fca5a5;">👑 黑暗统治</h3>
+                    <p>成为界主后，玄宸利用九界法则的力量，封锁了九界之间的通道，切断了各界的联系。</p>
+                    <p class="mt-2">他培养自己的势力，打压异己，将九界带入了黑暗时代。</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 核心能力 -->
+        <div class="story-content rounded-3xl p-8 mb-8">
+            <h2 class="text-3xl font-bold mb-6 chapter-title">⚔️ 核心能力</h2>
+            <div class="story-divider h-px mb-6"></div>
+            
+            <div class="space-y-6">
+                <!-- 九界法则操控 -->
+                <div class="dark-effect rounded-xl p-6">
+                    <h3 class="text-xl font-bold mb-3" style="color: #dc2626;">🌌 九界法则操控</h3>
+                    <p class="mb-3" style="color: #ccd6f6;">作为九界之主，玄宸掌控着九界法则的力量。他能够操控时空，封锁境界，甚至可以改写九界的规则。</p>
+                    <div class="rounded-lg p-4" style="background: rgba(220, 38, 38, 0.1); border-left: 4px solid #dc2626;">
+                        <p class="text-sm" style="color: #fca5a5;">⚠️ 终极能力：能够封锁九界通道，切断各界联系，是主角团最大的障碍。</p>
+                    </div>
+                </div>
+
+                <!-- 黑暗功法 -->
+                <div class="dark-effect rounded-xl p-6">
+                    <h3 class="text-xl font-bold mb-3" style="color: #b91c1c;">💀 黑暗功法</h3>
+                    <p class="mb-3" style="color: #ccd6f6;">玄宸修炼的黑暗功法，能够腐蚀人心，操控黑暗能量。这种功法威力巨大，但也会反噬修炼者，使其逐渐失去人性。</p>
+                    <div class="rounded-lg p-4" style="background: rgba(185, 28, 28, 0.1); border-left: 4px solid #b91c1c;">
+                        <p class="text-sm" style="color: #fca5a5;">💀 反噬效果：长期修炼黑暗功法，使玄宸逐渐失去情感，变得冷酷无情。</p>
+                    </div>
+                </div>
+
+                <!-- 时空封锁 -->
+                <div class="dark-effect rounded-xl p-6">
+                    <h3 class="text-xl font-bold mb-3" style="color: #fca5a5;">⏳ 时空封锁</h3>
+                    <p class="mb-3" style="color: #ccd6f6;">玄宸能够封锁时空，创造独立的空间战场。在这个战场上，他能够操控时间流速，使敌人陷入永恒的困境。</p>
+                    <div class="rounded-lg p-4" style="background: rgba(252, 165, 165, 0.1); border-left: 4px solid #fca5a5;">
+                        <p class="text-sm" style="color: #fca5a5;">⏰ 时空陷阱：能够将敌人困在时空夹缝中，直至永恒。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 与主角团的关系 -->
+        <div class="story-content rounded-3xl p-8 mb-8">
+            <h2 class="text-3xl font-bold mb-6 chapter-title">💥 与主角团的关系</h2>
+            <div class="story-divider h-px mb-6"></div>
+            
+            <div class="space-y-6" style="color: #ccd6f6; line-height: 1.8;">
+                <div class="dark-effect rounded-xl p-6">
+                    <h3 class="text-xl font-bold mb-3" style="color: #dc2626;">⚔️ 刘浪浪 - 宿敌</h3>
+                    <p>玄宸视刘浪浪为最大的威胁。因为刘浪浪拥有一体双魂的特殊体质，能够吸收多种能量，是唯一有可能击败他的人。</p>
+                    <p class="mt-2">两人之间的对决，将是决定九界命运的关键。</p>
+                </div>
+
+                <div class="dark-effect rounded-xl p-6">
+                    <h3 class="text-xl font-bold mb-3" style="color: #b91c1c;">🧔 河一 - 对手</h3>
+                    <p>河一作为界域风水师，能够感知九界的变化。他的存在，让玄宸的统治不再稳固。</p>
+                    <p class="mt-2">玄宸多次试图拉拢河一，但都被拒绝。从此，河一成为了他的眼中钉。</p>
+                </div>
+
+                <div class="dark-effect rounded-xl p-6">
+                    <h3 class="text-xl font-bold mb-3" style="color: #fca5a5;">🧙 天道老人 - 旧友变敌人</h3>
+                    <p>天道老人曾经是玄宸的战友，两人并肩作战，守护九界。但玄宸的堕落，让两人反目成仇。</p>
+                    <p class="mt-2">天道老人一直在寻找机会，希望能够让玄宸迷途知返，但似乎已经不可能了。</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 经典台词 -->
+        <div class="story-content rounded-3xl p-8 mb-8">
+            <h2 class="text-3xl font-bold mb-6 chapter-title">💬 经典台词</h2>
+            <div class="story-divider h-px mb-6"></div>
+            
+            <div class="space-y-4">
+                <div class="dark-effect rounded-xl p-6">
+                    <p class="text-lg italic" style="color: #dc2626;">"九界法则，在我手中。任何人，都无法反抗我的意志。"</p>
+                    <p class="text-right mt-2" style="color: #fca5a5;">——展现界主威严时</p>
+                </div>
+
+                <div class="dark-effect rounded-xl p-6">
+                    <p class="text-lg italic" style="color: #b91c1c;">"力量...这才是真正的力量！你们这些守护者，根本不明白力量的真谛！"</p>
+                    <p class="text-right mt-2" style="color: #fca5a5;">——堕落时所说</p>
+                </div>
+
+                <div class="dark-effect rounded-xl p-6">
+                    <p class="text-lg italic" style="color: #fca5a5;">"刘浪浪...你确实很强。但还不够，还远远不够！"</p>
+                    <p class="text-right mt-2" style="color: #fca5a5;">——与刘浪浪对决时</p>
+                </div>
+
+                <div class="dark-effect rounded-xl p-6">
+                    <p class="text-lg italic" style="color: #fca5a5;">"天道...你还是那么天真。这个九界，只有力量才是真理！"</p>
+                    <p class="text-right mt-2" style="color: #fca5a5;">——与天道老人对峙时</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 相关剧情 -->
+        <div class="story-content rounded-3xl p-8 mb-8">
+            <h2 class="text-3xl font-bold mb-6 chapter-title">📚 相关剧情</h2>
+            <div class="story-divider h-px mb-6"></div>
+            
+            <div class="space-y-4">
+                <div class="dark-effect rounded-xl p-6 flex items-center justify-between">
+                    <div>
+                        <h3 class="font-bold" style="color: #dc2626;">第10卷：界主登场</h3>
+                        <p class="text-sm" style="color: #fca5a5;">玄宸正式登场，展现界主威严</p>
+                    </div>
+                    <span class="text-2xl">👑</span>
+                </div>
+
+                <div class="dark-effect rounded-xl p-6 flex items-center justify-between">
+                    <div>
+                        <h3 class="font-bold" style="color: #b91c1c;">第17卷：黑暗崛起</h3>
+                        <p class="text-sm" style="color: #fca5a5;">玄宸的黑暗计划逐渐展开</p>
+                    </div>
+                    <span class="text-2xl">💀</span>
+                </div>
+
+                <div class="dark-effect rounded-xl p-6 flex items-center justify-between">
+                    <div>
+                        <h3 class="font-bold" style="color: #fca5a5;">第22卷：最终决战</h3>
+                        <p class="text-sm" style="color: #fca5a5;">主角团与玄宸的最终对决</p>
+                    </div>
+                    <span class="text-2xl">⚔️</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 人物关系网 -->
+        <div class="story-content rounded-3xl p-8 mb-8">
+            <h2 class="text-3xl font-bold mb-6 chapter-title">🕸️ 人物关系网</h2>
+            <div class="story-divider h-px mb-6"></div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="dark-effect rounded-xl p-4 flex items-center space-x-4">
+                    <div class="w-12 h-12 rounded-full flex items-center justify-center text-2xl" style="background: linear-gradient(135deg, #fbbf24, #f59e0b);">
+                        🧙
+                    </div>
+                    <div class="flex-1">
+                        <h3 class="font-bold" style="color: #fbbf24;">刘浪浪</h3>
+                        <p class="text-sm" style="color: #fca5a5;">宿敌 · 最大的威胁</p>
+                    </div>
+                    <span class="px-3 py-1 rounded-full text-xs font-bold" style="background: rgba(239, 68, 68, 0.2); color: #ef4444;">宿敌</span>
+                </div>
+
+                <div class="dark-effect rounded-xl p-4 flex items-center space-x-4">
+                    <div class="w-12 h-12 rounded-full flex items-center justify-center text-2xl" style="background: linear-gradient(135deg, #64ffda, #4fd1c5);">
+                        🧔
+                    </div>
+                    <div class="flex-1">
+                        <h3 class="font-bold" style="color: #64ffda;">河一</h3>
+                        <p class="text-sm" style="color: #fca5a5;">对手 · 眼中钉</p>
+                    </div>
+                    <span class="px-3 py-1 rounded-full text-xs font-bold" style="background: rgba(239, 68, 68, 0.2); color: #ef4444;">宿敌</span>
+                </div>
+
+                <div class="dark-effect rounded-xl p-4 flex items-center space-x-4">
+                    <div class="w-12 h-12 rounded-full flex items-center justify-center text-2xl" style="background: linear-gradient(135deg, #8b5cf6, #7c3aed);">
+                        🔮
+                    </div>
+                    <div class="flex-1">
+                        <h3 class="font-bold" style="color: #8b5cf6;">天道老人</h3>
+                        <p class="text-sm" style="color: #fca5a5;">旧友 · 如今的敌人</p>
+                    </div>
+                    <span class="px-3 py-1 rounded-full text-xs font-bold" style="background: rgba(239, 68, 68, 0.2); color: #ef4444;">宿敌</span>
+                </div>
+
+                <div class="dark-effect rounded-xl p-4 flex items-center space-x-4">
+                    <div class="w-12 h-12 rounded-full flex items-center justify-center text-2xl" style="background: linear-gradient(135deg, #dc2626, #b91c1c);">
+                        🩸
+                    </div>
+                    <div class="flex-1">
+                        <h3 class="font-bold" style="color: #dc2626;">血衍</h3>
+                        <p class="text-sm" style="color: #fca5a5;">盟友 · 黑暗化身</p>
+                    </div>
+                    <span class="px-3 py-1 rounded-full text-xs font-bold" style="background: rgba(16, 185, 129, 0.2); color: #10b981;">盟友</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 返回按钮 -->
+        <div class="text-center mt-12">
+            <a href="index.html" class="back-button px-8 py-4 rounded-full font-bold text-white shadow-lg text-lg inline-flex items-center space-x-2">
+                <span>←</span>
+                <span>返回百科首页</span>
+            </a>
+        </div>
+    </div>
+
+</body>
+</html>

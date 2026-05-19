@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>第5卷：初相遇 - 九界修真世界</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <style>
+        .story-header {
+            background: linear-gradient(135deg, rgba(236, 72, 153, 0.12), rgba(236, 72, 153, 0.06));
+            backdrop-filter: blur(20px) saturate(180%);
+            border: 0.5px solid rgba(236, 72, 153, 0.18);
+            border-radius: 40px;
+            padding: 40px;
+            margin-bottom: 30px;
+        }
+        .back-button {
+            position: fixed;
+            top: 80px;
+            left: 20px;
+            z-index: 100;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ec4899;
+            font-size: 24px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body class="text-gray-200">
+    <button class="back-button" onclick="window.location.href='ling-xi.html'">←</button>
+    
+    <nav class="fixed top-0 w-full z-50" style="background: rgba(26, 26, 46, 0.9); backdrop-filter: blur(10px);">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <h1 class="text-xl font-bold text-title-gradient">九界修真</h1>
+        </div>
+    </nav>
+
+    <main class="container mx-auto px-4 pt-24 pb-20">
+        <section class="story-header fade-in">
+            <div class="text-center">
+                <h1 class="text-4xl md:text-5xl font-bold mb-4" style="color: #ec4899;">
+                    第5卷：初相遇
+                </h1>
+                <p class="text-lg mb-2" style="color: #8892b0;">灵汐与刘浪浪初次相遇</p>
+            </div>
+        </section>
+
+        <section class="story-content fade-in" style="background: rgba(255,255,255,0.1); backdrop-filter: blur(15px); border: 1px solid rgba(255,255,255,0.15); border-radius: 32px; padding: 32px; line-height: 2;">
+            <h2 style="text-align: center; color: #ec4899; font-size: 24px; margin-bottom: 30px;">第5卷：初相遇</h2>
+            
+            <p>战国的春天，总是来得很早。</p>
+            
+            <p>灵汐站在城墙之上，看着城外熙熙攘攘的商队。</p>
+            
+            <p>作为战国公主，她本不该出现在这里。</p>
+            
+            <p>但作为医者，她必须来。</p>
+            
+            <p>城外来了个奇怪的年轻人，据说从蛮荒界而来，身怀异宝...</p>
+            
+            <p>"灵汐公主，"侍女走过来，"那位先生请你过去看诊。"</p>
+            
+            <p>她点点头，整理了一下衣襟，向诊帐走去。</p>
+            
+            <p>掀开帐帘的那一刻，她愣住了。</p>
+            
+            <p>那个年轻人——</p>
+            
+            <p>正对着一本医书发呆。</p>
+            
+            <div style="text-align: center; margin-top: 60px; padding-top: 40px; border-top: 1px solid rgba(255, 255, 255, 0.1);">
+                <p style="color: #8892b0; font-size: 14px;">【第5卷（简化版）】</p>
+                <p style="color: #ec4899; margin-top: 20px;">
+                    <a href="ling-xi.html" style="text-decoration: none;">← 返回灵汐页面</a>
+                </p>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.fade-in').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(20px)';
+            el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            observer.observe(el);
+        });
+    </script>
+</body>
+</html>
