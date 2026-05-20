@@ -362,23 +362,15 @@
                 </button>
                     
                     <div id="share-dropdown" class="hidden absolute bottom-full mb-2 right-0 bg-darker border border-gray-800 rounded-lg shadow-lg p-4 w-64 z-50">
-                        <h4 class="text-white font-medium mb-3">分享到</h4>
+                        <h4 class="text-white font-medium mb-3">分享</h4>
                         <div class="grid grid-cols-2 gap-3">
                             <a href="#" class="flex items-center space-x-3 p-2 rounded-md hover:bg-gray-800 transition-colors share-link">
                                 <i class="fa fa-link text-primary"></i>
                                 <span class="text-gray-300">复制链接</span>
                             </a>
-                            <a href="#" class="flex items-center space-x-3 p-2 rounded-md hover:bg-gray-800 transition-colors share-email">
-                                <i class="fa fa-envelope text-primary"></i>
-                                <span class="text-gray-300">邮件</span>
-                            </a>
-                            <a href="#" class="flex items-center space-x-3 p-2 rounded-md hover:bg-gray-800 transition-colors share-wechat">
-                                <i class="fa fa-wechat text-primary"></i>
-                                <span class="text-gray-300">微信</span>
-                            </a>
-                            <a href="#" class="flex items-center space-x-3 p-2 rounded-md hover:bg-gray-800 transition-colors share-weibo">
-                                <i class="fa fa-weibo text-primary"></i>
-                                <span class="text-gray-300">微博</span>
+                            <a href="#" class="flex items-center space-x-3 p-2 rounded-md hover:bg-gray-800 transition-colors share-send">
+                                <i class="fa fa-paper-plane text-primary"></i>
+                                <span class="text-gray-300">发送页面</span>
                             </a>
                         </div>
                     </div>
@@ -756,6 +748,7 @@
                         if (audio.src || audio.currentSrc) {
                             audio.play().catch(e => console.log('播放失败:', e));
                         } else if (episodeCards.length > 0) {
+                            // 如果没有音频源，播放第一个
                             const firstCard = episodeCards[0];
                             const src = firstCard.getAttribute('data-src');
                             if (src) {
@@ -876,102 +869,72 @@
             // 节目选择
             episodeCards.forEach(card => {
                 card.addEventListener('click', function() {
-                    try {
-                        const src = this.getAttribute('data-src');
-                        if (!src) {
-                            showToast('错误：未找到音频文件');
-                            return;
+                    const src = this.getAttribute('data-src');
+                    if (!src) return;
+                    
+                    // 移除所有卡片的活动状态
+                    episodeCards.forEach(c => {
+                        c.classList.remove('bg-primary', 'bg-opacity-10', 'border-primary');
+                        c.classList.add('bg-dark', 'bg-opacity-50', 'border-transparent');
+                        
+                        // 移除所有播放波形和状态标签
+                        const statusContainer = c.querySelector('.flex.flex-col.items-center');
+                        if (statusContainer) {
+                            statusContainer.remove();
                         }
                         
-                        console.log('尝试播放:', src);
-                        
-                        // 移除所有卡片的活动状态
-                        episodeCards.forEach(c => {
-                            c.classList.remove('bg-primary', 'bg-opacity-10', 'border-primary');
-                            c.classList.add('bg-dark', 'bg-opacity-50', 'border-transparent');
-                            
-                            // 移除所有播放波形和状态标签
-                            const statusContainer = c.querySelector('.flex.flex-col.items-center');
-                            if (statusContainer) {
-                                statusContainer.remove();
-                            }
-                            
-                            // 添加播放按钮
-                            const buttonContainer = c.querySelector('.flex.justify-between');
-                            if (buttonContainer && !buttonContainer.querySelector('button')) {
-                                const button = document.createElement('button');
-                                button.className = 'text-white hover:text-primary transition-colors';
-                                button.innerHTML = '<i class="fa fa-play-circle text-xl"></i>';
-                                buttonContainer.appendChild(button);
-                            }
-                        });
-                        
-                        // 添加活动状态到点击的卡片
-                        this.classList.remove('bg-dark', 'bg-opacity-50', 'border-transparent');
-                        this.classList.add('bg-primary', 'bg-opacity-10', 'border-primary');
-                        
-                        // 移除播放按钮
-                        const playBtn = this.querySelector('button');
-                        if (playBtn) {
-                            playBtn.remove();
+                        // 添加播放按钮
+                        const buttonContainer = c.querySelector('.flex.justify-between');
+                        if (buttonContainer && !buttonContainer.querySelector('button')) {
+                            const button = document.createElement('button');
+                            button.className = 'text-white hover:text-primary transition-colors';
+                            button.innerHTML = '<i class="fa fa-play-circle text-xl"></i>';
+                            buttonContainer.appendChild(button);
                         }
+                    });
+                    
+                    // 添加活动状态到点击的卡片
+                    this.classList.remove('bg-dark', 'bg-opacity-50', 'border-transparent');
+                    this.classList.add('bg-primary', 'bg-opacity-10', 'border-primary');
+                    
+                    // 移除播放按钮
+                    const playBtn = this.querySelector('button');
+                    if (playBtn) {
+                        playBtn.remove();
+                    }
+                    
+                    // 添加正在播放标签和波形
+                    const buttonContainer = this.querySelector('.flex.justify-between');
+                    if (buttonContainer) {
+                        const statusSpan = document.createElement('span');
+                        statusSpan.className = 'text-xs bg-primary text-white px-2 py-0.5 rounded-full mb-2';
+                        statusSpan.textContent = '正在播放';
                         
-                        // 添加正在播放标签和波形
-                        const buttonContainer = this.querySelector('.flex.justify-between');
-                        if (buttonContainer) {
-                            const statusSpan = document.createElement('span');
-                            statusSpan.className = 'text-xs bg-primary text-white px-2 py-0.5 rounded-full mb-2';
-                            statusSpan.textContent = '正在播放';
-                            
-                            const waveDiv = document.createElement('div');
-                            waveDiv.className = 'audio-wave h-4';
-                            waveDiv.innerHTML = '<span></span><span></span><span></span><span></span><span></span>';
-                            
-                            const statusContainer = document.createElement('div');
-                            statusContainer.className = 'flex flex-col items-center';
-                            statusContainer.appendChild(statusSpan);
-                            statusContainer.appendChild(waveDiv);
-                            
-                            buttonContainer.appendChild(statusContainer);
-                        }
+                        const waveDiv = document.createElement('div');
+                        waveDiv.className = 'audio-wave h-4';
+                        waveDiv.innerHTML = '<span></span><span></span><span></span><span></span><span></span>';
                         
-                        // 更新当前播放信息
-                        const episodeTitle = this.querySelector('h3');
-                        if (episodeTitle) {
-                            const titleEl = document.querySelector('.w-full.max-w-md h2') || 
-                                            document.querySelector('h2.text-2xl');
-                            if (titleEl) titleEl.textContent = episodeTitle.textContent;
-                        }
+                        const statusContainer = document.createElement('div');
+                        statusContainer.className = 'flex flex-col items-center';
+                        statusContainer.appendChild(statusSpan);
+                        statusContainer.appendChild(waveDiv);
                         
-                        // 加载并播放音频
-                        if (audio) {
-                            audio.src = src;
-                            audio.load();
-                            
-                            // 添加错误处理
-                            audio.onerror = function() {
-                                console.error('音频加载失败:', audio.error);
-                                showToast('音频加载失败，请检查文件是否存在');
-                            };
-                            
-                            // 添加可以播放时的处理
-                            audio.oncanplay = function() {
-                                console.log('音频可以播放');
-                            };
-                            
-                            audio.play().then(() => {
-                                console.log('播放成功');
-                                showToast('正在播放: ' + (episodeTitle ? episodeTitle.textContent : ''));
-                            }).catch(e => {
-                                console.error('播放失败:', e);
-                                showToast('播放失败: ' + e.message);
-                            });
-                        } else {
-                            showToast('错误：未找到音频播放器');
-                        }
-                    } catch (err) {
-                        console.error('章节点击处理错误:', err);
-                        showToast('发生错误: ' + err.message);
+                        buttonContainer.appendChild(statusContainer);
+                    }
+                    
+                    // 更新当前播放信息
+                    const episodeTitle = this.querySelector('h3');
+                    if (episodeTitle) {
+                        const titleEl = document.querySelector('.w-full.max-w-md h2') || 
+                                        document.querySelector('h2.text-2xl');
+                        if (titleEl) titleEl.textContent = episodeTitle.textContent;
+                    }
+                    
+                    // 加载并播放音频
+                    if (audio) {
+                        audio.src = src;
+                        audio.load();
+                        audio.play().catch(e => console.log('播放失败:', e));
                     }
                 });
             });
@@ -998,7 +961,9 @@
             
             animatedElements.forEach(element => {
                 observer.observe(element);
-            });            // ============ 功能按钮实现 ============
+            });
+            
+            // ============ 功能按钮实现 ============
             
             // 1. 随机播放
             const shuffleBtn = document.getElementById('shuffle-btn');
@@ -1306,65 +1271,42 @@
                     shareDropdown.classList.add('hidden');
                 }
             });
-            
-            // 微信分享
-            const shareWechat = shareDropdown.querySelector('.share-wechat');
-            if (shareWechat) {
-                shareWechat.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    showToast('请截图或使用微信扫一扫分享');
-                    shareDropdown.classList.add('hidden');
-                });
-            }
-            
-            // 复制链接
-            const shareLink = shareDropdown.querySelector('.share-link');
-            if (shareLink) {
-                shareLink.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    const url = window.location.href;
-                    if (navigator.clipboard) {
-                        navigator.clipboard.writeText(url).then(() => {
+                
+                // 复制链接
+                const shareLink = shareDropdown.querySelector('.share-link');
+                if (shareLink) {
+                    shareLink.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        const url = window.location.href;
+                        if (navigator.clipboard) {
+                            navigator.clipboard.writeText(url).then(() => {
+                                showToast('链接已复制到剪贴板');
+                            });
+                        } else {
+                            const input = document.createElement('input');
+                            input.value = url;
+                            document.body.appendChild(input);
+                            input.select();
+                            document.execCommand('copy');
+                            document.body.removeChild(input);
                             showToast('链接已复制到剪贴板');
-                        });
-                    } else {
-                        // Fallback
-                        const input = document.createElement('input');
-                        input.value = url;
-                        document.body.appendChild(input);
-                        input.select();
-                        document.execCommand('copy');
-                        document.body.removeChild(input);
-                        showToast('链接已复制到剪贴板');
-                    }
-                    shareDropdown.classList.add('hidden');
-                });
-            }
-            
-            // 微博分享
-            const shareWeibo = shareDropdown.querySelector('.share-weibo');
-            if (shareWeibo) {
-                shareWeibo.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    const url = encodeURIComponent(window.location.href);
-                    const title = encodeURIComponent(document.title);
-                    window.open(`https://service.weibo.com/share/share.php?url=${url}&title=${title}`, '_blank');
-                    shareDropdown.classList.add('hidden');
-                });
-            }
-            
-            // 邮件分享
-            const shareEmail = shareDropdown.querySelector('.share-email');
-            if (shareEmail) {
-                shareEmail.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    const url = window.location.href;
-                    const title = document.title;
-                    const mailtoUrl = `mailto:?subject=${encodeURIComponent(title)}&body=${encodeURIComponent('推荐你收听：' + title + ' ' + url)}`;
-                    window.location.href = mailtoUrl;
-                    shareDropdown.classList.add('hidden');
-                });
-            }
+                        }
+                        shareDropdown.classList.add('hidden');
+                    });
+                }
+                
+                // 发送页面
+                const shareSend = shareDropdown.querySelector('.share-send');
+                if (shareSend) {
+                    shareSend.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        const url = window.location.href;
+                        const title = document.title;
+                        const mailtoUrl = `mailto:?subject=${encodeURIComponent(title)}&body=${encodeURIComponent('推荐你收听：' + title + ' ' + url)}`;
+                        window.location.href = mailtoUrl;
+                        shareDropdown.classList.add('hidden');
+                    });
+                }
         });
     </script>
     
