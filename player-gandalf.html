@@ -354,9 +354,6 @@
             
             <div class="hidden md:flex items-center space-x-8">
                 <a href="index.html" class="font-medium text-white hover:text-primary transition-colors">首页</a>
-                <a href="#" class="font-medium text-white hover:text-primary transition-colors">发现</a>
-
-                <a href="#" class="font-medium text-white hover:text-primary transition-colors">关于我们</a>
             </div>
             
             <div class="flex items-center space-x-4">
@@ -396,9 +393,6 @@
         <div id="mobile-menu" class="hidden md:hidden bg-darker border-t border-gray-800 absolute w-full">
             <div class="container mx-auto px-6 py-4 flex flex-col space-y-4">
                 <a href="index.html" class="font-medium text-white hover:text-primary transition-colors py-2">首页</a>
-                <a href="#" class="font-medium text-white hover:text-primary transition-colors py-2">发现</a>
-
-                <a href="#" class="font-medium text-white hover:text-primary transition-colors py-2">关于我们</a>
                 <button class="w-full px-4 py-2 bg-primary text-white rounded-full hover:bg-opacity-90 transition-colors" id="share-button-mobile">
                     分享
                 </button>
@@ -731,6 +725,8 @@
 
     </footer>
 
+    <audio id="audio-player" preload="metadata"></audio>
+
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // 移动端菜单切换
@@ -759,6 +755,7 @@
                         if (audio.src || audio.currentSrc) {
                             audio.play().catch(e => console.log('播放失败:', e));
                         } else if (episodeCards.length > 0) {
+                            // 如果没有音频源，播放第一个
                             const firstCard = episodeCards[0];
                             const src = firstCard.getAttribute('data-src');
                             if (src) {
@@ -971,7 +968,9 @@
             
             animatedElements.forEach(element => {
                 observer.observe(element);
-            });            // ============ 功能按钮实现 ============
+            });
+            
+            // ============ 功能按钮实现 ============
             
             // 1. 随机播放
             const shuffleBtn = document.getElementById('shuffle-btn');
@@ -1246,7 +1245,7 @@
                         const cards = Array.from(episodeCards);
                         const currentIndex = cards.findIndex(c => c.classList.contains('bg-primary'));
                         const nextIndex = (currentIndex + 1) % cards.length;
-                    if (cards[nextIndex]) cards[nextIndex].click();
+                        if (cards[nextIndex]) cards[nextIndex].click();
                     }
                 });
             }
@@ -1279,71 +1278,67 @@
                     shareDropdown.classList.add('hidden');
                 }
             });
-            
-            // 微信分享
-            const shareWechat = shareDropdown.querySelector('.share-wechat');
-            if (shareWechat) {
-                shareWechat.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    showToast('请截图或使用微信扫一扫分享');
-                    shareDropdown.classList.add('hidden');
-                });
-            }
-            
-            // 复制链接
-            const shareLink = shareDropdown.querySelector('.share-link');
-            if (shareLink) {
-                shareLink.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    const url = window.location.href;
-                    if (navigator.clipboard) {
-                        navigator.clipboard.writeText(url).then(() => {
+                
+                // 微信分享
+                const shareWechat = shareDropdown.querySelector('.share-wechat');
+                if (shareWechat) {
+                    shareWechat.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        showToast('请截图或使用微信扫一扫分享');
+                        shareDropdown.classList.add('hidden');
+                    });
+                }
+                
+                // 复制链接
+                const shareLink = shareDropdown.querySelector('.share-link');
+                if (shareLink) {
+                    shareLink.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        const url = window.location.href;
+                        if (navigator.clipboard) {
+                            navigator.clipboard.writeText(url).then(() => {
+                                showToast('链接已复制到剪贴板');
+                            });
+                        } else {
+                            // Fallback
+                            const input = document.createElement('input');
+                            input.value = url;
+                            document.body.appendChild(input);
+                            input.select();
+                            document.execCommand('copy');
+                            document.body.removeChild(input);
                             showToast('链接已复制到剪贴板');
-                        });
-                    } else {
-                        // Fallback
-                        const input = document.createElement('input');
-                        input.value = url;
-                        document.body.appendChild(input);
-                        input.select();
-                        document.execCommand('copy');
-                        document.body.removeChild(input);
-                        showToast('链接已复制到剪贴板');
-                    }
-                    shareDropdown.classList.add('hidden');
-                });
-            }
-            
-            // 微博分享
-            const shareWeibo = shareDropdown.querySelector('.share-weibo');
-            if (shareWeibo) {
-                shareWeibo.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    const url = encodeURIComponent(window.location.href);
-                    const title = encodeURIComponent(document.title);
-                    window.open(`https://service.weibo.com/share/share.php?url=${url}&title=${title}`, '_blank');
-                    shareDropdown.classList.add('hidden');
-                });
-            }
-            
-            // 邮件分享
-            const shareEmail = shareDropdown.querySelector('.share-email');
-            if (shareEmail) {
-                shareEmail.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    const url = window.location.href;
-                    const title = document.title;
-                    const mailtoUrl = `mailto:?subject=${encodeURIComponent(title)}&body=${encodeURIComponent('推荐你收听：' + title + ' ' + url)}`;
-                    window.location.href = mailtoUrl;
-                    shareDropdown.classList.add('hidden');
-                });
-            }
+                        }
+                        shareDropdown.classList.add('hidden');
+                    });
+                }
+                
+                // 微博分享
+                const shareWeibo = shareDropdown.querySelector('.share-weibo');
+                if (shareWeibo) {
+                    shareWeibo.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        const url = encodeURIComponent(window.location.href);
+                        const title = encodeURIComponent(document.title);
+                        window.open(`https://service.weibo.com/share/share.php?url=${url}&title=${title}`, '_blank');
+                        shareDropdown.classList.add('hidden');
+                    });
+                }
+                
+                // 邮件分享
+                const shareEmail = shareDropdown.querySelector('.share-email');
+                if (shareEmail) {
+                    shareEmail.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        const url = window.location.href;
+                        const title = document.title;
+                        const mailtoUrl = `mailto:?subject=${encodeURIComponent(title)}&body=${encodeURIComponent('推荐你收听：' + title + ' ' + url)}`;
+                        window.location.href = mailtoUrl;
+                        shareDropdown.classList.add('hidden');
+                    });
+                }
             }
         });
     </script>
-    
-    <!-- 音频播放器（隐藏） -->
-    <audio id="audio-player" preload="metadata"></audio>
-    
 </body>
 </html>
