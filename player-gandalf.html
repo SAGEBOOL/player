@@ -1309,8 +1309,7 @@
                     shareDropdown.classList.add('hidden');
                 });
             }
-        });
-    
+
             // ============ 背景音乐（BGM） ============
             const bgmPlayer = document.getElementById('bgm-player');
             const bgmBtn = document.getElementById('bgm-btn');
@@ -1325,7 +1324,6 @@
                 bgmPlayer.volume = 0.3;
                 bgmPlayer.loop = true;
                 
-                // 首次用户交互后启动BGM
                 let bgmStarted = false;
                 function startBgm() {
                     if (!bgmStarted) {
@@ -1340,12 +1338,10 @@
                 document.addEventListener('click', startBgm, { once: true });
             }
             
-            // BGM 按钮：切换菜单
             if (bgmBtn && bgmMenu) {
                 bgmBtn.addEventListener('click', function(e) {
                     e.stopPropagation();
                     bgmMenu.classList.toggle('hidden');
-                    // 关闭其他菜单
                     const shareDropdown = document.getElementById('share-dropdown');
                     const speedMenu = document.getElementById('speed-menu');
                     if (shareDropdown) shareDropdown.classList.add('hidden');
@@ -1353,14 +1349,12 @@
                 });
             }
             
-            // 点击其他地方关闭BGM菜单
             document.addEventListener('click', function(e) {
                 if (bgmMenu && !bgmMenu.contains(e.target) && bgmBtn && !bgmBtn.contains(e.target)) {
                     bgmMenu.classList.add('hidden');
                 }
             });
             
-            // BGM 音量滑块
             if (bgmVolume && bgmPlayer) {
                 bgmVolume.addEventListener('input', function() {
                     bgmPlayer.volume = this.value / 100;
@@ -1373,7 +1367,6 @@
                 });
             }
             
-            // BGM 开启
             if (bgmToggleOn && bgmPlayer) {
                 bgmToggleOn.addEventListener('click', function() {
                     bgmPlayer.play().then(() => {
@@ -1382,12 +1375,11 @@
                         bgmToggleOn.classList.add('bg-green-700');
                         bgmToggleOff.classList.remove('bg-red-700');
                     }).catch(() => {
-                        showToast('背景音乐播放失败，请检查文件');
+                        showToast('背景音乐播放失败');
                     });
                 });
             }
             
-            // BGM 关闭
             if (bgmToggleOff && bgmPlayer) {
                 bgmToggleOff.addEventListener('click', function() {
                     bgmPlayer.pause();
@@ -1398,6 +1390,8 @@
                 });
             }
 
+        });
+    
 </script>
 </body>
 </html>
