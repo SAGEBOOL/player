@@ -360,7 +360,20 @@
                     分享
                 </button>
                     
-                    <div id="share-dropdown" class="hidden absolute bottom-full mb-2 right-0 bg-darker border border-gray-800 rounded-lg shadow-lg p-4 w-64 z-50">
+                    <div id="bgm-menu" class="hidden absolute bottom-full mb-2 right-0 bg-darker border border-gray-800 rounded-lg shadow-lg p-4 w-56 z-50">
+                                <h4 class="text-white font-medium mb-3 text-sm">背景音乐</h4>
+                                <p class="text-xs text-gray-400 mb-3">月下孤城02 · 循环播放</p>
+                                <div class="flex items-center justify-between mb-3">
+                                    <span class="text-xs text-gray-300">音量</span>
+                                    <input type="range" id="bgm-volume" min="0" max="100" value="30" class="w-32 h-1 bg-gray-600 rounded-lg appearance-none cursor-pointer accent-primary">
+                                </div>
+                                <div class="flex justify-between gap-2">
+                                    <button id="bgm-toggle-on" class="flex-1 py-2 px-3 bg-green-600 text-white text-xs rounded-lg hover:bg-green-700 transition-colors">开启</button>
+                                    <button id="bgm-toggle-off" class="flex-1 py-2 px-3 bg-red-600 text-white text-xs rounded-lg hover:bg-red-700 transition-colors">关闭</button>
+                                </div>
+                            </div>
+
+<div id="share-dropdown" class="hidden absolute bottom-full mb-2 right-0 bg-darker border border-gray-800 rounded-lg shadow-lg p-4 w-64 z-50">
                         <h4 class="text-white font-medium mb-3">分享</h4>
                         <div class="grid grid-cols-2 gap-3">
                             <a href="#" class="flex items-center space-x-3 p-2 rounded-md hover:bg-gray-800 transition-colors share-link">
@@ -476,6 +489,10 @@
                             <button class="text-white hover:text-primary transition-colors relative" id="speed-btn" title="语速调节">
                                 <i class="fa fa-tachometer"></i>
                                 <span id="speed-badge" class="hidden absolute -top-2 -right-2 text-[8px] bg-primary text-white rounded-full w-4 h-4 flex items-center justify-center">1x</span>
+                            </button>
+                            <button class="text-white hover:text-primary transition-colors relative" id="bgm-btn" title="背景音乐">
+                                <i class="fa fa-music"></i>
+                                <span id="bgm-badge" class="hidden absolute -top-2 -right-2 text-[8px] bg-green-500 text-white rounded-full w-4 h-4 flex items-center justify-center"></span>
                             </button>
                         </div>
 
@@ -1442,6 +1459,7 @@
     
     <!-- 音频播放器（隐藏） -->
     <audio id="audio-player" preload="metadata"></audio>
+    <audio id="bgm-player" preload="metadata" loop></audio>
     
     <!-- 页脚 -->
     <footer class="bg-darker py-12 border-t border-gray-800">
@@ -2038,6 +2056,94 @@
                 });
             }
         });
-    </script>
+    
+            // ============ 背景音乐（BGM） ============
+            const bgmPlayer = document.getElementById('bgm-player');
+            const bgmBtn = document.getElementById('bgm-btn');
+            const bgmBadge = document.getElementById('bgm-badge');
+            const bgmMenu = document.getElementById('bgm-menu');
+            const bgmVolume = document.getElementById('bgm-volume');
+            const bgmToggleOn = document.getElementById('bgm-toggle-on');
+            const bgmToggleOff = document.getElementById('bgm-toggle-off');
+            
+            if (bgmPlayer) {
+                bgmPlayer.src = 'assets/music/月下孤城02.mp3';
+                bgmPlayer.volume = 0.3;
+                bgmPlayer.loop = true;
+                
+                // 首次用户交互后启动BGM
+                let bgmStarted = false;
+                function startBgm() {
+                    if (!bgmStarted) {
+                        bgmPlayer.play().then(() => {
+                            bgmBadge.classList.remove('hidden');
+                            bgmBadge.textContent = 'ON';
+                            bgmToggleOn.classList.add('bg-green-700');
+                        }).catch(() => {});
+                        bgmStarted = true;
+                    }
+                }
+                document.addEventListener('click', startBgm, { once: true });
+            }
+            
+            // BGM 按钮：切换菜单
+            if (bgmBtn && bgmMenu) {
+                bgmBtn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    bgmMenu.classList.toggle('hidden');
+                    // 关闭其他菜单
+                    const shareDropdown = document.getElementById('share-dropdown');
+                    const speedMenu = document.getElementById('speed-menu');
+                    if (shareDropdown) shareDropdown.classList.add('hidden');
+                    if (speedMenu) speedMenu.classList.add('hidden');
+                });
+            }
+            
+            // 点击其他地方关闭BGM菜单
+            document.addEventListener('click', function(e) {
+                if (bgmMenu && !bgmMenu.contains(e.target) && bgmBtn && !bgmBtn.contains(e.target)) {
+                    bgmMenu.classList.add('hidden');
+                }
+            });
+            
+            // BGM 音量滑块
+            if (bgmVolume && bgmPlayer) {
+                bgmVolume.addEventListener('input', function() {
+                    bgmPlayer.volume = this.value / 100;
+                    bgmBadge.classList.remove('hidden');
+                    if (bgmPlayer.paused) {
+                        bgmBadge.textContent = 'OFF';
+                    } else {
+                        bgmBadge.textContent = Math.round(this.value / 10) + '';
+                    }
+                });
+            }
+            
+            // BGM 开启
+            if (bgmToggleOn && bgmPlayer) {
+                bgmToggleOn.addEventListener('click', function() {
+                    bgmPlayer.play().then(() => {
+                        bgmBadge.classList.remove('hidden');
+                        bgmBadge.textContent = 'ON';
+                        bgmToggleOn.classList.add('bg-green-700');
+                        bgmToggleOff.classList.remove('bg-red-700');
+                    }).catch(() => {
+                        showToast('背景音乐播放失败，请检查文件');
+                    });
+                });
+            }
+            
+            // BGM 关闭
+            if (bgmToggleOff && bgmPlayer) {
+                bgmToggleOff.addEventListener('click', function() {
+                    bgmPlayer.pause();
+                    bgmBadge.classList.remove('hidden');
+                    bgmBadge.textContent = 'OFF';
+                    bgmToggleOff.classList.add('bg-red-700');
+                    bgmToggleOn.classList.remove('bg-green-700');
+                });
+            }
+
+</script>
 </body>
 </html>
