@@ -486,7 +486,7 @@
                                 <p class="text-xs text-gray-400 mb-3">月下孤城02 · 循环播放</p>
                                 <div class="flex items-center justify-between mb-3">
                                     <span class="text-xs text-gray-300">音量</span>
-                                    <input type="range" id="bgm-volume" min="0" max="100" value="30" class="w-32 h-1 bg-gray-600 rounded-lg appearance-none cursor-pointer accent-primary">
+                                    <input type="range" id="bgm-volume" min="0" max="100" value="1" class="w-32 h-1 bg-gray-600 rounded-lg appearance-none cursor-pointer accent-primary">
                                 </div>
                                 <div class="flex justify-between gap-2">
                                     <button id="bgm-toggle-on" class="flex-1 py-2 px-3 bg-green-600 text-white text-xs rounded-lg hover:bg-green-700 transition-colors">开启</button>
@@ -2225,7 +2225,7 @@
                 
                 if (!bgmPlayer) return;
                 bgmPlayer.src = 'assets/music/月下孤城02.mp3';
-                bgmPlayer.volume = 0.3;
+                bgmPlayer.volume = 0.005;
                 
                 var bgmStarted = false;
                 document.addEventListener('click', function startBgm() {
