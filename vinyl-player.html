@@ -619,12 +619,15 @@
                         </div>
                     </div>
                     
-                    <!-- 节目列表 -->
+                    <!-- 播放列表 Tab 切换 -->
                     <div>
-                        <h2 class="text-2xl font-light mb-6 flex items-center">
-                            <span class="w-1 h-6 bg-primary mr-3"></span>
-                            节目列表
-                        </h2>
+                        <div class="flex border-b border-gray-800 mb-6">
+                            <button id="tab-playlist" class="tab-btn px-6 py-3 text-sm font-medium border-b-2 border-primary text-primary transition-colors">节目列表</button>
+                            <button id="tab-upload" class="tab-btn px-6 py-3 text-sm font-medium border-b-2 border-transparent text-gray-400 hover:text-white transition-colors">我的上传</button>
+                        </div>
+                        
+                        <!-- 节目列表内容 -->
+                        <div id="panel-playlist">
                         <div class="space-y-4 max-h-96 overflow-y-auto pr-2" id="episode-list">
 <!-- 节目 1 -->
                             <div class="episode-card p-4 bg-dark bg-opacity-50 border-l-4 border-transparent hover:border-primary hover:bg-opacity-70 cursor-pointer transition-colors" data-episode="1" data-src="assets/music/he-yi-chapter-01.mp3">
@@ -1634,6 +1637,21 @@
     
     <!-- 音频播放器（隐藏） -->
     <audio id="audio-player" preload="metadata"></audio>
+                        <!-- 我的上传列表 -->
+                        <div id="panel-upload" class="hidden">
+                            <div class="mb-4">
+                                <label for="local-file-input" class="block w-full py-12 border-2 border-dashed border-gray-700 rounded-lg cursor-pointer hover:border-primary transition-colors text-center">
+                                    <i class="fa fa-cloud-upload text-4xl text-gray-500 mb-3 block"></i>
+                                    <p class="text-gray-400 text-sm">点击或拖拽上传 MP3 文件</p>
+                                    <p class="text-gray-600 text-xs mt-1">支持多选，文件仅在本次浏览时可用</p>
+                                    <input type="file" id="local-file-input" accept="audio/mp3,audio/mpeg" multiple class="hidden">
+                                </label>
+                            </div>
+                            <div id="upload-list" class="space-y-4 max-h-96 overflow-y-auto pr-2">
+                                <p class="text-gray-500 text-center py-8">还没有上传文件</p>
+                            </div>
+                        </div>
+
     <audio id="bgm-player" preload="metadata" loop></audio>
     
     <!-- 页脚 -->
@@ -2230,6 +2248,148 @@
                     shareDropdown.classList.add('hidden');
                 });
             }
+
+            // ============ 本地上传播放列表 ============
+            (function() {
+                var tabPlaylist = document.getElementById('tab-playlist');
+                var tabUpload = document.getElementById('tab-upload');
+                var panelPlaylist = document.getElementById('panel-playlist');
+                var panelUpload = document.getElementById('panel-upload');
+                var fileInput = document.getElementById('local-file-input');
+                var uploadList = document.getElementById('upload-list');
+                var audio = document.getElementById('audio-player');
+                
+                var uploadedFiles = [];
+                
+                function switchTab(tab) {
+                    if (tab === 'playlist') {
+                        tabPlaylist.classList.add('border-b-2', 'border-primary', 'text-primary');
+                        tabPlaylist.classList.remove('border-transparent', 'text-gray-400');
+                        tabUpload.classList.add('border-transparent', 'text-gray-400');
+                        tabUpload.classList.remove('border-b-2', 'border-primary', 'text-primary');
+                        panelPlaylist.classList.remove('hidden');
+                        panelUpload.classList.add('hidden');
+                    } else {
+                        tabUpload.classList.add('border-b-2', 'border-primary', 'text-primary');
+                        tabUpload.classList.remove('border-transparent', 'text-gray-400');
+                        tabPlaylist.classList.add('border-transparent', 'text-gray-400');
+                        tabPlaylist.classList.remove('border-b-2', 'border-primary', 'text-primary');
+                        panelPlaylist.classList.add('hidden');
+                        panelUpload.classList.remove('hidden');
+                    }
+                }
+                
+                if (tabPlaylist) tabPlaylist.addEventListener('click', function() { switchTab('playlist'); });
+                if (tabUpload) tabUpload.addEventListener('click', function() { switchTab('upload'); });
+                
+                function renderUploadList() {
+                    if (!uploadList) return;
+                    if (uploadedFiles.length === 0) {
+                        uploadList.innerHTML = '<p class="text-gray-500 text-center py-8">还没有上传文件</p>';
+                        return;
+                    }
+                    var html = '';
+                    for (var i = 0; i < uploadedFiles.length; i++) {
+                        var f = uploadedFiles[i];
+                        var duration = f.duration ? formatTime(f.duration) : '--:--';
+                        html += '<div class="upload-card p-4 bg-dark bg-opacity-50 border-l-4 border-transparent hover:border-primary hover:bg-opacity-70 cursor-pointer transition-colors rounded-lg" data-upload-index="' + i + '">' +
+                            '<div class="flex justify-between items-start">' +
+                                '<div>' +
+                                    '<div class="flex items-center mb-1">' +
+                                        '<span class="text-white text-sm font-medium mr-2">' + escapeHtml(f.name) + '</span>' +
+                                        '<span class="text-xs text-gray-400">' + duration + '</span>' +
+                                    '</div>' +
+                                    '<p class="text-sm text-gray-400">' + formatSize(f.size) + '</p>' +
+                                '</div>' +
+                                '<button class="text-white hover:text-primary transition-colors upload-play-btn">' +
+                                    '<i class="fa fa-play-circle text-xl"></i>' +
+                                '</button>' +
+                                '<button class="text-red-400 hover:text-red-500 transition-colors ml-2 upload-remove-btn" data-index="' + i + '">' +
+                                    '<i class="fa fa-trash"></i>' +
+                                '</button>' +
+                            '</div>' +
+                        '</div>';
+                    }
+                    uploadList.innerHTML = html;
+                    
+                    // Bind events
+                    var cards = uploadList.querySelectorAll('.upload-card');
+                    for (var j = 0; j < cards.length; j++) {
+                        cards[j].addEventListener('click', function(e) {
+                            var idx = parseInt(this.getAttribute('data-upload-index'));
+                            playUploaded(idx);
+                        });
+                    }
+                    var removeBtns = uploadList.querySelectorAll('.upload-remove-btn');
+                    for (var k = 0; k < removeBtns.length; k++) {
+                        removeBtns[k].addEventListener('click', function(e) {
+                            e.stopPropagation();
+                            var idx = parseInt(this.getAttribute('data-index'));
+                            if (uploadedFiles[idx].url) URL.revokeObjectURL(uploadedFiles[idx].url);
+                            uploadedFiles.splice(idx, 1);
+                            renderUploadList();
+                        });
+                    }
+                }
+                
+                function playUploaded(index) {
+                    if (!audio || index < 0 || index >= uploadedFiles.length) return;
+                    var f = uploadedFiles[index];
+                    if (!f.url) f.url = URL.createObjectURL(f.file);
+                    audio.src = f.url;
+                    audio.play().catch(function() {});
+                    // Highlight active card
+                    var cards = uploadList.querySelectorAll('.upload-card');
+                    cards.forEach(function(c) { c.classList.remove('bg-primary', 'bg-opacity-10'); });
+                    if (cards[index]) cards[index].classList.add('bg-primary', 'bg-opacity-10');
+                    // Update player display
+                    var titleEl = document.getElementById('current-track-title');
+                    var artistEl = document.getElementById('current-track-artist');
+                    if (titleEl) titleEl.textContent = f.name;
+                    if (artistEl) artistEl.textContent = '本地文件';
+                }
+                
+                if (fileInput) {
+                    fileInput.addEventListener('change', function() {
+                        var files = Array.from(fileInput.files);
+                        for (var i = 0; i < files.length; i++) {
+                            if (files[i].type.indexOf('audio/') === 0) {
+                                uploadedFiles.push({
+                                    name: files[i].name.replace('.mp3', ''),
+                                    fullname: files[i].name,
+                                    file: files[i],
+                                    size: files[i].size,
+                                    url: null,
+                                    duration: 0
+                                });
+                            }
+                        }
+                        renderUploadList();
+                        fileInput.value = '';
+                        // Switch to upload tab
+                        switchTab('upload');
+                    });
+                }
+                
+                function formatTime(seconds) {
+                    var m = Math.floor(seconds / 60);
+                    var s = Math.floor(seconds % 60);
+                    return m + ':' + (s < 10 ? '0' : '') + s;
+                }
+                
+                function formatSize(bytes) {
+                    if (bytes < 1024) return bytes + ' B';
+                    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+                    return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+                }
+                
+                function escapeHtml(str) {
+                    var div = document.createElement('div');
+                    div.textContent = str;
+                    return div.innerHTML;
+                }
+            })();
+
             // ============ 背景音乐（BGM） ============
             (function() {
                 var bgmPlayer = document.getElementById('bgm-player');
