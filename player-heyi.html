@@ -95,6 +95,8 @@
             background: radial-gradient(circle at center, #000000 0%, #333333 100%);
             box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
             overflow: hidden;
+            will-change: transform;
+            transform: translateZ(0);
         }
         
         .vinyl-record::before {
@@ -1745,6 +1747,9 @@
             const progressBar = document.getElementById('progress-bar');
             const progressBarFill = document.getElementById('progress-bar-fill');
             const episodeCards = document.querySelectorAll('.episode-card');
+            const playerTitleEl = document.querySelector('.w-full.max-w-md h2') || 
+                                document.querySelector('h2.text-2xl');
+            let lastActiveCard = null;
             
             // 播放/暂停功能
             if (playButton && audio) {
@@ -1752,14 +1757,20 @@
                     const icon = this.querySelector('i');
                     if (audio.paused) {
                         if (audio.src || audio.currentSrc) {
-                            audio.play().catch(e => console.log('播放失败:', e));
+                            audio.play().catch(e => {
+                                console.log('播放失败:', e);
+                                showToast('播放失败，请检查网络连接或音频文件');
+                            });
                         } else if (episodeCards.length > 0) {
                             // 如果没有音频源，播放第一个
                             const firstCard = episodeCards[0];
                             const src = firstCard.getAttribute('data-src');
                             if (src) {
                                 audio.src = src;
-                                audio.play().catch(e => console.log('播放失败:', e));
+                                audio.play().catch(e => {
+                                    console.log('播放失败:', e);
+                                    showToast('播放失败，请检查网络连接或音频文件');
+                                });
                             }
                         }
                     } else {
@@ -1783,9 +1794,7 @@
                     const currentCard = document.querySelector('.episode-card.bg-primary');
                     let currentIndex = 0;
                     if (currentCard) {
-                        episodeCards.forEach((card, i) => {
-                            if (card === currentCard) currentIndex = i;
-                        });
+                        currentIndex = Array.from(episodeCards).findIndex(card => card === currentCard);
                     }
                     const prevIndex = currentIndex > 0 ? currentIndex - 1 : episodeCards.length - 1;
                     playEpisodeByIndex(prevIndex);
@@ -1797,17 +1806,17 @@
                     const currentCard = document.querySelector('.episode-card.bg-primary');
                     let currentIndex = -1;
                     if (currentCard) {
-                        episodeCards.forEach((card, i) => {
-                            if (card === currentCard) currentIndex = i;
-                        });
+                        currentIndex = Array.from(episodeCards).findIndex(card => card === currentCard);
                     }
                     const nextIndex = currentIndex < episodeCards.length - 1 ? currentIndex + 1 : 0;
                     playEpisodeByIndex(nextIndex);
                 });
             }
             
-            // 音频事件监听
+                // 音频事件监听
             if (audio) {
+                let timeupdateRafPending = false;
+                
                 audio.addEventListener('play', function() {
                     const icon = playButton.querySelector('i');
                     icon.classList.remove('fa-play');
@@ -1830,26 +1839,31 @@
                 });
                 
                 audio.addEventListener('timeupdate', function() {
-                    if (audio.duration) {
-                        const progress = (audio.currentTime / audio.duration) * 100;
-                        if (progressBarFill) progressBarFill.style.width = `${progress}%`;
-                        
-                        // 更新时间显示
-                        const currentTimeEl = document.getElementById('current-time');
-                        const durationTimeEl = document.getElementById('duration-time');
-                        
-                        if (currentTimeEl) {
-                            const mins = Math.floor(audio.currentTime / 60);
-                            const secs = Math.floor(audio.currentTime % 60);
-                            currentTimeEl.textContent = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+                    if (timeupdateRafPending) return;
+                    timeupdateRafPending = true;
+                    requestAnimationFrame(() => {
+                        timeupdateRafPending = false;
+                        if (audio.duration) {
+                            const progress = (audio.currentTime / audio.duration) * 100;
+                            if (progressBarFill) progressBarFill.style.width = `${progress}%`;
+                            
+                            // 更新时间显示
+                            const currentTimeEl = document.getElementById('current-time');
+                            const durationTimeEl = document.getElementById('duration-time');
+                            
+                            if (currentTimeEl) {
+                                const mins = Math.floor(audio.currentTime / 60);
+                                const secs = Math.floor(audio.currentTime % 60);
+                                currentTimeEl.textContent = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+                            }
+                            
+                            if (durationTimeEl && audio.duration) {
+                                const mins = Math.floor(audio.duration / 60);
+                                const secs = Math.floor(audio.duration % 60);
+                                durationTimeEl.textContent = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+                            }
                         }
-                        
-                        if (durationTimeEl && audio.duration) {
-                            const mins = Math.floor(audio.duration / 60);
-                            const secs = Math.floor(audio.duration % 60);
-                            durationTimeEl.textContent = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-                        }
-                    }
+                    });
                 });
                 
                 audio.addEventListener('loadedmetadata', function() {
@@ -1873,55 +1887,58 @@
             }
             
             // 节目选择
+            let lastActiveCard = null;
             episodeCards.forEach(card => {
                 card.addEventListener('click', function() {
                     const src = this.getAttribute('data-src');
                     if (!src) return;
                     
-                    // 移除所有卡片的活动状态
-                    episodeCards.forEach(c => {
-                        c.classList.remove('bg-primary', 'bg-opacity-10', 'border-primary');
-                        c.classList.add('bg-dark', 'bg-opacity-50', 'border-transparent');
+                    // 只移除上一个活动卡片的状态
+                    if (lastActiveCard && lastActiveCard !== this) {
+                        lastActiveCard.classList.remove('bg-primary', 'bg-opacity-10', 'border-primary');
+                        lastActiveCard.classList.add('bg-dark', 'bg-opacity-50', 'border-transparent');
                         
-                        // 移除所有播放波形和状态标签
-                        const statusContainer = c.querySelector('.flex.flex-col.items-center');
-                        if (statusContainer) {
-                            statusContainer.remove();
-                        }
+                        // 移除上一个活动卡片的"正在播放"标签
+                        const lastIndicators = lastActiveCard.querySelectorAll('.playing-indicator');
+                        lastIndicators.forEach(ind => ind.remove());
                         
-                        // 添加播放按钮
-                        const buttonContainer = c.querySelector('.flex.justify-between');
-                        if (buttonContainer && !buttonContainer.querySelector('button')) {
+                        // 为上一个活动卡片添加播放按钮
+                        const lastBtnContainer = lastActiveCard.querySelector('.flex.justify-between');
+                        if (lastBtnContainer && !lastBtnContainer.querySelector('button')) {
                             const button = document.createElement('button');
                             button.className = 'text-white hover:text-primary transition-colors';
                             button.innerHTML = '<i class="fa fa-play-circle text-xl"></i>';
-                            buttonContainer.appendChild(button);
+                            lastBtnContainer.appendChild(button);
                         }
-                    });
+                    }
                     
-                    // 添加活动状态到点击的卡片
+                    // 添加活动状态到当前点击的卡片
                     this.classList.remove('bg-dark', 'bg-opacity-50', 'border-transparent');
                     this.classList.add('bg-primary', 'bg-opacity-10', 'border-primary');
                     
-                    // 移除播放按钮
+                    // 移除当前卡片的播放按钮
                     const playBtn = this.querySelector('button');
                     if (playBtn) {
                         playBtn.remove();
                     }
                     
+                    // 移除当前卡片现有的"正在播放"标签（防止重复）
+                    const existingIndicators = this.querySelectorAll('.playing-indicator');
+                    existingIndicators.forEach(ind => ind.remove());
+                    
                     // 添加正在播放标签和波形
                     const buttonContainer = this.querySelector('.flex.justify-between');
                     if (buttonContainer) {
                         const statusSpan = document.createElement('span');
-                        statusSpan.className = 'text-xs bg-primary text-white px-2 py-0.5 rounded-full mb-2';
+                        statusSpan.className = 'text-xs bg-primary text-white px-2 py-0.5 rounded-full mb-2 playing-indicator';
                         statusSpan.textContent = '正在播放';
                         
                         const waveDiv = document.createElement('div');
-                        waveDiv.className = 'audio-wave h-4';
+                        waveDiv.className = 'audio-wave h-4 playing-indicator';
                         waveDiv.innerHTML = '<span></span><span></span><span></span><span></span><span></span>';
                         
                         const statusContainer = document.createElement('div');
-                        statusContainer.className = 'flex flex-col items-center';
+                        statusContainer.className = 'flex flex-col items-center playing-indicator';
                         statusContainer.appendChild(statusSpan);
                         statusContainer.appendChild(waveDiv);
                         
@@ -1930,18 +1947,22 @@
                     
                     // 更新当前播放信息
                     const episodeTitle = this.querySelector('h3');
-                    if (episodeTitle) {
-                        const titleEl = document.querySelector('.w-full.max-w-md h2') || 
-                                        document.querySelector('h2.text-2xl');
-                        if (titleEl) titleEl.textContent = episodeTitle.textContent;
+                    if (episodeTitle && playerTitleEl) {
+                        playerTitleEl.textContent = episodeTitle.textContent;
                     }
                     
                     // 加载并播放音频
                     if (audio) {
                         audio.src = src;
                         audio.load();
-                        audio.play().catch(e => console.log('播放失败:', e));
+                        audio.play().catch(e => {
+                            console.log('播放失败:', e);
+                            showToast('播放失败，请检查网络连接或音频文件');
+                        });
                     }
+                    
+                    // 更新上一个活动卡片的引用
+                    lastActiveCard = this;
                 });
             });
             

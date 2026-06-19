@@ -95,6 +95,7 @@
             background: radial-gradient(circle at center, #000000 0%, #333333 100%);
             box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
             overflow: hidden;
+            will-change: transform;
         }
         
         .vinyl-record::before {
@@ -759,6 +760,8 @@
             const progressBar = document.getElementById('progress-bar');
             const progressBarFill = document.getElementById('progress-bar-fill');
             const episodeCards = document.querySelectorAll('.episode-card');
+            const playerTitleEl = document.querySelector('h2.text-2xl') || 
+                                        document.querySelector('.w-full.max-w-md h2');
             
             // 播放/暂停功能
             if (playButton && audio) {
@@ -821,6 +824,7 @@
             }
             
             // 音频事件监听
+            let timeupdateRafPending = false; // 节流timeupdate事件
             if (audio) {
                 audio.addEventListener('play', function() {
                     const icon = playButton.querySelector('i');
@@ -844,26 +848,31 @@
                 });
                 
                 audio.addEventListener('timeupdate', function() {
-                    if (audio.duration) {
-                        const progress = (audio.currentTime / audio.duration) * 100;
-                        if (progressBarFill) progressBarFill.style.width = `${progress}%`;
-                        
-                        // 更新时间显示
-                        const currentTimeEl = document.getElementById('current-time');
-                        const durationTimeEl = document.getElementById('duration-time');
-                        
-                        if (currentTimeEl) {
-                            const mins = Math.floor(audio.currentTime / 60);
-                            const secs = Math.floor(audio.currentTime % 60);
-                            currentTimeEl.textContent = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+                    if (timeupdateRafPending) return;
+                    timeupdateRafPending = true;
+                    requestAnimationFrame(() => {
+                        timeupdateRafPending = false;
+                        if (audio.duration) {
+                            const progress = (audio.currentTime / audio.duration) * 100;
+                            if (progressBarFill) progressBarFill.style.width = `${progress}%`;
+                            
+                            // 更新时间显示（缓存DOM引用）
+                            const currentTimeEl = document.getElementById('current-time');
+                            const durationTimeEl = document.getElementById('duration-time');
+                            
+                            if (currentTimeEl) {
+                                const mins = Math.floor(audio.currentTime / 60);
+                                const secs = Math.floor(audio.currentTime % 60);
+                                currentTimeEl.textContent = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+                            }
+                            
+                            if (durationTimeEl && audio.duration) {
+                                const mins = Math.floor(audio.duration / 60);
+                                const secs = Math.floor(audio.duration % 60);
+                                durationTimeEl.textContent = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+                            }
                         }
-                        
-                        if (durationTimeEl && audio.duration) {
-                            const mins = Math.floor(audio.duration / 60);
-                            const secs = Math.floor(audio.duration % 60);
-                            durationTimeEl.textContent = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-                        }
-                    }
+                    });
                 });
                 
                 audio.addEventListener('loadedmetadata', function() {
@@ -886,32 +895,31 @@
                 });
             }
             
-            // 节目选择
+            // 节目选择 - 优化版本：使用lastActiveCard缓存，避免遍历所有卡片
+            let lastActiveCard = null;
             episodeCards.forEach(card => {
                 card.addEventListener('click', function() {
                     const src = this.getAttribute('data-src');
                     if (!src) return;
                     
-                    // 移除所有卡片的活动状态
-                    episodeCards.forEach(c => {
-                        c.classList.remove('bg-primary', 'bg-opacity-10', 'border-primary');
-                        c.classList.add('bg-dark', 'bg-opacity-50', 'border-transparent');
+                    // 只更新上一个活动卡片（如果存在）
+                    if (lastActiveCard && lastActiveCard !== this) {
+                        lastActiveCard.classList.remove('bg-primary', 'bg-opacity-10', 'border-primary');
+                        lastActiveCard.classList.add('bg-dark', 'bg-opacity-50', 'border-transparent');
                         
-                        // 移除所有播放波形和状态标签
-                        const statusContainer = c.querySelector('.flex.flex-col.items-center');
-                        if (statusContainer) {
-                            statusContainer.remove();
-                        }
+                        // 移除播放波形和状态标签（使用class统一移除）
+                        const oldIndicators = lastActiveCard.querySelectorAll('.playing-indicator');
+                        oldIndicators.forEach(el => el.remove());
                         
                         // 添加播放按钮
-                        const buttonContainer = c.querySelector('.flex.justify-between');
+                        const buttonContainer = lastActiveCard.querySelector('.flex.justify-between');
                         if (buttonContainer && !buttonContainer.querySelector('button')) {
                             const button = document.createElement('button');
                             button.className = 'text-white hover:text-primary transition-colors';
                             button.innerHTML = '<i class="fa fa-play-circle text-xl"></i>';
                             buttonContainer.appendChild(button);
                         }
-                    });
+                    }
                     
                     // 添加活动状态到点击的卡片
                     this.classList.remove('bg-dark', 'bg-opacity-50', 'border-transparent');
@@ -923,39 +931,43 @@
                         playBtn.remove();
                     }
                     
-                    // 添加正在播放标签和波形
+                    // 添加正在播放标签和波形（添加playing-indicator类方便统一移除）
                     const buttonContainer = this.querySelector('.flex.justify-between');
-                    if (buttonContainer) {
+                    if (buttonContainer && !buttonContainer.querySelector('.playing-indicator')) {
                         const statusSpan = document.createElement('span');
-                        statusSpan.className = 'text-xs bg-primary text-white px-2 py-0.5 rounded-full mb-2';
+                        statusSpan.className = 'text-xs bg-primary text-white px-2 py-0.5 rounded-full mb-2 playing-indicator';
                         statusSpan.textContent = '正在播放';
                         
                         const waveDiv = document.createElement('div');
-                        waveDiv.className = 'audio-wave h-4';
+                        waveDiv.className = 'audio-wave h-4 playing-indicator';
                         waveDiv.innerHTML = '<span></span><span></span><span></span><span></span><span></span>';
                         
                         const statusContainer = document.createElement('div');
-                        statusContainer.className = 'flex flex-col items-center';
+                        statusContainer.className = 'flex flex-col items-center playing-indicator';
                         statusContainer.appendChild(statusSpan);
                         statusContainer.appendChild(waveDiv);
                         
                         buttonContainer.appendChild(statusContainer);
                     }
                     
-                    // 更新当前播放信息
+                    // 更新当前播放信息（使用缓存的playerTitleEl）
                     const episodeTitle = this.querySelector('h3');
-                    if (episodeTitle) {
-                        const titleEl = document.querySelector('.w-full.max-w-md h2') || 
-                                        document.querySelector('h2.text-2xl');
-                        if (titleEl) titleEl.textContent = episodeTitle.textContent;
+                    if (episodeTitle && playerTitleEl) {
+                        playerTitleEl.textContent = episodeTitle.textContent;
                     }
                     
                     // 加载并播放音频
                     if (audio) {
                         audio.src = src;
                         audio.load();
-                        audio.play().catch(e => console.log('播放失败:', e));
+                        audio.play().catch(e => {
+                            console.log('播放失败:', e);
+                            showToast('播放失败，请检查网络连接');
+                        });
                     }
+                    
+                    // 更新lastActiveCard缓存
+                    lastActiveCard = this;
                 });
             });
             
