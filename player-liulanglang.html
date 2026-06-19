@@ -478,6 +478,10 @@
                                 <i class="fa fa-tachometer"></i>
                                 <span id="speed-badge" class="hidden absolute -top-2 -right-2 text-[8px] bg-primary text-white rounded-full w-4 h-4 flex items-center justify-center">1x</span>
                             </button>
+                            <button class="text-white hover:text-primary transition-colors relative" id="bgm-btn" title="背景音乐">
+                                <i class="fa fa-music"></i>
+                                <span id="bgm-badge" class="hidden absolute -top-2 -right-2 text-[8px] bg-primary text-white rounded-full w-4 h-4 flex items-center justify-center">On</span>
+                            </button>
                         </div>
 
                         <!-- 定时关闭下拉菜单 -->
@@ -551,6 +555,34 @@
                                 <button id="speed-close" class="w-full py-3 text-gray-400 hover:text-white transition-colors text-sm">
                                     关闭
                                 </button>
+                            </div>
+                        </div>
+
+                        <!-- 背景音乐控制菜单 -->
+                        <div id="bgm-menu" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm">
+                            <div class="bg-darker border border-gray-700 rounded-xl p-6 max-w-xs w-full mx-4 shadow-2xl">
+                                <h3 class="text-lg font-bold mb-4 text-center">背景音乐控制</h3>
+                                <p class="text-sm text-gray-400 mb-4 text-center">月下孤城02 · 循环播放</p>
+                                <div class="space-y-4 mb-6">
+                                    <div>
+                                        <label class="text-xs text-gray-300 mb-2 block">音量调节</label>
+                                        <input type="range" id="bgm-volume" min="0" max="100" value="2" class="w-full h-2 bg-gray-600 rounded-lg appearance-none cursor-pointer accent-primary">
+                                        <div class="flex justify-between text-xs text-gray-500 mt-1">
+                                            <span>0%</span>
+                                            <span id="bgm-volume-label">2%</span>
+                                            <span>100%</span>
+                                        </div>
+                                    </div>
+                                    <div class="flex justify-center gap-4">
+                                        <button id="bgm-toggle-on" class="px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium">
+                                            <i class="fa fa-play mr-2"></i>开启
+                                        </button>
+                                        <button id="bgm-toggle-off" class="px-6 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-medium">
+                                            <i class="fa fa-stop mr-2"></i>关闭
+                                        </button>
+                                    </div>
+                                </div>
+                                <button id="bgm-close" class="w-full py-2 bg-dark border border-gray-700 rounded-lg hover:border-gray-500 transition-colors text-gray-400 text-sm">关闭</button>
                             </div>
                         </div>
                     </div>
@@ -706,6 +738,7 @@
                         </div>
 
     <audio id="audio-player" preload="metadata"></audio>
+    <audio id="bgm-player" preload="metadata" loop></audio>
     
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -1177,6 +1210,95 @@
                 });
                 showToast(`语速已设置为 ${speed}x`);
             }
+            
+            // ============ 背景音乐（BGM） ============
+            (function() {
+                var bgmPlayer = document.getElementById('bgm-player');
+                var bgmBtn = document.getElementById('bgm-btn');
+                var bgmBadge = document.getElementById('bgm-badge');
+                var bgmMenu = document.getElementById('bgm-menu');
+                var bgmVolume = document.getElementById('bgm-volume');
+                var bgmVolumeLabel = document.getElementById('bgm-volume-label');
+                var bgmToggleOn = document.getElementById('bgm-toggle-on');
+                var bgmToggleOff = document.getElementById('bgm-toggle-off');
+                var bgmClose = document.getElementById('bgm-close');
+                
+                if (!bgmPlayer) return;
+                
+                // 设置BGM音频源
+                bgmPlayer.src = 'assets/music/月下孤城02.mp3';
+                bgmPlayer.volume = 0.02; // 默认2%音量
+                
+                // BGM按钮点击事件 - 打开菜单
+                if (bgmBtn) {
+                    bgmBtn.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        if (bgmMenu) {
+                            bgmMenu.classList.toggle('hidden');
+                            // 关闭其他菜单
+                            var timerMenu = document.getElementById('timer-menu');
+                            var speedMenu = document.getElementById('speed-menu');
+                            if (timerMenu) timerMenu.classList.add('hidden');
+                            if (speedMenu) speedMenu.classList.add('hidden');
+                        }
+                    });
+                }
+                
+                // 音量调节
+                if (bgmVolume) {
+                    bgmVolume.addEventListener('input', function() {
+                        var vol = this.value / 100;
+                        bgmPlayer.volume = vol;
+                        if (bgmVolumeLabel) bgmVolumeLabel.textContent = this.value + '%';
+                        if (bgmBadge) {
+                            if (vol > 0 && !bgmPlayer.paused) {
+                                bgmBadge.classList.remove('hidden');
+                                bgmBadge.textContent = 'On';
+                            }
+                        }
+                    });
+                }
+                
+                // 开启BGM
+                if (bgmToggleOn) {
+                    bgmToggleOn.addEventListener('click', function() {
+                        bgmPlayer.play().then(() => {
+                            if (bgmBadge) {
+                                bgmBadge.classList.remove('hidden');
+                                bgmBadge.textContent = 'On';
+                            }
+                            showToast('背景音乐已开启');
+                        }).catch(e => {
+                            console.log('BGM播放失败:', e);
+                        });
+                    });
+                }
+                
+                // 关闭BGM
+                if (bgmToggleOff) {
+                    bgmToggleOff.addEventListener('click', function() {
+                        bgmPlayer.pause();
+                        if (bgmBadge) bgmBadge.classList.add('hidden');
+                        showToast('背景音乐已关闭');
+                    });
+                }
+                
+                // 关闭菜单
+                if (bgmClose) {
+                    bgmClose.addEventListener('click', function() {
+                        if (bgmMenu) bgmMenu.classList.add('hidden');
+                    });
+                }
+                
+                // 点击菜单外部关闭
+                document.addEventListener('click', function(e) {
+                    if (bgmMenu && !bgmMenu.classList.contains('hidden') && 
+                        !bgmMenu.contains(e.target) && e.target !== bgmBtn && 
+                        !bgmBtn.contains(e.target)) {
+                        bgmMenu.classList.add('hidden');
+                    }
+                });
+            })();
             
             // Toast 提示
             function showToast(message) {

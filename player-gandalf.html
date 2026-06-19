@@ -478,6 +478,39 @@
                                 <i class="fa fa-tachometer"></i>
                                 <span id="speed-badge" class="hidden absolute -top-2 -right-2 text-[8px] bg-primary text-white rounded-full w-4 h-4 flex items-center justify-center">1x</span>
                             </button>
+                            <button class="text-white hover:text-primary transition-colors relative" id="bgm-btn" title="背景音乐">
+                                <i class="fa fa-music"></i>
+                                <span id="bgm-badge" class="hidden absolute -top-2 -right-2 text-[8px] bg-green-500 text-white rounded-full w-4 h-4 flex items-center justify-center"></span>
+                            </button>
+                        </div>
+
+                        <!-- BGM 控制菜单 -->
+                        <div id="bgm-menu" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm">
+                            <div class="bg-darker border border-gray-700 rounded-xl p-6 max-w-xs w-full mx-4 shadow-2xl">
+                                <h3 class="text-lg font-bold mb-4 text-center">背景音乐控制</h3>
+                                <p class="text-sm text-gray-400 mb-4 text-center">月下孤城02 · 循环播放</p>
+                                <div class="space-y-4 mb-6">
+                                    <div>
+                                        <label class="text-xs text-gray-300 mb-2 block">音量调节</label>
+                                        <input type="range" id="bgm-volume" min="0" max="100" value="2" class="w-full h-2 bg-gray-600 rounded-lg appearance-none cursor-pointer accent-primary">
+                                        <div class="flex justify-between text-xs text-gray-500 mt-1">
+                                            <span>0%</span>
+                                            <span id="bgm-volume-label">2%</span>
+                                            <span>100%</span>
+                                        </div>
+                                    </div>
+                                    <div class="flex justify-center gap-4">
+                                        <button id="bgm-toggle-on" class="px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium">
+                                            <i class="fa fa-play mr-2"></i>开启
+                                        </button>
+                                        <button id="bgm-toggle-off" class="px-6 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-medium">
+                                            <i class="fa fa-stop mr-2"></i>关闭
+                                        </button>
+                                    </div>
+                                </div>
+                                <button id="bgm-close" class="w-full py-2 bg-dark border border-gray-700 rounded-lg hover:border-gray-500 transition-colors text-gray-400 text-sm">关闭</button>
+                            </div>
+                        </div>
                         </div>
 
                         <!-- 定时关闭下拉菜单 -->
@@ -740,6 +773,7 @@
                         </div>
 
     <audio id="audio-player" preload="metadata"></audio>
+    <audio id="bgm-player" preload="metadata" loop></audio>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -1229,6 +1263,70 @@
                     toast.classList.add('opacity-0');
                 }, 2000);
             }
+            
+            // ============ 背景音乐（BGM） ============
+            (function() {
+                var bgmPlayer = document.getElementById('bgm-player');
+                var bgmBtn = document.getElementById('bgm-btn');
+                var bgmBadge = document.getElementById('bgm-badge');
+                var bgmMenu = document.getElementById('bgm-menu');
+                var bgmVolume = document.getElementById('bgm-volume');
+                var bgmVolumeLabel = document.getElementById('bgm-volume-label');
+                var bgmToggleOn = document.getElementById('bgm-toggle-on');
+                var bgmToggleOff = document.getElementById('bgm-toggle-off');
+                var bgmClose = document.getElementById('bgm-close');
+                
+                if (!bgmPlayer) return;
+                bgmPlayer.src = 'assets/music/月下孤城02.mp3';
+                bgmPlayer.volume = 0.02;
+                bgmPlayer.loop = true;
+                var isPlaying = false;
+                
+                if (bgmBtn && bgmMenu) {
+                    bgmBtn.addEventListener('click', function() {
+                        bgmMenu.classList.toggle('hidden');
+                    });
+                }
+                if (bgmClose) {
+                    bgmClose.addEventListener('click', function() {
+                        bgmMenu.classList.add('hidden');
+                    });
+                }
+                
+                // 开启
+                if (bgmToggleOn) {
+                    bgmToggleOn.addEventListener('click', function() {
+                        if (isPlaying) return;
+                        bgmPlayer.play().then(function() {
+                            isPlaying = true;
+                            bgmPlayer.muted = false;
+                            if (bgmBadge) bgmBadge.classList.remove('hidden');
+                            bgmBadge.textContent = 'BGM';
+                        }).catch(function(e) {
+                            console.log('BGM开启失败:', e);
+                        });
+                    });
+                }
+                
+                // 关闭
+                if (bgmToggleOff) {
+                    bgmToggleOff.addEventListener('click', function() {
+                        if (!isPlaying) return;
+                        bgmPlayer.pause();
+                        isPlaying = false;
+                        if (bgmBadge) bgmBadge.classList.add('hidden');
+                    });
+                }
+                
+                // 音量
+                if (bgmVolume) {
+                    bgmVolume.addEventListener('input', function() {
+                        var v = parseInt(this.value) / 100;
+                        bgmPlayer.volume = v;
+                        if (bgmVolumeLabel) bgmVolumeLabel.textContent = this.value + '%';
+                    });
+                }
+            })();
             
             // 监听音频结束（随机/循环逻辑）
             if (audio) {
